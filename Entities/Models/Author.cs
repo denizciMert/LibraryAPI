@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryAPI.Entities.Models
 {
@@ -14,5 +13,7 @@ namespace LibraryAPI.Entities.Models
         public short DateOfBirth { get; set; }
 
         public short? DateOfDeath { get; set; }
+
+        public List<AuthorBook>? AuthorBooks { get; set; }
     }
 }

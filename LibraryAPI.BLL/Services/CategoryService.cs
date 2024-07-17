@@ -1,26 +1,25 @@
 ﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
-using LibraryAPI.DAL;
+using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.CategoryDTO;
 using LibraryAPI.Entities.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.BLL.Services
 {
     public class CategoryService : ILibraryServiceManager<CategoryGet,CategoryPost,Category>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly CategoryData _categoryData;
 
-        public CategoryService(ApplicationDbContext context)
+        public CategoryService(CategoryData categoryData)
         {
-            _context = context;
+            _categoryData = categoryData;
         }
 
         public async Task<ServiceResult<IEnumerable<CategoryGet>>> GetAllAsync()
         {
             try
             {
-                var categories = await _context.Categories.ToListAsync();
+                var categories = await _categoryData.SelectAll();
 
                 if (categories == null || categories.Count == 0)
                 {
@@ -52,7 +51,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var categories = await _context.Categories.ToListAsync();
+                var categories = await _categoryData.SelectAll();
 
                 if (categories == null || categories.Count == 0)
                 {
@@ -71,7 +70,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+                var category = await _categoryData.SelectForEntity(id);
                 if (category == null)
                 {
                     return ServiceResult<CategoryGet>.FailureResult("Kategori verisi bulunmuyor.");
@@ -97,7 +96,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+                var category = await _categoryData.SelectForEntity(id);
 
                 if (category == null)
                 {
@@ -116,7 +115,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                if ((await _context.Categories.FirstOrDefaultAsync(x => x.CategoryName == tPost.CategoryName)) != null)
+                if ((await _categoryData.SelectForEntityName(tPost.CategoryName)) != null)
                 {
                     return ServiceResult<CategoryGet>.FailureResult("Bu kategori zaten eklenmiş.");
                 }
@@ -129,8 +128,8 @@ namespace LibraryAPI.BLL.Services
                     DeleteDateLog = null,
                     UpdateDateLog = null
                 };
-                _context.Categories.Add(newCategory);
-                await _context.SaveChangesAsync();
+                _categoryData.AddToContext(newCategory);
+                await _categoryData.SaveContext();
 
                 var result = await GetByIdAsync(newCategory.Id);
 
@@ -146,7 +145,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+                var category = await _categoryData.SelectForEntity(id);
 
                 if (category == null)
                 {
@@ -156,7 +155,7 @@ namespace LibraryAPI.BLL.Services
                 category.CategoryName = tPost.CategoryName;
                 category.State = Entities.Enums.State.Güncellendi;
                 category.UpdateDateLog = DateTime.Now;
-                await _context.SaveChangesAsync();
+                await _categoryData.SaveContext();
 
                 var newCategory = new CategoryGet
                 {
@@ -180,7 +179,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+                var category = await _categoryData.SelectForEntity(id);
 
                 if (category == null)
                 {
@@ -188,7 +187,7 @@ namespace LibraryAPI.BLL.Services
                 }
                 category.DeleteDateLog = DateTime.Now;
                 category.State = Entities.Enums.State.Silindi;
-                await _context.SaveChangesAsync();
+                await _categoryData.SaveContext();
 
                 return ServiceResult<bool>.SuccessResult(true);
             }

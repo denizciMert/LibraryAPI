@@ -1,6 +1,8 @@
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.BLL.Services;
 using LibraryAPI.DAL;
+using LibraryAPI.DAL.Data;
+using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.AuthorDTO;
 using LibraryAPI.Entities.DTOs.BookDTO;
@@ -60,6 +62,8 @@ namespace LibraryAPI.WebAPI
             builder.Services.AddScoped<ILibraryServiceManager<StudyTableGet, StudyTablePost, StudyTable>, StudyTableService>();
             builder.Services.AddScoped<ILibraryServiceManager<SubCategoryGet, SubCategoryPost, SubCategory>, SubCategoryService>();
             builder.Services.AddScoped<ILibraryServiceManager<TitleGet, TitlePost, Title>, TitleService>();
+
+            builder.Services.AddScoped<IQueryBase<Category>, CategoryData>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

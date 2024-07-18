@@ -88,7 +88,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<CategoryGet>.FailureResult("Kategori verisi bulunmuyor.");
+                return ServiceResult<CategoryGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
             }
         }
 
@@ -137,7 +137,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<CategoryGet>.FailureResult($"Kategori kaydı oluşturulurken bir hata meydana geldi. Hata: {ex.Message}");
+                return ServiceResult<CategoryGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
             }
         }
 
@@ -171,7 +171,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<CategoryGet>.FailureResult($"Kategori verisi güncellenemedi. Hata: {ex.Message}");
+                return ServiceResult<CategoryGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
             }
         }
 
@@ -193,7 +193,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Kategori verisi silinirken hata oluştu. Hata: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
             }
         }
     }

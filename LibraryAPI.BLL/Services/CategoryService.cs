@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.CategoryDTO;
 using LibraryAPI.Entities.Models;
@@ -8,11 +9,13 @@ namespace LibraryAPI.BLL.Services
 {
     public class CategoryService : ILibraryServiceManager<CategoryGet,CategoryPost,Category>
     {
+        private readonly ApplicationDbContext _context;
         private readonly CategoryData _categoryData;
 
-        public CategoryService(CategoryData categoryData)
+        public CategoryService(ApplicationDbContext context)
         {
-            _categoryData = categoryData;
+            _context = context;
+            _categoryData = new CategoryData(_context);
         }
 
         public async Task<ServiceResult<IEnumerable<CategoryGet>>> GetAllAsync()

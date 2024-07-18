@@ -15,6 +15,7 @@
         public List<string>? Adresses { get; set; } = [];
         public List<string>? Loans { get; set; } = [];
         public List<string>? Penalties { get; set; } = [];
+        public bool Banned { get; set; }
         public string? ImagePath { get; set; } = string.Empty;
         public string? UserRole { get; set; } = string.Empty;
         public DateTime? DateOfRegister { get; set; }

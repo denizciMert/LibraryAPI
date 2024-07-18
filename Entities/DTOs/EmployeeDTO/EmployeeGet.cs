@@ -10,11 +10,13 @@
         public string? Phone { get; set; } = string.Empty;
         public DateTime? DateOfBirth { get; set; }
         public string? Gender { get; set; } = string.Empty;
+        public List<string>? Addresses { get; set; }
         public string? Country { get; set; } = string.Empty;
         public string? Title { get; set; } = string.Empty;
         public string? Department { get; set; } = string.Empty;
         public float? Salary { get; set; }
         public string? Shift { get; set; } = string.Empty;
+        public bool Banned { get; set; }
         public string? ImagePath { get; set; } = string.Empty;
         public string? UserRole { get; set; } = string.Empty;
         public DateTime? DateOfRegister { get; set; }

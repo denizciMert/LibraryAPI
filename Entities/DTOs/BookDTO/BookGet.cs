@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LibraryAPI.Entities.DTOs.BookDTO
+﻿namespace LibraryAPI.Entities.DTOs.BookDTO
 {
     public class BookGet
     {
@@ -20,6 +14,7 @@ namespace LibraryAPI.Entities.DTOs.BookDTO
         public List<string>? Authors { get; set; } = [];
         public List<string>? SubCategories { get; set; } = [];
         public List<string>? Languages { get; set; } = [];
+        public List<int>? CopyNumbers { get; set; }
         public DateTime? CreatinDateLog { get; set; }
         public DateTime? UpdateDateLog { get; set; }
         public DateTime? DeleteDateLog { get; set; }

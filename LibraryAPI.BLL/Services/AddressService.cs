@@ -1,5 +1,7 @@
 ﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.BLL.Mappers;
+using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.Models;
@@ -8,11 +10,15 @@ namespace LibraryAPI.BLL.Services
 {
     public class AddressService : ILibraryServiceManager<AddressGet, AddressPost, Address>
     {
+        private readonly ApplicationDbContext _context;
         private readonly AddressData _addressData;
+        private readonly AddressMapper _addressMapper;
 
-        public AddressService(AddressData addressData)
+        public AddressService(ApplicationDbContext context)
         {
-            _addressData = addressData;
+            _context = context;
+            _addressData = new AddressData(_context);
+            _addressMapper = new AddressMapper();
         }
 
         public async Task<ServiceResult<IEnumerable<AddressGet>>> GetAllAsync()
@@ -25,25 +31,16 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<IEnumerable<AddressGet>>.FailureResult("Adres verisi bulunmuyor.");
                 }
+
                 List<AddressGet> addressGets = new List<AddressGet>();
+
                 foreach (var address in addresses)
                 {
-                    var addressGet = new AddressGet
-                    {
-                        Id = address.Id,
-                        UserName = address.ApplicationUser.UserName,
-                        UserFullName = $"{ address.ApplicationUser.FirstName } { address.ApplicationUser.LastName }",
-                        AddressString = address.AddressString,
-                        District = address.District.DistrictName,
-                        City = address.District.City.CityName,
-                        Country = address.District.City.Country.CountryName,
-                        State = address.State.ToString(),
-                        CreatinDateLog = address.CreationDateLog,
-                        UpdateDateLog = address.UpdateDateLog,
-                        DeleteDateLog = address.DeleteDateLog
-                    };
+                    var addressGet = _addressMapper.MapToDto(address);
+
                     addressGets.Add(addressGet);
                 }
+
                 return ServiceResult<IEnumerable<AddressGet>>.SuccessResult(addressGets);
             }
             catch (Exception ex)

@@ -52,6 +52,8 @@ namespace LibraryAPI.DAL
             modelBuilder.Entity<BookLanguage>().HasKey(a => new { a.BooksId, a.LanguagesId });
 
             modelBuilder.Entity<BookSubCategory>().HasKey(a => new { a.BooksId, a.SubCategoriesId });
+
+            modelBuilder.Entity<BookCopy>().HasKey(x => new { x.BookId, x.CopyNo });
         }
     }
 }

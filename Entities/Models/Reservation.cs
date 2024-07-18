@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryAPI.Entities.Models
 {
@@ -13,6 +12,11 @@ namespace LibraryAPI.Entities.Models
 
         [ForeignKey(nameof(MemberId))]
         public Member? Member { get; set; }
+
+        public string EmployeeId { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(EmployeeId))]
+        public Employee? Employee { get; set; }
 
         public int TableId { get; set; }
 

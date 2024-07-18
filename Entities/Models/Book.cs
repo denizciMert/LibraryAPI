@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryAPI.Entities.Models
 {
@@ -40,6 +38,8 @@ namespace LibraryAPI.Entities.Models
         public List<BookLanguage>? BookLanguages { get; set; }
 
         public List<AuthorBook>? AuthorBooks { get; set; }
+
+        public List<BookCopy>? BookCopies { get; set; }
 
         public string? BookImagePath { get; set; } = string.Empty;
     }

@@ -8,8 +8,8 @@ namespace LibraryAPI.Entities.DTOs.LoanDTO
         public string MemberId { get; set; } = string.Empty;
         
         [Required] 
-        public int EmployeeId { get; set; }
-        
+        public string EmployeeId { get; set; } = string.Empty;
+
         [Required]
         public int BookId { get; set; }
         

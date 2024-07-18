@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.AuthorDTO;
 using LibraryAPI.Entities.Enums;
@@ -9,11 +10,13 @@ namespace LibraryAPI.BLL.Services
 {
     public class AuthorService : ILibraryServiceManager<AuthorGet,AuthorPost,Author>
     {
+        private readonly ApplicationDbContext _context;
         private readonly AuthorData _authorData;
 
-        public AuthorService(AuthorData authorData)
+        public AuthorService(ApplicationDbContext context)
         {
-            _authorData = authorData;
+            _context = context;
+            _authorData = new AuthorData(_context);
         }
 
         public async Task<ServiceResult<IEnumerable<AuthorGet>>> GetAllAsync()

@@ -714,6 +714,7 @@ namespace LibraryAPI.DAL.Migrations
                     AddressString = table.Column<string>(type: "varchar(500)", nullable: false),
                     DistrictId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreationDateLog = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDateLog = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeleteDateLog = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -722,6 +723,11 @@ namespace LibraryAPI.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Addresses_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Addresses_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -779,6 +785,11 @@ namespace LibraryAPI.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_ApplicationUserId",
+                table: "Addresses",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_DistrictId",

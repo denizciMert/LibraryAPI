@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryAPI.Entities.Models
 {
@@ -7,5 +6,7 @@ namespace LibraryAPI.Entities.Models
     {
         [Column(TypeName = "varchar(6)")]
         public string TableCode { get; set; } = string.Empty;
+
+        public bool Reserved { get; set; } = false;
     }
 }

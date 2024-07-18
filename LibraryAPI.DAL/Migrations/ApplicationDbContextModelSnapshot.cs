@@ -34,6 +34,9 @@ namespace LibraryAPI.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreationDateLog")
                         .HasColumnType("datetime2");
 
@@ -54,6 +57,8 @@ namespace LibraryAPI.DAL.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("DistrictId");
 
@@ -1097,6 +1102,10 @@ namespace LibraryAPI.DAL.Migrations
 
             modelBuilder.Entity("LibraryAPI.Entities.Models.Address", b =>
                 {
+                    b.HasOne("LibraryAPI.Entities.Models.ApplicationUser", null)
+                        .WithMany("Addresses")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("LibraryAPI.Entities.Models.District", "District")
                         .WithMany()
                         .HasForeignKey("DistrictId")
@@ -1117,7 +1126,7 @@ namespace LibraryAPI.DAL.Migrations
             modelBuilder.Entity("LibraryAPI.Entities.Models.AuthorBook", b =>
                 {
                     b.HasOne("LibraryAPI.Entities.Models.Author", "Author")
-                        .WithMany()
+                        .WithMany("AuthorBooks")
                         .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1406,6 +1415,11 @@ namespace LibraryAPI.DAL.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("LibraryAPI.Entities.Models.Author", b =>
+                {
+                    b.Navigation("AuthorBooks");
+                });
+
             modelBuilder.Entity("LibraryAPI.Entities.Models.Book", b =>
                 {
                     b.Navigation("AuthorBooks");
@@ -1420,6 +1434,11 @@ namespace LibraryAPI.DAL.Migrations
                     b.Navigation("Loans");
 
                     b.Navigation("Penalties");
+                });
+
+            modelBuilder.Entity("LibraryAPI.Entities.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Addresses");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,10 +4,12 @@
     {
         public int? Id { get; set; }
         public string? MemberName { get; set; } = string.Empty;
-        public string? UserName { get; set; } = string.Empty;
+        public string? MemberUserName { get; set; } = string.Empty;
         public string? BookTitle { get; set; } = string.Empty;
         public string? BookIsbn { get; set; } = string.Empty;
         public short? CopyNo { get; set; }
+        public string? EmployeeName { get; set; }
+        public string? EmployeeUserName { get; set; }
         public DateTime? LoanDate { get; set; }
         public DateTime? DueDate { get; set; }
         public DateTime? ReturnedDate { get; set; }

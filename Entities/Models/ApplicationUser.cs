@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using LibraryAPI.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,6 +17,8 @@ namespace LibraryAPI.Entities.Models
         public DateTime? DateOfBirth { get; set; }
 
         public DateTime? DateOfRegister { get; set; }
+
+        public List<Address>? Addresses { get; set; }
 
         public int CountryId { get; set; }
 

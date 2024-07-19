@@ -1,4 +1,6 @@
 ﻿using LibraryAPI.Entities.DTOs.AddressDTO;
+using LibraryAPI.Entities.DTOs.CategoryDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Mappers
@@ -13,6 +15,43 @@ namespace LibraryAPI.BLL.Mappers
                 DistrictId = dto.DistrictId,
                 UserId = dto.UserId
             };
+
+            return address;
+        }
+
+        public Address PostEntity(AddressPost dto)
+        {
+            var address = new Address
+            {
+                AddressString = dto.AddressString,
+                DistrictId = dto.DistrictId,
+                UserId = dto.UserId,
+                CreationDateLog = DateTime.Now,
+                UpdateDateLog = null,
+                DeleteDateLog = null,
+                State = State.Eklendi
+            };
+
+            return address;
+        }
+
+        public Address UpdateEntity(Address address, AddressPost addressPost)
+        {
+            address.AddressString = addressPost.AddressString;
+            address.DistrictId = addressPost.DistrictId;
+            address.UserId = addressPost.UserId;
+            address.CreationDateLog = address.CreationDateLog;
+            address.UpdateDateLog = DateTime.Now;
+            address.DeleteDateLog = null;
+            address.State = State.Güncellendi;
+
+            return address;
+        }
+
+        public Address DeleteEntity(Address address)
+        {
+            address.DeleteDateLog = DateTime.Now;
+            address.State = State.Silindi;
 
             return address;
         }

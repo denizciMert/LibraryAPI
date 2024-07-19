@@ -18,7 +18,6 @@ namespace LibraryAPI.DAL.Data
             return await _context.Books
                 .Include(x => x.AuthorBooks).ThenInclude(x => x.Author)
                 .Include(x => x.BookLanguages).ThenInclude(x => x.Language)
-                .Include(x => x.BookLanguages).ThenInclude(x => x.Language)
                 .Include(x=>x.BookSubCategories).ThenInclude(x=>x.SubCategory)
                 .Include(x=>x.Publisher)
                 .Include(x => x.Location).ToListAsync();
@@ -28,7 +27,6 @@ namespace LibraryAPI.DAL.Data
         {
             return await _context.Books
                 .Include(x => x.AuthorBooks).ThenInclude(x => x.Author)
-                .Include(x => x.BookLanguages).ThenInclude(x => x.Language)
                 .Include(x => x.BookLanguages).ThenInclude(x => x.Language)
                 .Include(x => x.BookSubCategories).ThenInclude(x => x.SubCategory)
                 .Include(x => x.Publisher)

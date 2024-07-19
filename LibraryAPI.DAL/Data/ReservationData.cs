@@ -17,6 +17,7 @@ namespace LibraryAPI.DAL.Data
         {
             return await _context.Reservations
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
+                .Include(x=>x.Employee).ThenInclude(x=>x.ApplicationUser)
                 .Include(x => x.StudyTable)
                 .ToListAsync();
         }
@@ -25,6 +26,7 @@ namespace LibraryAPI.DAL.Data
         {
             return await _context.Reservations
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.StudyTable)
                 .FirstOrDefaultAsync(x=>x.Id==id);
         }
@@ -33,6 +35,7 @@ namespace LibraryAPI.DAL.Data
         {
             return await _context.Reservations
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.StudyTable)
                 .FirstOrDefaultAsync(x => x.Member.Id == id);
         }

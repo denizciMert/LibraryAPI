@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.BLL.Mappers;
 using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.AuthorDTO;
@@ -8,15 +9,18 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
-    public class AuthorService : ILibraryServiceManager<AuthorGet,AuthorPost,Author>
+    public class AuthorService : ILibraryServiceManager<AuthorGet, AuthorPost, Author>
     {
+
         private readonly ApplicationDbContext _context;
         private readonly AuthorData _authorData;
+        private readonly AuthorMapper _authorMapper;
 
         public AuthorService(ApplicationDbContext context)
         {
             _context = context;
             _authorData = new AuthorData(_context);
+            _authorMapper = new AuthorMapper();
         }
 
         public async Task<ServiceResult<IEnumerable<AuthorGet>>> GetAllAsync()
@@ -24,7 +28,6 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var authors = await _authorData.SelectAll();
-
                 if (authors == null || authors.Count == 0)
                 {
                     return ServiceResult<IEnumerable<AuthorGet>>.FailureResult("Yazar verisi bulunmuyor.");
@@ -32,20 +35,7 @@ namespace LibraryAPI.BLL.Services
                 List<AuthorGet> authorGets = new List<AuthorGet>();
                 foreach (var author in authors)
                 {
-                    var books = await _authorData.SelectBooks(author.Id);
-                    var authorGet = new AuthorGet
-                    {
-                        Id = author.Id,
-                        AuthorName = author.AuthorFullName,
-                        Biography = author.Biography,
-                        DateOfBirth = author.DateOfBirth,
-                        DateOfDeath = author.DateOfDeath,
-                        Books = books,
-                        State = author.State.ToString(),
-                        CreatinDateLog = author.CreationDateLog,
-                        UpdateDateLog = author.UpdateDateLog,
-                        DeleteDateLog = author.DeleteDateLog
-                    };
+                    var authorGet = _authorMapper.MapToDto(author);
                     authorGets.Add(authorGet);
                 }
                 return ServiceResult<IEnumerable<AuthorGet>>.SuccessResult(authorGets);
@@ -61,12 +51,10 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var authors = await _authorData.SelectAll();
-
                 if (authors == null || authors.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Author>>.FailureResult("Yazar verisi bulunmuyor.");
                 }
-
                 return ServiceResult<IEnumerable<Author>>.SuccessResult(authors);
             }
             catch (Exception ex)
@@ -84,20 +72,7 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar verisi bulunmuyor.");
                 }
-                var books = await _authorData.SelectBooks(author.Id);
-                var authorGet = new AuthorGet
-                {
-                    Id = author.Id,
-                    AuthorName = author.AuthorFullName,
-                    Biography = author.Biography,
-                    DateOfBirth = author.DateOfBirth,
-                    DateOfDeath = author.DateOfDeath,
-                    Books = books,
-                    State = author.State.ToString(),
-                    CreatinDateLog = author.CreationDateLog,
-                    UpdateDateLog = author.UpdateDateLog,
-                    DeleteDateLog = author.DeleteDateLog
-                };
+                var authorGet = _authorMapper.MapToDto(author);
                 return ServiceResult<AuthorGet>.SuccessResult(authorGet);
             }
             catch (Exception ex)
@@ -111,12 +86,10 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var author = await _authorData.SelectForEntity(id);
-
                 if (author == null)
                 {
                     return ServiceResult<Author>.FailureResult("Yazar verisi bulunmuyor.");
                 }
-
                 return ServiceResult<Author>.SuccessResult(author);
             }
             catch (Exception ex)
@@ -133,23 +106,10 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Bu yazar zaten eklenmiş.");
                 }
-
-                var newAuthor = new Author
-                {
-                    AuthorFullName = tPost.AuthorName,
-                    Biography = tPost.Biography,
-                    DateOfBirth = tPost.DateOfBirth,
-                    DateOfDeath = tPost.DateOfDeath,
-                    State = State.Eklendi,
-                    CreationDateLog = DateTime.Now,
-                    DeleteDateLog = null,
-                    UpdateDateLog = null
-                };
+                var newAuthor = _authorMapper.PostEntity(tPost);
                 _authorData.AddToContext(newAuthor);
                 await _authorData.SaveContext();
-
                 var result = await GetByIdAsync(newAuthor.Id);
-
                 return ServiceResult<AuthorGet>.SuccessResult(result.Data);
             }
             catch (Exception ex)
@@ -163,35 +123,13 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var author = await _authorData.SelectForEntity(id);
-
                 if (author == null)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar verisi bulunmuyor.");
                 }
-
-                author.AuthorFullName = tPost.AuthorName;
-                author.Biography = tPost.Biography;
-                author.DateOfBirth = tPost.DateOfBirth;
-                author.DateOfDeath = tPost.DateOfDeath;
-                author.State = Entities.Enums.State.Güncellendi;
-                author.UpdateDateLog = DateTime.Now;
-
+                _authorMapper.UpdateEntity(author, tPost);
                 await _authorData.SaveContext();
-
-                var newAuthor = new AuthorGet
-                {
-                    Id = author.Id,
-                    AuthorName = author.AuthorFullName,
-                    Biography = author.Biography,
-                    DateOfBirth = author.DateOfBirth,
-                    DateOfDeath = author.DateOfDeath,
-                    Books = null,
-                    State = State.Eklendi.ToString(),
-                    CreatinDateLog = author.CreationDateLog,
-                    UpdateDateLog = author.UpdateDateLog,
-                    DeleteDateLog = null
-                };
-
+                var newAuthor = _authorMapper.MapToDto(author);
                 return ServiceResult<AuthorGet>.SuccessResult(newAuthor);
             }
             catch (Exception ex)
@@ -205,16 +143,12 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var author = await _authorData.SelectForEntity(id);
-
                 if (author == null)
                 {
                     return ServiceResult<bool>.FailureResult("Yazar verisi bulunmuyor.");
                 }
-
-                author.DeleteDateLog = DateTime.Now;
-                author.State = Entities.Enums.State.Silindi;
+                _authorMapper.DeleteEntity(author);
                 await _authorData.SaveContext();
-
                 return ServiceResult<bool>.SuccessResult(true);
             }
             catch (Exception ex)
@@ -223,4 +157,6 @@ namespace LibraryAPI.BLL.Services
             }
         }
     }
+
 }
+

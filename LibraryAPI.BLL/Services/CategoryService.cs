@@ -1,5 +1,6 @@
 ﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.BLL.Mappers;
 using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.CategoryDTO;
@@ -11,11 +12,13 @@ namespace LibraryAPI.BLL.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly CategoryData _categoryData;
+        private readonly CategoryMapper _categoryMapper;
 
         public CategoryService(ApplicationDbContext context)
         {
             _context = context;
             _categoryData = new CategoryData(_context);
+            _categoryMapper = new CategoryMapper();
         }
 
         public async Task<ServiceResult<IEnumerable<CategoryGet>>> GetAllAsync()
@@ -23,7 +26,6 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var categories = await _categoryData.SelectAll();
-
                 if (categories == null || categories.Count == 0)
                 {
                     return ServiceResult<IEnumerable<CategoryGet>>.FailureResult("Kategori verisi bulunmuyor.");
@@ -31,15 +33,7 @@ namespace LibraryAPI.BLL.Services
                 List<CategoryGet> categoryGets = new List<CategoryGet>();
                 foreach (var category in categories)
                 {
-                    var categoryGet = new CategoryGet
-                    {
-                        Id = category.Id,
-                        CategoryName = category.CategoryName,
-                        State = category.State.ToString(),
-                        CreatinDateLog = category.CreationDateLog,
-                        UpdateDateLog = category.UpdateDateLog,
-                        DeleteDateLog = category.DeleteDateLog
-                    };
+                    var categoryGet = _categoryMapper.MapToDto(category);
                     categoryGets.Add(categoryGet);
                 }
                 return ServiceResult<IEnumerable<CategoryGet>>.SuccessResult(categoryGets);
@@ -55,12 +49,10 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var categories = await _categoryData.SelectAll();
-
                 if (categories == null || categories.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Category>>.FailureResult("Kategori verisi bulunmuyor.");
                 }
-
                 return ServiceResult<IEnumerable<Category>>.SuccessResult(categories);
             }
             catch (Exception ex)
@@ -78,15 +70,7 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<CategoryGet>.FailureResult("Kategori verisi bulunmuyor.");
                 }
-                var categoryGet = new CategoryGet
-                {
-                    Id = category.Id,
-                    CategoryName = category.CategoryName,
-                    State = category.State.ToString(),
-                    CreatinDateLog = category.CreationDateLog,
-                    UpdateDateLog = category.UpdateDateLog,
-                    DeleteDateLog = category.DeleteDateLog
-                };
+                var categoryGet = _categoryMapper.MapToDto(category);
                 return ServiceResult<CategoryGet>.SuccessResult(categoryGet);
             }
             catch (Exception ex)
@@ -100,12 +84,10 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var category = await _categoryData.SelectForEntity(id);
-
                 if (category == null)
                 {
                     return ServiceResult<Category>.FailureResult("Kategori verisi bulunmuyor.");
                 }
-
                 return ServiceResult<Category>.SuccessResult(category);
             }
             catch (Exception ex)
@@ -122,20 +104,10 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<CategoryGet>.FailureResult("Bu kategori zaten eklenmiş.");
                 }
-
-                var newCategory = new Category
-                {
-                    CategoryName = tPost.CategoryName,
-                    State = Entities.Enums.State.Eklendi,
-                    CreationDateLog = DateTime.Now,
-                    DeleteDateLog = null,
-                    UpdateDateLog = null
-                };
+                var newCategory = _categoryMapper.PostEntity(tPost);
                 _categoryData.AddToContext(newCategory);
                 await _categoryData.SaveContext();
-
                 var result = await GetByIdAsync(newCategory.Id);
-
                 return ServiceResult<CategoryGet>.SuccessResult(result.Data);
             }
             catch (Exception ex)
@@ -149,27 +121,13 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var category = await _categoryData.SelectForEntity(id);
-
                 if (category == null)
                 {
                     return ServiceResult<CategoryGet>.FailureResult("Kategori verisi bulunmuyor.");
                 }
-
-                category.CategoryName = tPost.CategoryName;
-                category.State = Entities.Enums.State.Güncellendi;
-                category.UpdateDateLog = DateTime.Now;
+                _categoryMapper.UpdateEntity(category, tPost);
                 await _categoryData.SaveContext();
-
-                var newCategory = new CategoryGet
-                {
-                    Id = category.Id,
-                    CategoryName = category.CategoryName,
-                    State = category.State.ToString(),
-                    CreatinDateLog = category.CreationDateLog,
-                    UpdateDateLog = category.UpdateDateLog,
-                    DeleteDateLog = category.DeleteDateLog
-                };
-
+                var newCategory = _categoryMapper.MapToDto(category);
                 return ServiceResult<CategoryGet>.SuccessResult(newCategory);
             }
             catch (Exception ex)
@@ -183,15 +141,12 @@ namespace LibraryAPI.BLL.Services
             try
             {
                 var category = await _categoryData.SelectForEntity(id);
-
                 if (category == null)
                 {
                     return ServiceResult<bool>.FailureResult("Kategori verisi bulunmuyor.");
                 }
-                category.DeleteDateLog = DateTime.Now;
-                category.State = Entities.Enums.State.Silindi;
+                _categoryMapper.DeleteEntity(category);
                 await _categoryData.SaveContext();
-
                 return ServiceResult<bool>.SuccessResult(true);
             }
             catch (Exception ex)

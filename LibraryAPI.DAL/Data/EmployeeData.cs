@@ -18,6 +18,7 @@ namespace LibraryAPI.DAL.Data
             return await _context.Employees
                 .Include(x=>x.ApplicationUser).ThenInclude(x=>x.Country)
                 .Include(x=>x.Department)
+                .Include(x=>x.Title)
                 .ToListAsync();
         }
 
@@ -31,6 +32,7 @@ namespace LibraryAPI.DAL.Data
             return await _context.Employees
                 .Include(x => x.ApplicationUser).ThenInclude(x => x.Country)
                 .Include(x => x.Department)
+                .Include(x => x.Title)
                 .FirstOrDefaultAsync(x=>x.Id==id);
         }
     }

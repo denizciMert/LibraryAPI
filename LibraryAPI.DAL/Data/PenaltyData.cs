@@ -18,6 +18,7 @@ namespace LibraryAPI.DAL.Data
             return await _context.Penalties
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.PenaltyType)
+                .Include(x=>x.Loan).ThenInclude(x=>x.Employee).ThenInclude(x=>x.ApplicationUser)
                 .ToListAsync();
         }
 
@@ -26,6 +27,7 @@ namespace LibraryAPI.DAL.Data
             return await _context.Penalties
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.PenaltyType)
+                .Include(x => x.Loan).ThenInclude(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .FirstOrDefaultAsync(x=>x.Id==id);
         }
 
@@ -34,6 +36,7 @@ namespace LibraryAPI.DAL.Data
             return await _context.Penalties
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.PenaltyType)
+                .Include(x => x.Loan).ThenInclude(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .FirstOrDefaultAsync(x=>x.Member.Id==id);
         }
     }

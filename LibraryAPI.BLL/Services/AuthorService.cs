@@ -4,22 +4,18 @@ using LibraryAPI.BLL.Mappers;
 using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.AuthorDTO;
-using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
     public class AuthorService : ILibraryServiceManager<AuthorGet, AuthorPost, Author>
     {
-
-        private readonly ApplicationDbContext _context;
         private readonly AuthorData _authorData;
         private readonly AuthorMapper _authorMapper;
 
         public AuthorService(ApplicationDbContext context)
         {
-            _context = context;
-            _authorData = new AuthorData(_context);
+            _authorData = new AuthorData(context);
             _authorMapper = new AuthorMapper();
         }
 

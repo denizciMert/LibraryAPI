@@ -1,12 +1,11 @@
 ﻿using LibraryAPI.Entities.DTOs.BookDTO;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class BookMapper
-	{
+    public class BookMapper
+    {
         public Book MapToEntity(BookPost dto)
         {
             var book = new Book
@@ -17,48 +16,78 @@ namespace LibraryAPI.BLL.Mappers
                 DateOfPublish = dto.DateOfPublish,
                 CopyCount = (short)dto.CopyNumbers.Count,
                 PublisherId = dto.PublisherId,
-                LocationId = dto.LocationId,
-                //Buradan sonrası kayıt oluşturulduktan sonra yapılmalı?
-                BookSubCategories = dto.SubCategoryIds.Select(id => new BookSubCategory { SubCategoriesId = id }).ToList(),
-                BookLanguages = dto.LanguageIds.Select(id => new BookLanguage { LanguagesId = id }).ToList(),
-                AuthorBooks = dto.AuthorIds.Select(id => new AuthorBook { AuthorsId = id }).ToList(),
-                BookCopies = dto.CopyNumbers.Select(id => new BookCopy { CopyNo = id}).ToList()
+                LocationId = dto.LocationId
             };
+            return CrossTables(book, dto);
+        }
+
+        public Book CrossTables(Book book, BookPost dto)
+        {
+            book.BookSubCategories = new List<BookSubCategory>();
+            dto.SubCategoryIds.ForEach(s => book.BookSubCategories.Add(new BookSubCategory { SubCategoriesId = s }));
+
+            book.BookLanguages = new List<BookLanguage>();
+            dto.LanguageIds.ForEach(s => book.BookLanguages.Add(new BookLanguage { LanguagesId = s }));
+
+            book.BookCopies = new List<BookCopy>();
+            dto.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s }));
+
+            book.AuthorBooks = new List<AuthorBook>();
+            dto.AuthorIds.ForEach(s => book.AuthorBooks.Add(new AuthorBook { AuthorsId = s }));
 
             return book;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Book PostEntity(BookPost dto)
         {
-            var category = new Category
+            var book = new Book
             {
-                CategoryName = dto.CategoryName,
-                CreationDateLog = DateTime.Now,
-                UpdateDateLog = null,
-                DeleteDateLog = null,
-                State = State.Eklendi
+                Isbn = dto.Isbn,
+                BookTitle = dto.Title,
+                PageCount = dto.PageCount,
+                DateOfPublish = dto.DateOfPublish,
+                CopyCount = (short)dto.CopyNumbers.Count,
+                PublisherId = dto.PublisherId,
+                LocationId = dto.LocationId,
+                BookSubCategories = dto.SubCategoryIds.Select(id => new BookSubCategory { SubCategoriesId = id }).ToList(),
+                BookLanguages = dto.LanguageIds.Select(id => new BookLanguage { LanguagesId = id }).ToList(),
+                AuthorBooks = dto.AuthorIds.Select(id => new AuthorBook { AuthorsId = id }).ToList(),
+                BookCopies = dto.CopyNumbers.Select(id => new BookCopy { CopyNo = id }).ToList()
             };
-
-            return category;
+            return book;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Book UpdateEntity(Book book, BookPost bookPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            book.Isbn = bookPost.Isbn;
+            book.BookTitle = bookPost.Title;
+            book.PageCount = bookPost.PageCount;
+            book.DateOfPublish = bookPost.DateOfPublish;
+            book.CopyCount = (short)bookPost.CopyNumbers.Count;
+            book.PublisherId = bookPost.PublisherId;
+            book.LocationId = bookPost.LocationId;
+            book.BookSubCategories = new List<BookSubCategory>();
+            bookPost.SubCategoryIds.ForEach(s => book.BookSubCategories.Add(new BookSubCategory { SubCategoriesId = s }));
+            book.BookLanguages = new List<BookLanguage>();
+            bookPost.LanguageIds.ForEach(s => book.BookLanguages.Add(new BookLanguage { LanguagesId = s }));
+            book.BookCopies = new List<BookCopy>();
+            bookPost.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s }));
+            book.AuthorBooks = new List<AuthorBook>();
+            bookPost.AuthorIds.ForEach(s => book.AuthorBooks.Add(new AuthorBook { AuthorsId = s }));
+            book.CreationDateLog = book.CreationDateLog;
+            book.UpdateDateLog = DateTime.Now;
+            book.DeleteDateLog = null;
+            book.State = State.Güncellendi;
 
-            return category;
+            return book;
         }
 
-        public Category DeleteEntity(Category category)
+        public Book DeleteEntity(Book book)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            book.DeleteDateLog = DateTime.Now;
+            book.State = State.Silindi;
 
-            return category;
+            return book;
         }
 
         public BookGet MapToDto(Book entity)
@@ -82,9 +111,8 @@ namespace LibraryAPI.BLL.Mappers
                 DeleteDateLog = entity.DeleteDateLog,
                 State = entity.State.ToString()
             };
-
             return dto;
         }
-}
+    }
 }
 

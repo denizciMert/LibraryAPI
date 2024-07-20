@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.SubCategoryDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class SubCategoriesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<SubCategoryGet, SubCategoryPost, SubCategory> _libraryServiceManager;
 
-        public SubCategoriesController(ApplicationDbContext context)
+        public SubCategoriesController(ILibraryServiceManager<SubCategoryGet, SubCategoryPost, SubCategory> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/SubCategories
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SubCategory>>> GetSubCategories()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<SubCategoryGet>>> GetAll()
         {
-            return await _context.SubCategories.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<SubCategory>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/SubCategories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SubCategory>> GetSubCategory(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<SubCategoryGet>> Get(int id)
         {
-            var subCategory = await _context.SubCategories.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (subCategory == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return subCategory;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<SubCategory>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/SubCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubCategory(int id, SubCategory subCategory)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, SubCategoryPost subCategory)
         {
-            if (id != subCategory.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, subCategory);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(subCategory).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SubCategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/SubCategories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<SubCategory>> PostSubCategory(SubCategory subCategory)
+        [HttpPost("Post")]
+        public async Task<ActionResult<SubCategoryPost>> Post(SubCategoryPost subCategory)
         {
-            _context.SubCategories.Add(subCategory);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(subCategory);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetSubCategory", new { id = subCategory.Id }, subCategory);
+            return Ok(result.Data);
         }
 
         // DELETE: api/SubCategories/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubCategory(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var subCategory = await _context.SubCategories.FindAsync(id);
-            if (subCategory == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.SubCategories.Remove(subCategory);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool SubCategoryExists(int id)
-        {
-            return _context.SubCategories.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

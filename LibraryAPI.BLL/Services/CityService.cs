@@ -10,14 +10,12 @@ namespace LibraryAPI.BLL.Services
 {
     public class CityService : ILibraryServiceManager<CityGet, CityPost, City>
     {
-        private readonly ApplicationDbContext _context;
         private readonly CityData _cityData;
         private readonly CityMapper _cityMapper;
 
         public CityService(ApplicationDbContext context)
         {
-            _context = context;
-            _cityData = new CityData(_context);
+            _cityData = new CityData(context);
             _cityMapper = new CityMapper();
         }
 

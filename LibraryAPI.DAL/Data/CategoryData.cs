@@ -1,4 +1,6 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.AddressDTO;
+using LibraryAPI.Entities.DTOs.CategoryDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +37,19 @@ namespace LibraryAPI.DAL.Data
         public void AddToContext(Category category)
         {
             _context.Categories.Add(category);
+        }
+
+        public async Task<bool> IsRegistered(CategoryPost tPost)
+        {
+            var categories = await SelectAll();
+            foreach (var category in categories)
+            {
+                if (category.CategoryName == tPost.CategoryName)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public async Task SaveContext()

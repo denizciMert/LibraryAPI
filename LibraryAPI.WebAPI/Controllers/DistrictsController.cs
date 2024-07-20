@@ -1,108 +1,116 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.DistrictDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class DistrictsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<DistrictGet, DistrictPost, District> _libraryServiceManager;
 
-        public DistrictsController(ApplicationDbContext context)
+        public DistrictsController(ILibraryServiceManager<DistrictGet, DistrictPost, District> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Districts
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<District>>> GetDistricts()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<DistrictGet>>> GetAll()
         {
-            return await _context.Districts.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<District>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Districts/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<District>> GetDistrict(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<DistrictGet>> Get(int id)
         {
-            var district = await _context.Districts.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (district == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return district;
+            return Ok(result.Data);
         }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<District>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
 
         // PUT: api/Districts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDistrict(int id, District district)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, DistrictPost district)
         {
-            if (id != district.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, district);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(district).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DistrictExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Districts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<District>> PostDistrict(District district)
+        [HttpPost("Post")]
+        public async Task<ActionResult<DistrictPost>> Post(DistrictPost district)
         {
-            _context.Districts.Add(district);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(district);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetDistrict", new { id = district.Id }, district);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Districts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDistrict(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var district = await _context.Districts.FindAsync(id);
-            if (district == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Districts.Remove(district);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool DistrictExists(int id)
-        {
-            return _context.Districts.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

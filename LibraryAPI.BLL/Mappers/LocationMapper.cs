@@ -18,37 +18,37 @@ namespace LibraryAPI.BLL.Mappers
             return location;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Location PostEntity(LocationPost dto)
         {
-            var category = new Category
+            var location = new Location
             {
-                CategoryName = dto.CategoryName,
+                ShelfCode = dto.ShelfCode,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return location;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Location UpdateEntity(Location location, LocationPost locationPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            location.ShelfCode = locationPost.ShelfCode;
+            location.CreationDateLog = location.CreationDateLog;
+            location.UpdateDateLog = DateTime.Now;
+            location.DeleteDateLog = null;
+            location.State = State.Güncellendi;
 
-            return category;
+            return location;
         }
 
-        public Category DeleteEntity(Category category)
+        public Location DeleteEntity(Location location)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            location.DeleteDateLog = DateTime.Now;
+            location.State = State.Silindi;
 
-            return category;
+            return location;
         }
 
         public LocationGet MapToDto(Location entity)

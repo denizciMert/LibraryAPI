@@ -20,37 +20,43 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Publisher PostEntity(PublisherPost dto)
         {
-            var category = new Category
+            var publisher = new Publisher
             {
-                CategoryName = dto.CategoryName,
+                PublisherName = dto.PublisherName,
+                Phone = dto.Phone,
+                EMail = dto.Email,
+                ContactPerson = dto.ContactPerson,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return publisher;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Publisher UpdateEntity(Publisher publisher, PublisherPost publisherPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            publisher.PublisherName = publisherPost.PublisherName;
+            publisher.Phone = publisherPost.Phone;
+            publisher.EMail = publisherPost.Email;
+            publisher.ContactPerson = publisherPost.ContactPerson;
+            publisher.CreationDateLog = publisher.CreationDateLog;
+            publisher.UpdateDateLog = DateTime.Now;
+            publisher.DeleteDateLog = null;
+            publisher.State = State.Güncellendi;
 
-            return category;
+            return publisher;
         }
 
-        public Category DeleteEntity(Category category)
+        public Publisher DeleteEntity(Publisher publisher)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            publisher.DeleteDateLog = DateTime.Now;
+            publisher.State = State.Silindi;
 
-            return category;
+            return publisher;
         }
 
         public PublisherGet MapToDto(Publisher entity)

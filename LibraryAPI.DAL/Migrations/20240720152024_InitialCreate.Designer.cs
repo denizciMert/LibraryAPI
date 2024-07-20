@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryAPI.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240718195715_InitialCreate")]
+    [Migration("20240720152024_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -171,14 +171,8 @@ namespace LibraryAPI.DAL.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.Property<int>("TimesVoted")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdateDateLog")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("VoteSummary")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -191,12 +185,6 @@ namespace LibraryAPI.DAL.Migrations
 
             modelBuilder.Entity("LibraryAPI.Entities.Models.BookCopy", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
@@ -206,7 +194,7 @@ namespace LibraryAPI.DAL.Migrations
                     b.Property<bool>("Reserved")
                         .HasColumnType("bit");
 
-                    b.HasKey("Id");
+                    b.HasKey("BookId", "CopyNo");
 
                     b.ToTable("BookCopies");
                 });
@@ -224,6 +212,24 @@ namespace LibraryAPI.DAL.Migrations
                     b.HasIndex("LanguagesId");
 
                     b.ToTable("BookLanguages");
+                });
+
+            modelBuilder.Entity("LibraryAPI.Entities.Models.BookRating", b =>
+                {
+                    b.Property<int>("RatedBookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RaterMemberId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.HasKey("RatedBookId", "RaterMemberId");
+
+                    b.HasIndex("RaterMemberId");
+
+                    b.ToTable("BookRatings");
                 });
 
             modelBuilder.Entity("LibraryAPI.Entities.Models.BookSubCategory", b =>
@@ -694,6 +700,10 @@ namespace LibraryAPI.DAL.Migrations
                     b.Property<DateTime?>("DeleteDateLog")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("MemberId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -714,6 +724,8 @@ namespace LibraryAPI.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("MemberId");
 
@@ -764,6 +776,9 @@ namespace LibraryAPI.DAL.Migrations
 
                     b.Property<DateTime?>("DeleteDateLog")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Reserved")
+                        .HasColumnType("bit");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
@@ -1164,6 +1179,17 @@ namespace LibraryAPI.DAL.Migrations
                     b.Navigation("Publisher");
                 });
 
+            modelBuilder.Entity("LibraryAPI.Entities.Models.BookCopy", b =>
+                {
+                    b.HasOne("LibraryAPI.Entities.Models.Book", "Book")
+                        .WithMany("BookCopies")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("LibraryAPI.Entities.Models.BookLanguage", b =>
                 {
                     b.HasOne("LibraryAPI.Entities.Models.Book", "Book")
@@ -1181,6 +1207,25 @@ namespace LibraryAPI.DAL.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Language");
+                });
+
+            modelBuilder.Entity("LibraryAPI.Entities.Models.BookRating", b =>
+                {
+                    b.HasOne("LibraryAPI.Entities.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("RatedBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LibraryAPI.Entities.Models.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("RaterMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("LibraryAPI.Entities.Models.BookSubCategory", b =>
@@ -1328,10 +1373,16 @@ namespace LibraryAPI.DAL.Migrations
 
             modelBuilder.Entity("LibraryAPI.Entities.Models.Reservation", b =>
                 {
+                    b.HasOne("LibraryAPI.Entities.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LibraryAPI.Entities.Models.Member", "Member")
                         .WithMany()
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("LibraryAPI.Entities.Models.StudyTable", "StudyTable")
@@ -1339,6 +1390,8 @@ namespace LibraryAPI.DAL.Migrations
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Employee");
 
                     b.Navigation("Member");
 
@@ -1426,6 +1479,8 @@ namespace LibraryAPI.DAL.Migrations
             modelBuilder.Entity("LibraryAPI.Entities.Models.Book", b =>
                 {
                     b.Navigation("AuthorBooks");
+
+                    b.Navigation("BookCopies");
 
                     b.Navigation("BookLanguages");
 

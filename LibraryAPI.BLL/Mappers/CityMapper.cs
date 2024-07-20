@@ -1,5 +1,4 @@
-﻿using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.CityDTO;
+﻿using LibraryAPI.Entities.DTOs.CityDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -18,37 +17,39 @@ namespace LibraryAPI.BLL.Mappers
             return city;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public City PostEntity(CityPost dto)
         {
-            var category = new Category
+            var city = new City
             {
-                CategoryName = dto.CategoryName,
+                CityName = dto.CityName,
+                CountryId = dto.CountryId,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return city;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public City UpdateEntity(City city, CityPost cityPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            city.CityName = cityPost.CityName;
+            city.CountryId = cityPost.CountryId;
+            city.CreationDateLog = city.CreationDateLog;
+            city.UpdateDateLog = DateTime.Now;
+            city.DeleteDateLog = null;
+            city.State = State.Güncellendi;
 
-            return category;
+            return city;
         }
 
-        public Category DeleteEntity(Category category)
+        public City DeleteEntity(City city)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            city.DeleteDateLog = DateTime.Now;
+            city.State = State.Silindi;
 
-            return category;
+            return city;
         }
 
         public CityGet MapToDto(City entity)

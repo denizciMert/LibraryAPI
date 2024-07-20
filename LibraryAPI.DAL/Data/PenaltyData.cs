@@ -1,4 +1,6 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.AddressDTO;
+using LibraryAPI.Entities.DTOs.PenaltyDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +40,31 @@ namespace LibraryAPI.DAL.Data
                 .Include(x => x.PenaltyType)
                 .Include(x => x.Loan).ThenInclude(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .FirstOrDefaultAsync(x=>x.Member.Id==id);
+        }
+
+        public async Task<bool> IsRegistered(PenaltyPost tPost)
+        {
+            var penalties = await SelectAll();
+            foreach (var penalty in penalties)
+            {
+                if (penalty.PenaltiedMembeId == tPost.PenaltiedMemberId &&
+                    penalty.LoanId == tPost.LoanId &&
+                    penalty.Active == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddToContext(Penalty penalty)
+        {
+            _context.Penalties.Add(penalty);
+        }
+
+        public async Task SaveContext()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

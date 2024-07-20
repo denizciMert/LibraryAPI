@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.PublisherDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class PublishersController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<PublisherGet, PublisherPost, Publisher> _libraryServiceManager;
 
-        public PublishersController(ApplicationDbContext context)
+        public PublishersController(ILibraryServiceManager<PublisherGet, PublisherPost, Publisher> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Publishers
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Publisher>>> GetPublishers()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<PublisherGet>>> GetAll()
         {
-            return await _context.Publishers.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Publisher>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Publishers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Publisher>> GetPublisher(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<PublisherGet>> Get(int id)
         {
-            var publisher = await _context.Publishers.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (publisher == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return publisher;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Publisher>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Publishers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPublisher(int id, Publisher publisher)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, PublisherPost publisher)
         {
-            if (id != publisher.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, publisher);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(publisher).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PublisherExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Publishers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Publisher>> PostPublisher(Publisher publisher)
+        [HttpPost("Post")]
+        public async Task<ActionResult<PublisherPost>> Post(PublisherPost publisher)
         {
-            _context.Publishers.Add(publisher);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(publisher);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetPublisher", new { id = publisher.Id }, publisher);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Publishers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePublisher(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var publisher = await _context.Publishers.FindAsync(id);
-            if (publisher == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Publishers.Remove(publisher);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool PublisherExists(int id)
-        {
-            return _context.Publishers.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

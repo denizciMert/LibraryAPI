@@ -12,5 +12,8 @@ namespace LibraryAPI.Entities.DTOs.PenaltyDTO
 
         [Required]
         public int LoanId { get; set; }
+
+        [Required]
+        public int PenaltyTypeId { get; set; }
     }
 }

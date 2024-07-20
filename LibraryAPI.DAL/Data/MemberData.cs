@@ -1,4 +1,6 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.AddressDTO;
+using LibraryAPI.Entities.DTOs.MemberDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +36,31 @@ namespace LibraryAPI.DAL.Data
                 .Include(x => x.Loans)
                 .Include(x => x.Penalties)
                 .FirstOrDefaultAsync(x=>x.Id==id);
+        }
+
+        public async Task<bool> IsRegistered(MemberPost tPost)
+        {
+            var members = await SelectAll();
+            foreach (var member in members)
+            {
+                if (member.ApplicationUser.Email == tPost.Email &&
+                    member.ApplicationUser.IdentityNo == tPost.IdentityNo &&
+                    member.ApplicationUser.UserName == tPost.UserName)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddToContext(Member member)
+        {
+            _context.Members.Add(member);
+        }
+
+        public async Task SaveContext()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

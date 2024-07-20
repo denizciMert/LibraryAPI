@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.PenaltyTypeDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class PenaltyTypesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<PenaltyTypeGet, PenaltyTypePost, PenaltyType> _libraryServiceManager;
 
-        public PenaltyTypesController(ApplicationDbContext context)
+        public PenaltyTypesController(ILibraryServiceManager<PenaltyTypeGet, PenaltyTypePost, PenaltyType> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/PenaltyTypes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PenaltyType>>> GetPenaltyTypes()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<PenaltyTypeGet>>> GetAll()
         {
-            return await _context.PenaltyTypes.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<PenaltyType>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/PenaltyTypes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PenaltyType>> GetPenaltyType(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<PenaltyTypeGet>> Get(int id)
         {
-            var penaltyType = await _context.PenaltyTypes.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (penaltyType == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return penaltyType;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<PenaltyType>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/PenaltyTypes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPenaltyType(int id, PenaltyType penaltyType)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, PenaltyTypePost penaltyType)
         {
-            if (id != penaltyType.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, penaltyType);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(penaltyType).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PenaltyTypeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/PenaltyTypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<PenaltyType>> PostPenaltyType(PenaltyType penaltyType)
+        [HttpPost("Post")]
+        public async Task<ActionResult<PenaltyTypePost>> Post(PenaltyTypePost penaltyType)
         {
-            _context.PenaltyTypes.Add(penaltyType);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(penaltyType);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetPenaltyType", new { id = penaltyType.Id }, penaltyType);
+            return Ok(result.Data);
         }
 
         // DELETE: api/PenaltyTypes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePenaltyType(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var penaltyType = await _context.PenaltyTypes.FindAsync(id);
-            if (penaltyType == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.PenaltyTypes.Remove(penaltyType);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool PenaltyTypeExists(int id)
-        {
-            return _context.PenaltyTypes.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

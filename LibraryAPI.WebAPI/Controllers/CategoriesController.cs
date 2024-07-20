@@ -1,6 +1,5 @@
 ﻿using LibraryAPI.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using LibraryAPI.DAL;
 using LibraryAPI.Entities.DTOs.CategoryDTO;
 using LibraryAPI.Entities.Models;
 
@@ -11,17 +10,15 @@ namespace LibraryAPI.WebAPI.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ILibraryServiceManager<CategoryGet,CategoryPost,Category> _libraryServiceManager;
-        private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context, ILibraryServiceManager<CategoryGet, CategoryPost, Category> libraryServiceManager)
+        public CategoriesController(ILibraryServiceManager<CategoryGet, CategoryPost, Category> libraryServiceManager)
         {
-            _context = context;
             _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Categories
         [HttpGet("Get")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<CategoryGet>>> GetAll()
         {
             var result = await _libraryServiceManager.GetAllAsync();
 
@@ -34,7 +31,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         [HttpGet("GetData")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategoriesData()
+        public async Task<ActionResult<IEnumerable<Category>>> GetAllData()
         {
             var result = await _libraryServiceManager.GetAllWithDataAsync();
 
@@ -48,7 +45,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        public async Task<ActionResult<CategoryGet>> Get(int id)
         {
             var result = await _libraryServiceManager.GetByIdAsync(id);
 
@@ -61,7 +58,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         [HttpGet("GetData/{id}")]
-        public async Task<ActionResult<Category>> GetCategoryData(int id)
+        public async Task<ActionResult<Category>> GetData(int id)
         {
             var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
 
@@ -76,7 +73,7 @@ namespace LibraryAPI.WebAPI.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Put/{id}")]
-        public async Task<IActionResult> PutCategory(int id, CategoryPost category)
+        public async Task<IActionResult> Put(int id, CategoryPost category)
         {
             var result = await _libraryServiceManager.UpdateAsync(id, category);
 
@@ -91,7 +88,7 @@ namespace LibraryAPI.WebAPI.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Post")]
-        public async Task<ActionResult<CategoryPost>> PostCategory(CategoryPost category)
+        public async Task<ActionResult<CategoryPost>> Post(CategoryPost category)
         {
             var result = await _libraryServiceManager.AddAsync(category);
             if (!result.Success)
@@ -104,7 +101,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var result = await _libraryServiceManager.DeleteAsync(id);
 

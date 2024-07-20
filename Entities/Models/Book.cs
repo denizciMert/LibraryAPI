@@ -19,10 +19,6 @@ namespace LibraryAPI.Entities.Models
 
         public float Rating { get; set; }
 
-        public int TimesVoted { get; set; } = 0;
-
-        public int VoteSummary { get; set; } = 0;
-
         public int PublisherId { get; set; }
 
         public int LocationId { get; set; }

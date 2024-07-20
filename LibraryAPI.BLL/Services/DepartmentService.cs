@@ -1,11 +1,6 @@
 ﻿using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.Entities.DTOs.DepartmentDTO;
 using LibraryAPI.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LibraryAPI.BLL.Core;
 using LibraryAPI.DAL;
 using LibraryAPI.BLL.Mappers;
@@ -15,14 +10,12 @@ namespace LibraryAPI.BLL.Services
 {
     public class DepartmentService : ILibraryServiceManager<DepartmentGet, DepartmentPost, Department>
     {
-        private readonly ApplicationDbContext _context;
         private readonly DepartmentData _departmentData;
         private readonly DepartmentMapper _departmentMapper;
 
         public DepartmentService(ApplicationDbContext context)
         {
-            _context = context;
-            _departmentData = new DepartmentData(_context);
+            _departmentData = new DepartmentData(context);
             _departmentMapper = new DepartmentMapper();
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.DistrictDTO;
+﻿using LibraryAPI.Entities.DTOs.DistrictDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -19,37 +17,39 @@ namespace LibraryAPI.BLL.Mappers
             return district;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public District PostEntity(DistrictPost dto)
         {
-            var category = new Category
+            var district = new District
             {
-                CategoryName = dto.CategoryName,
+                DistrictName = dto.District,
+                CityId = dto.CityId,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return district;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public District UpdateEntity(District district, DistrictPost districtPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            district.DistrictName = districtPost.District;
+            district.CityId = districtPost.CityId;
+            district.CreationDateLog = district.CreationDateLog;
+            district.UpdateDateLog = DateTime.Now;
+            district.DeleteDateLog = null;
+            district.State = State.Güncellendi;
 
-            return category;
+            return district;
         }
 
-        public Category DeleteEntity(Category category)
+        public District DeleteEntity(District district)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            district.DeleteDateLog = DateTime.Now;
+            district.State = State.Silindi;
 
-            return category;
+            return district;
         }
         public DistrictGet MapToDto(District entity)
         {

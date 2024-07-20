@@ -1,4 +1,6 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.AddressDTO;
+using LibraryAPI.Entities.DTOs.CityDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +27,30 @@ namespace LibraryAPI.DAL.Data
         public async Task<City> SelectForUser(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsRegistered(CityPost tPost)
+        {
+            var cities = await SelectAll();
+            foreach (var city in cities)
+            {
+                if (city.CityName == tPost.CityName &&
+                    city.CountryId == tPost.CountryId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddToContext(City city)
+        {
+            _context.Cities.Add(city);
+        }
+
+        public async Task SaveContext()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

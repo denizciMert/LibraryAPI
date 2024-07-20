@@ -10,14 +10,12 @@ namespace LibraryAPI.BLL.Services
 {
     public class CategoryService : ILibraryServiceManager<CategoryGet,CategoryPost,Category>
     {
-        private readonly ApplicationDbContext _context;
         private readonly CategoryData _categoryData;
         private readonly CategoryMapper _categoryMapper;
 
         public CategoryService(ApplicationDbContext context)
         {
-            _context = context;
-            _categoryData = new CategoryData(_context);
+            _categoryData = new CategoryData(context);
             _categoryMapper = new CategoryMapper();
         }
 

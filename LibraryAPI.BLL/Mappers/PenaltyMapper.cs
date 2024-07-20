@@ -19,37 +19,41 @@ namespace LibraryAPI.BLL.Mappers
             return penalty;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Penalty PostEntity(PenaltyPost dto)
         {
-            var category = new Category
+            var penalty = new Penalty
             {
-                CategoryName = dto.CategoryName,
+                PenaltyTypeId = dto.PenaltyId,
+                PenaltiedMembeId = dto.PenaltiedMemberId,
+                LoanId = dto.LoanId,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return penalty;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Penalty UpdateEntity(Penalty penalty, PenaltyPost penaltyPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            penalty.PenaltyTypeId = penaltyPost.PenaltyTypeId;
+            penalty.LoanId = penaltyPost.LoanId;
+            penalty.PenaltiedMembeId = penaltyPost.PenaltiedMemberId;
+            penalty.CreationDateLog = penalty.CreationDateLog;
+            penalty.UpdateDateLog = DateTime.Now;
+            penalty.DeleteDateLog = null;
+            penalty.State = State.Güncellendi;
 
-            return category;
+            return penalty;
         }
 
-        public Category DeleteEntity(Category category)
+        public Penalty DeleteEntity(Penalty penalty)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            penalty.DeleteDateLog = DateTime.Now;
+            penalty.State = State.Silindi;
 
-            return category;
+            return penalty;
         }
 
         public PenaltyGet MapToDto(Penalty entity)

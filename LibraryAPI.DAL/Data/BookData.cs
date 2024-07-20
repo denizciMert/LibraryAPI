@@ -1,4 +1,5 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.BookDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,29 @@ namespace LibraryAPI.DAL.Data
         public async Task<Book> SelectForUser(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsRegistered(BookPost tPost)
+        {
+            var books = await SelectAll();
+            foreach (var book in books)
+            {
+                if (book.Isbn==tPost.Isbn)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddToContext(Book book)
+        {
+            _context.Books.Add(book);
+        }
+
+        public async Task SaveContext()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

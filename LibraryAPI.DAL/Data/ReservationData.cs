@@ -1,4 +1,6 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.AddressDTO;
+using LibraryAPI.Entities.DTOs.ReservationDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +40,31 @@ namespace LibraryAPI.DAL.Data
                 .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.StudyTable)
                 .FirstOrDefaultAsync(x => x.Member.Id == id);
+        }
+
+        public async Task<bool> IsRegistered(ReservationPost tPost)
+        {
+            var reservations = await SelectAll();
+            foreach (var reservation in reservations)
+            {
+                if (reservation.MemberId == tPost.MemberId &&
+                    reservation.TableId == tPost.TableId &&
+                    reservation.ReservationEnd > DateTime.Now)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddToContext(Reservation reservation)
+        {
+            _context.Reservations.Add(reservation);
+        }
+
+        public async Task SaveContext()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.LanguageDTO;
+﻿using LibraryAPI.Entities.DTOs.LanguageDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -19,37 +17,39 @@ namespace LibraryAPI.BLL.Mappers
             return language;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Language PostEntity(LanguagePost dto)
         {
-            var category = new Category
+            var language = new Language
             {
-                CategoryName = dto.CategoryName,
+                LanguageCode = dto.LanguageCode,
+                LanguageName = dto.LanguageName,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return language;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Language UpdateEntity(Language language, LanguagePost languagePost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            language.LanguageCode = languagePost.LanguageCode;
+            language.LanguageName = languagePost.LanguageName;
+            language.CreationDateLog = language.CreationDateLog;
+            language.UpdateDateLog = DateTime.Now;
+            language.DeleteDateLog = null;
+            language.State = State.Güncellendi;
 
-            return category;
+            return language;
         }
 
-        public Category DeleteEntity(Category category)
+        public Language DeleteEntity(Language language)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            language.DeleteDateLog = DateTime.Now;
+            language.State = State.Silindi;
 
-            return category;
+            return language;
         }
 
         public LanguageGet MapToDto(Language entity)

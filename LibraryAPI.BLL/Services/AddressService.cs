@@ -10,14 +10,12 @@ namespace LibraryAPI.BLL.Services
 {
     public class AddressService : ILibraryServiceManager<AddressGet, AddressPost, Address>
     {
-        private readonly ApplicationDbContext _context;
         private readonly AddressData _addressData;
         private readonly AddressMapper _addressMapper;
 
         public AddressService(ApplicationDbContext context)
         {
-            _context = context;
-            _addressData = new AddressData(_context);
+            _addressData = new AddressData(context);
             _addressMapper = new AddressMapper();
         }
 

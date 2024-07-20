@@ -17,37 +17,37 @@ namespace LibraryAPI.BLL.Mappers
             return country;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Country PostEntity(CountryPost dto)
         {
-            var category = new Category
+            var country = new Country
             {
-                CategoryName = dto.CategoryName,
+                CountryName = dto.CountryName,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return country;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Country UpdateEntity(Country country, CountryPost countryPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            country.CountryName = country.CountryName;
+            country.CreationDateLog = country.CreationDateLog;
+            country.UpdateDateLog = DateTime.Now;
+            country.DeleteDateLog = null;
+            country.State = State.Güncellendi;
 
-            return category;
+            return country;
         }
 
-        public Category DeleteEntity(Category category)
+        public Country DeleteEntity(Country country)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            country.DeleteDateLog = DateTime.Now;
+            country.State = State.Silindi;
 
-            return category;
+            return country;
         }
 
         public CountryGet MapToDto(Country entity)

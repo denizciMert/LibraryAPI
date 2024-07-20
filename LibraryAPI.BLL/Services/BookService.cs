@@ -11,14 +11,12 @@ namespace LibraryAPI.BLL.Services
 {
     public class BookService : ILibraryServiceManager<BookGet,BookPost,Book>
     {
-        private readonly ApplicationDbContext _context;
         private readonly BookData _bookData;
         private readonly BookMapper _bookMapper;
 
         public BookService(ApplicationDbContext context)
         {
-            _context = context;
-            _bookData = new BookData(_context);
+            _bookData = new BookData(context);
             _bookMapper = new BookMapper();
         }
 

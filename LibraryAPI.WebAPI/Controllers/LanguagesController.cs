@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.LanguageDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class LanguagesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<LanguageGet, LanguagePost, Language> _libraryServiceManager;
 
-        public LanguagesController(ApplicationDbContext context)
+        public LanguagesController(ILibraryServiceManager<LanguageGet, LanguagePost, Language> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Languages
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Language>>> GetLanguages()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<LanguageGet>>> GetAll()
         {
-            return await _context.Languages.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Language>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Languages/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Language>> GetLanguage(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<LanguageGet>> Get(int id)
         {
-            var language = await _context.Languages.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (language == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return language;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Language>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Languages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLanguage(int id, Language language)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, LanguagePost language)
         {
-            if (id != language.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, language);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(language).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LanguageExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Languages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Language>> PostLanguage(Language language)
+        [HttpPost("Post")]
+        public async Task<ActionResult<LanguagePost>> Post(LanguagePost language)
         {
-            _context.Languages.Add(language);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(language);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetLanguage", new { id = language.Id }, language);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Languages/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLanguage(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var language = await _context.Languages.FindAsync(id);
-            if (language == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Languages.Remove(language);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool LanguageExists(int id)
-        {
-            return _context.Languages.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

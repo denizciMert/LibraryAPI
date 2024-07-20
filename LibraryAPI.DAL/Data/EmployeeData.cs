@@ -1,4 +1,5 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.DTOs.EmployeeDTO;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,31 @@ namespace LibraryAPI.DAL.Data
                 .Include(x => x.Department)
                 .Include(x => x.Title)
                 .FirstOrDefaultAsync(x=>x.Id==id);
+        }
+
+        public async Task<bool> IsRegistered(EmployeePost tPost)
+        {
+            var employees = await SelectAll();
+            foreach (var employee in employees)
+            {
+                if (employee.ApplicationUser.IdentityNo == tPost.IdentityNo ||
+                    employee.ApplicationUser.UserName == tPost.UserName ||
+                    employee.ApplicationUser.Email == tPost.Email)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddToContext(Employee employee)
+        {
+            _context.Employees.Add(employee);
+        }
+
+        public async Task SaveContext()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

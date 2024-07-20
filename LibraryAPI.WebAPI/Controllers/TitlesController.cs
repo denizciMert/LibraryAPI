@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.TitleDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class TitlesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<TitleGet, TitlePost, Title> _libraryServiceManager;
 
-        public TitlesController(ApplicationDbContext context)
+        public TitlesController(ILibraryServiceManager<TitleGet, TitlePost, Title> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Titles
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Title>>> GetTitles()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<TitleGet>>> GetAll()
         {
-            return await _context.Titles.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Title>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Titles/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Title>> GetTitle(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<TitleGet>> Get(int id)
         {
-            var title = await _context.Titles.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (title == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return title;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Title>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Titles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTitle(int id, Title title)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, TitlePost title)
         {
-            if (id != title.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, title);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(title).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TitleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Titles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Title>> PostTitle(Title title)
+        [HttpPost("Post")]
+        public async Task<ActionResult<TitlePost>> Post(TitlePost title)
         {
-            _context.Titles.Add(title);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(title);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetTitle", new { id = title.Id }, title);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Titles/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTitle(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var title = await _context.Titles.FindAsync(id);
-            if (title == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Titles.Remove(title);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool TitleExists(int id)
-        {
-            return _context.Titles.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

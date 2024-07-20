@@ -21,37 +21,43 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Reservation PostEntity(ReservationPost reservationPost)
         {
-            var category = new Category
+            var reservation = new Reservation
             {
-                CategoryName = dto.CategoryName,
+                MemberId = reservationPost.MemberId,
+                TableId = reservationPost.TableId,
+                ReservationStart = reservationPost.ReservationStart,
+                ReservationEnd = reservationPost.ReservationStart.AddHours(4),
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return reservation;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Reservation UpdateEntity(Reservation reservation, ReservationPost reservationPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            reservation.MemberId = reservationPost.MemberId;
+            reservation.TableId = reservationPost.TableId;
+            reservation.ReservationStart = reservationPost.ReservationStart;
+            reservation.ReservationEnd = reservationPost.ReservationStart.AddHours(4);
+            reservation.CreationDateLog = reservation.CreationDateLog;
+            reservation.UpdateDateLog = DateTime.Now;
+            reservation.DeleteDateLog = null;
+            reservation.State = State.Güncellendi;
 
-            return category;
+            return reservation;
         }
 
-        public Category DeleteEntity(Category category)
+        public Reservation DeleteEntity(Reservation reservation)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            reservation.DeleteDateLog = DateTime.Now;
+            reservation.State = State.Silindi;
 
-            return category;
+            return reservation;
         }
 
         public ReservationGet MapToDto(Reservation reservation)

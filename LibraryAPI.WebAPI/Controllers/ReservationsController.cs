@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.ReservationDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<ReservationGet, ReservationPost, Reservation> _libraryServiceManager;
 
-        public ReservationsController(ApplicationDbContext context)
+        public ReservationsController(ILibraryServiceManager<ReservationGet, ReservationPost, Reservation> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Reservations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<ReservationGet>>> GetAll()
         {
-            return await _context.Reservations.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Reservations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservation(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<ReservationGet>> Get(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (reservation == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return reservation;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Reservation>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Reservations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservation(int id, Reservation reservation)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, ReservationPost reservation)
         {
-            if (id != reservation.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, reservation);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(reservation).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReservationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Reservations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        [HttpPost("Post")]
+        public async Task<ActionResult<ReservationPost>> Post(ReservationPost reservation)
         {
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(reservation);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Reservations/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReservation(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
-            if (reservation == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Reservations.Remove(reservation);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ReservationExists(int id)
-        {
-            return _context.Reservations.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

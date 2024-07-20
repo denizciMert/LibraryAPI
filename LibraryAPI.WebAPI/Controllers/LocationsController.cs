@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.LocationDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class LocationsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<LocationGet, LocationPost, Location> _libraryServiceManager;
 
-        public LocationsController(ApplicationDbContext context)
+        public LocationsController(ILibraryServiceManager<LocationGet, LocationPost, Location> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Locations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<LocationGet>>> GetAll()
         {
-            return await _context.Locations.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Location>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Locations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Location>> GetLocation(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<LocationGet>> Get(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (location == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return location;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Location>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Locations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLocation(int id, Location location)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, LocationPost location)
         {
-            if (id != location.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, location);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(location).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LocationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Locations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Location>> PostLocation(Location location)
+        [HttpPost("Post")]
+        public async Task<ActionResult<LocationPost>> Post(LocationPost location)
         {
-            _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(location);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetLocation", new { id = location.Id }, location);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Locations/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLocation(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
-            if (location == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Locations.Remove(location);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool LocationExists(int id)
-        {
-            return _context.Locations.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

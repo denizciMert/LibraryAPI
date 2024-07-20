@@ -25,37 +25,49 @@ namespace LibraryAPI.BLL.Mappers
             return loan;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Loan PostEntity(LoanPost dto)
         {
-            var category = new Category
+            var loan = new Loan
             {
-                CategoryName = dto.CategoryName,
+                LoanedMemberId = dto.MemberId,
+                EmployeeId = dto.EmployeeId,
+                BookId = dto.BookId,
+                CopyNo = dto.CopyNo,
+                LoanDate = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(31),
+                Active = true,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return loan;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Loan UpdateEntity(Loan loan, LoanPost loanPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            loan.LoanedMemberId = loanPost.MemberId;
+            loan.EmployeeId = loanPost.EmployeeId;
+            loan.BookId = loanPost.BookId;
+            loan.CopyNo = loanPost.CopyNo;
+            loan.LoanDate = loan.LoanDate;
+            loan.DueDate = loan.DueDate;
+            loan.Active = loan.Active;
+            loan.CreationDateLog = loan.CreationDateLog;
+            loan.UpdateDateLog = DateTime.Now;
+            loan.DeleteDateLog = null;
+            loan.State = State.Güncellendi;
 
-            return category;
+            return loan;
         }
 
-        public Category DeleteEntity(Category category)
+        public Loan DeleteEntity(Loan loan)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            loan.DeleteDateLog = DateTime.Now;
+            loan.State = State.Silindi;
 
-            return category;
+            return loan;
         }
 
         public LoanGet MapToDto(Loan entity)

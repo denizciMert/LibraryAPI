@@ -18,37 +18,37 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Shift PostEntity(ShiftPost shiftPost)
         {
-            var category = new Category
+            var shift = new Shift
             {
-                CategoryName = dto.CategoryName,
+                ShiftType = shiftPost.ShiftType,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return shift;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Shift UpdateEntity(Shift shift, ShiftPost shiftPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            shift.ShiftType = shiftPost.ShiftType;
+            shift.CreationDateLog = shift.CreationDateLog;
+            shift.UpdateDateLog = DateTime.Now;
+            shift.DeleteDateLog = null;
+            shift.State = State.Güncellendi;
 
-            return category;
+            return shift;
         }
 
-        public Category DeleteEntity(Category category)
+        public Shift DeleteEntity(Shift shift)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            shift.DeleteDateLog = DateTime.Now;
+            shift.State = State.Silindi;
 
-            return category;
+            return shift;
         }
 
         public ShiftGet MapToDto(Shift shift)

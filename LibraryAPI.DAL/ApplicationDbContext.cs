@@ -18,6 +18,7 @@ namespace LibraryAPI.DAL
         public DbSet<BookCopy>? BookCopies { get; set; }
         public DbSet<BookLanguage>? BookLanguages { get; set; }
         public DbSet<BookSubCategory>? BookSubCategories { get; set; }
+        public DbSet<BookRating>? BookRatings { get; set; }
         public DbSet<Category>? Categories { get; set; }
         public DbSet<City>? Cities { get; set; }
         public DbSet<Country>? Countries { get; set; }
@@ -41,12 +42,6 @@ namespace LibraryAPI.DAL
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Address>().HasOne(x => x.ApplicationUser).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Penalty>().HasOne(x => x.Member).WithMany().HasForeignKey(x => x.PenaltiedMembeId).OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Loan>().HasOne(x => x.Member).WithMany().HasForeignKey(x => x.LoanedMemberId).OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<AuthorBook>().HasKey(a => new { a.BooksId, a.AuthorsId });
 
             modelBuilder.Entity<BookLanguage>().HasKey(a => new { a.BooksId, a.LanguagesId });
@@ -54,6 +49,16 @@ namespace LibraryAPI.DAL
             modelBuilder.Entity<BookSubCategory>().HasKey(a => new { a.BooksId, a.SubCategoriesId });
 
             modelBuilder.Entity<BookCopy>().HasKey(x => new { x.BookId, x.CopyNo });
+
+            modelBuilder.Entity<BookRating>().HasKey(x => new { x.RatedBookId, x.RaterMemberId });
+
+            modelBuilder.Entity<Address>().HasOne(x => x.ApplicationUser).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Penalty>().HasOne(x => x.Member).WithMany().HasForeignKey(x => x.PenaltiedMembeId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Loan>().HasOne(x => x.Member).WithMany().HasForeignKey(x => x.LoanedMemberId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>().HasOne(x => x.Member).WithMany().HasForeignKey(x => x.MemberId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

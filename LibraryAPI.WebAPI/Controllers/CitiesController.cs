@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.CityDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class CitiesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public CitiesController(ApplicationDbContext context)
+        private readonly ILibraryServiceManager<CityGet, CityPost, City> _libraryServiceManager;
+        public CitiesController(ILibraryServiceManager<CityGet, CityPost, City> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Cities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<City>>> GetCities()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<CityGet>>> GetAll()
         {
-            return await _context.Cities.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<City>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Cities/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<City>> GetCity(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<CityGet>> Get(int id)
         {
-            var city = await _context.Cities.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (city == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return city;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<City>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Cities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCity(int id, City city)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, CityPost city)
         {
-            if (id != city.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, city);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(city).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Cities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<City>> PostCity(City city)
+        [HttpPost("Post")]
+        public async Task<ActionResult<CityPost>> Post(CityPost city)
         {
-            _context.Cities.Add(city);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(city);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetCity", new { id = city.Id }, city);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Cities/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCity(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var city = await _context.Cities.FindAsync(id);
-            if (city == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Cities.Remove(city);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CityExists(int id)
-        {
-            return _context.Cities.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

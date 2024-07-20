@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.LoanDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class LoansController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<LoanGet, LoanPost, Loan> _libraryServiceManager;
 
-        public LoansController(ApplicationDbContext context)
+        public LoansController(ILibraryServiceManager<LoanGet, LoanPost, Loan> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Loans
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Loan>>> GetLoans()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<LoanGet>>> GetAll()
         {
-            return await _context.Loans.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Loan>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Loans/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Loan>> GetLoan(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<LoanGet>> Get(int id)
         {
-            var loan = await _context.Loans.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (loan == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return loan;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Loan>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Loans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLoan(int id, Loan loan)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, LoanPost loan)
         {
-            if (id != loan.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, loan);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(loan).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LoanExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Loans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Loan>> PostLoan(Loan loan)
+        [HttpPost("Post")]
+        public async Task<ActionResult<LoanPost>> Post(LoanPost loan)
         {
-            _context.Loans.Add(loan);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(loan);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetLoan", new { id = loan.Id }, loan);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Loans/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLoan(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var loan = await _context.Loans.FindAsync(id);
-            if (loan == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Loans.Remove(loan);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool LoanExists(int id)
-        {
-            return _context.Loans.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

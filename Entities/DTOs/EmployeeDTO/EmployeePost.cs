@@ -19,6 +19,15 @@ namespace LibraryAPI.Entities.DTOs.EmployeeDTO
         public string UserName { get; set; } = string.Empty;
 
         [Required]
+        [StringLength(320)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [Phone]
+        public string Phone { get; set; } = string.Empty;
+
+        [Required]
         [StringLength(11)]
         public string IdentityNo { get; set; } = string.Empty;
 
@@ -55,5 +64,7 @@ namespace LibraryAPI.Entities.DTOs.EmployeeDTO
 
         [Required]
         public int ShiftId { get; set; }
+
+        public string? UserImagePath { get; set; } = string.Empty;
     }
 }

@@ -10,14 +10,12 @@ namespace LibraryAPI.BLL.Services
 {
     public class CountryService : ILibraryServiceManager<CountryGet, CountryPost, Country>
     {
-        private readonly ApplicationDbContext _context;
         private readonly CountryData _countryData;
         private readonly CountryMapper _countryMapper;
 
         public CountryService(ApplicationDbContext context)
         {
-            _context = context;
-            _countryData = new CountryData(_context);
+            _countryData = new CountryData(context);
             _countryMapper = new CountryMapper();
         }
 

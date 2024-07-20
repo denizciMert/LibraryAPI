@@ -1,5 +1,4 @@
 ﻿using LibraryAPI.Entities.DTOs.AuthorDTO;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -20,37 +19,43 @@ namespace LibraryAPI.BLL.Mappers
             return author;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Author PostEntity(AuthorPost dto)
         {
-            var category = new Category
+            var author = new Author
             {
-                CategoryName = dto.CategoryName,
+                AuthorFullName = dto.AuthorName,
+                Biography = dto.Biography,
+                DateOfBirth = dto.DateOfBirth,
+                DateOfDeath = dto.DateOfDeath,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return author;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Author UpdateEntity(Author author, AuthorPost authorPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            author.AuthorFullName = authorPost.AuthorName;
+            author.Biography = authorPost.Biography;
+            author.DateOfBirth = authorPost.DateOfBirth;
+            author.DateOfDeath = authorPost.DateOfDeath;
+            author.CreationDateLog = author.CreationDateLog;
+            author.UpdateDateLog = DateTime.Now;
+            author.DeleteDateLog = null;
+            author.State = State.Güncellendi;
 
-            return category;
+            return author;
         }
 
-        public Category DeleteEntity(Category category)
+        public Author DeleteEntity(Author author)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            author.DeleteDateLog = DateTime.Now;
+            author.State = State.Silindi;
 
-            return category;
+            return author;
         }
 
         public AuthorGet MapToDto(Author entity)

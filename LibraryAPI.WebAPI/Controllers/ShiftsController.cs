@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.ShiftDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class ShiftsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<ShiftGet, ShiftPost, Shift> _libraryServiceManager;
 
-        public ShiftsController(ApplicationDbContext context)
+        public ShiftsController(ILibraryServiceManager<ShiftGet, ShiftPost, Shift> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/Shifts
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Shift>>> GetShifts()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<ShiftGet>>> GetAll()
         {
-            return await _context.Shifts.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<Shift>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/Shifts/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Shift>> GetShift(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<ShiftGet>> Get(int id)
         {
-            var shift = await _context.Shifts.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (shift == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return shift;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<Shift>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/Shifts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutShift(int id, Shift shift)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, ShiftPost shift)
         {
-            if (id != shift.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, shift);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(shift).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShiftExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/Shifts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Shift>> PostShift(Shift shift)
+        [HttpPost("Post")]
+        public async Task<ActionResult<ShiftPost>> Post(ShiftPost shift)
         {
-            _context.Shifts.Add(shift);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(shift);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetShift", new { id = shift.Id }, shift);
+            return Ok(result.Data);
         }
 
         // DELETE: api/Shifts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShift(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var shift = await _context.Shifts.FindAsync(id);
-            if (shift == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.Shifts.Remove(shift);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ShiftExists(int id)
-        {
-            return _context.Shifts.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

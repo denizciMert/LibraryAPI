@@ -17,37 +17,37 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public StudyTable PostEntity(StudyTablePost dto)
         {
-            var category = new Category
+            var studyTable = new StudyTable()
             {
-                CategoryName = dto.CategoryName,
+                TableCode = dto.TableCode,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return studyTable;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public StudyTable UpdateEntity(StudyTable studyTable, StudyTablePost studyTablePost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            studyTable.TableCode = studyTablePost.TableCode;
+            studyTable.CreationDateLog = studyTable.CreationDateLog;
+            studyTable.UpdateDateLog = DateTime.Now;
+            studyTable.DeleteDateLog = null;
+            studyTable.State = State.Güncellendi;
 
-            return category;
+            return studyTable;
         }
 
-        public Category DeleteEntity(Category category)
+        public StudyTable DeleteEntity(StudyTable studyTable)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            studyTable.DeleteDateLog = DateTime.Now;
+            studyTable.State = State.Silindi;
 
-            return category;
+            return studyTable;
         }
 
         public StudyTableGet MapToDto(StudyTable studyTable)

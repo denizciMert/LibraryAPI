@@ -1,5 +1,4 @@
-﻿using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.TitleDTO;
+﻿using LibraryAPI.Entities.DTOs.TitleDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -17,37 +16,37 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Title PostEntity(TitlePost dto)
         {
-            var category = new Category
+            var title = new Title
             {
-                CategoryName = dto.CategoryName,
+                TitleName = dto.TitleName,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return title;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Title UpdateEntity(Title title, TitlePost titlePost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            title.TitleName = titlePost.TitleName;
+            title.CreationDateLog = title.CreationDateLog;
+            title.UpdateDateLog = DateTime.Now;
+            title.DeleteDateLog = null;
+            title.State = State.Güncellendi;
 
-            return category;
+            return title;
         }
 
-        public Category DeleteEntity(Category category)
+        public Title DeleteEntity(Title title)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            title.DeleteDateLog = DateTime.Now;
+            title.State = State.Silindi;
 
-            return category;
+            return title;
         }
 
         public TitleGet MapToDto(Title entity)

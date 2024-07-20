@@ -17,37 +17,37 @@ namespace LibraryAPI.BLL.Mappers
             return department;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public Department PostEntity(DepartmentPost dto)
         {
-            var category = new Category
+            var department = new Department
             {
-                CategoryName = dto.CategoryName,
+                DepartmentName = dto.DepartmentName,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return department;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Department UpdateEntity(Department department, DepartmentPost departmentPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            department.DepartmentName = department.DepartmentName;
+            department.CreationDateLog = department.CreationDateLog;
+            department.UpdateDateLog = DateTime.Now;
+            department.DeleteDateLog = null;
+            department.State = State.Güncellendi;
 
-            return category;
+            return department;
         }
 
-        public Category DeleteEntity(Category category)
+        public Department DeleteEntity(Department department)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            department.DeleteDateLog = DateTime.Now;
+            department.State = State.Silindi;
 
-            return category;
+            return department;
         }
 
         public DepartmentGet MapToDto(Department entity)

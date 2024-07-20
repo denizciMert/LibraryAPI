@@ -46,21 +46,6 @@ namespace LibraryAPI.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookCopies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BookId = table.Column<int>(type: "int", nullable: false),
-                    CopyNo = table.Column<int>(type: "int", nullable: false),
-                    Reserved = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BookCopies", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -208,6 +193,7 @@ namespace LibraryAPI.DAL.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TableCode = table.Column<string>(type: "varchar(6)", nullable: false),
+                    Reserved = table.Column<bool>(type: "bit", nullable: false),
                     CreationDateLog = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDateLog = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeleteDateLog = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -363,8 +349,6 @@ namespace LibraryAPI.DAL.Migrations
                     CopyCount = table.Column<short>(type: "smallint", nullable: false),
                     Banned = table.Column<bool>(type: "bit", nullable: false),
                     Rating = table.Column<float>(type: "real", nullable: false),
-                    TimesVoted = table.Column<int>(type: "int", nullable: false),
-                    VoteSummary = table.Column<int>(type: "int", nullable: false),
                     PublisherId = table.Column<int>(type: "int", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: false),
                     BookImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -578,6 +562,25 @@ namespace LibraryAPI.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BookCopies",
+                columns: table => new
+                {
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    CopyNo = table.Column<int>(type: "int", nullable: false),
+                    Reserved = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookCopies", x => new { x.BookId, x.CopyNo });
+                    table.ForeignKey(
+                        name: "FK_BookCopies_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BookLanguages",
                 columns: table => new
                 {
@@ -621,6 +624,31 @@ namespace LibraryAPI.DAL.Migrations
                         name: "FK_BookSubCategories_SubCategories_SubCategoriesId",
                         column: x => x.SubCategoriesId,
                         principalTable: "SubCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BookRatings",
+                columns: table => new
+                {
+                    RatedBookId = table.Column<int>(type: "int", nullable: false),
+                    RaterMemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Rate = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookRatings", x => new { x.RatedBookId, x.RaterMemberId });
+                    table.ForeignKey(
+                        name: "FK_BookRatings_Books_RatedBookId",
+                        column: x => x.RatedBookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookRatings_Members_RaterMemberId",
+                        column: x => x.RaterMemberId,
+                        principalTable: "Members",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -682,6 +710,7 @@ namespace LibraryAPI.DAL.Migrations
                     ReservationStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReservationEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TableId = table.Column<int>(type: "int", nullable: false),
                     CreationDateLog = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDateLog = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -692,11 +721,17 @@ namespace LibraryAPI.DAL.Migrations
                 {
                     table.PrimaryKey("PK_Reservations", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Reservations_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Reservations_Members_MemberId",
                         column: x => x.MemberId,
                         principalTable: "Members",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Reservations_StudyTables_TableId",
                         column: x => x.TableId,
@@ -856,6 +891,11 @@ namespace LibraryAPI.DAL.Migrations
                 column: "LanguagesId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BookRatings_RaterMemberId",
+                table: "BookRatings",
+                column: "RaterMemberId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Books_LocationId",
                 table: "Books",
                 column: "LocationId");
@@ -936,6 +976,11 @@ namespace LibraryAPI.DAL.Migrations
                 column: "PenaltyTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reservations_EmployeeId",
+                table: "Reservations",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_MemberId",
                 table: "Reservations",
                 column: "MemberId");
@@ -980,6 +1025,9 @@ namespace LibraryAPI.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "BookLanguages");
+
+            migrationBuilder.DropTable(
+                name: "BookRatings");
 
             migrationBuilder.DropTable(
                 name: "BookSubCategories");

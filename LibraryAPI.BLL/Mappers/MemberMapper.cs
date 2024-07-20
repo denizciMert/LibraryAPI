@@ -1,5 +1,6 @@
 ﻿using System;
 using LibraryAPI.Entities.DTOs.CategoryDTO;
+using LibraryAPI.Entities.DTOs.EmployeeDTO;
 using LibraryAPI.Entities.DTOs.MemberDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
@@ -8,6 +9,7 @@ namespace LibraryAPI.BLL.Mappers
 {
     public class MemberMapper
     {
+        /*
         public Member MapToEntity(MemberPost dto)
         {
             var member = new Member
@@ -20,43 +22,93 @@ namespace LibraryAPI.BLL.Mappers
                     DateOfBirth = dto.DateOfBirth,
                     Gender = (Gender)dto.GenderId,
                     CountryId = dto.CountryId,
-                    UserRole = (UserRole)dto.UserRoleId
+                    UserRole = (UserRole)dto.UserRoleId,
+                    Email = dto.Email,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    DateOfRegister = DateTime.Now,
+                    UserImagePath = 
+                    UpdateDateLog = null,
+                    DeleteDateLog = null,
+                    State = State.Eklendi
                 }
             };
             return member;
         }
-
-        public Category PostEntity(CategoryPost dto)
+        */
+        public ApplicationUser PostUser(MemberPost tPost)
         {
-            var category = new Category
+            var user = new ApplicationUser
             {
-                CategoryName = dto.CategoryName,
-                CreationDateLog = DateTime.Now,
+                FirstName = tPost.FirstName,
+                MiddleName = tPost.MiddleName,
+                LastName = tPost.LastName,
+                UserName = tPost.UserName,
+                IdentityNo = tPost.IdentityNo,
+                DateOfBirth = tPost.DateOfBirth,
+                Gender = (Gender)tPost.GenderId!,
+                CountryId = tPost.CountryId,
+                UserRole = (UserRole)tPost.UserRoleId!,
+                DateOfRegister = DateTime.Now,
+                Email = tPost.Email,
+                PhoneNumber = tPost.Phone,
+                Banned = false,
+                UserImagePath = tPost.UserImagePath,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return user;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public Member PostMember(ApplicationUser user, MemberPost memberPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            var member = new Member
+            {
+                Id = user.Id,
+                EducationDegree = memberPost.EducationDegree
+            };
 
-            return category;
+            return member;
         }
 
-        public Category DeleteEntity(Category category)
+        public ApplicationUser UpdateUser(ApplicationUser user, MemberPost tPost)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            user.FirstName = tPost.FirstName;
+            user.MiddleName = tPost.MiddleName;
+            user.LastName = tPost.LastName;
+            user.UserName = tPost.UserName;
+            user.IdentityNo = tPost.IdentityNo;
+            user.DateOfBirth = tPost.DateOfBirth;
+            user.Gender = (Gender)tPost.GenderId!;
+            user.CountryId = tPost.CountryId;
+            user.UserRole = (UserRole)tPost.UserRoleId!;
+            user.DateOfRegister = user.DateOfRegister;
+            user.Email = tPost.Email;
+            user.PhoneNumber = tPost.Phone;
+            user.Banned = false;
+            user.UserImagePath = tPost.UserImagePath;
+            user.UpdateDateLog = DateTime.Now;
+            user.DeleteDateLog = null;
+            user.State = State.Güncellendi;
 
-            return category;
+            return user;
+        }
+
+        public Member UpdateMember(Member member, MemberPost memberPost)
+        {
+            member.EducationDegree = memberPost.EducationDegree;
+
+            return member;
+        }
+
+        public Member DeleteEntity(Member member)
+        {
+            member.ApplicationUser.DeleteDateLog = DateTime.Now;
+            member.ApplicationUser.State = State.Silindi;
+
+            return member;
         }
 
         public MemberGet MapToDto(Member entity)

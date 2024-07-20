@@ -1,6 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.PenaltyTypeDTO;
+﻿using LibraryAPI.Entities.DTOs.PenaltyTypeDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -19,37 +17,39 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public PenaltyType PostEntity(PenaltyTypePost dto)
         {
-            var category = new Category
+            var penalty = new PenaltyType
             {
-                CategoryName = dto.CategoryName,
+                PenaltyName = dto.PenaltyType,
+                AmountToPay = dto.AmountToPay,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return penalty;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public PenaltyType UpdateEntity(PenaltyType penalty, PenaltyTypePost penaltyTypePost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            penalty.PenaltyName = penaltyTypePost.PenaltyType;
+            penalty.AmountToPay = penaltyTypePost.AmountToPay;
+            penalty.CreationDateLog = penalty.CreationDateLog;
+            penalty.UpdateDateLog = DateTime.Now;
+            penalty.DeleteDateLog = null;
+            penalty.State = State.Güncellendi;
 
-            return category;
+            return penalty;
         }
 
-        public Category DeleteEntity(Category category)
+        public PenaltyType DeleteEntity(PenaltyType penaltyType)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            penaltyType.DeleteDateLog = DateTime.Now;
+            penaltyType.State = State.Silindi;
 
-            return category;
+            return penaltyType;
         }
 
         public PenaltyTypeGet MapToDto(PenaltyType entity)

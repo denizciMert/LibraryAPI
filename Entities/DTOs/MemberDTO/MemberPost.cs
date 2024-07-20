@@ -17,10 +17,19 @@ namespace LibraryAPI.Entities.DTOs.MemberDTO
 
         [Required]
         public string UserName { get; set; } = string.Empty;
-        
+
+        [Required]
+        [StringLength(320)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
         [Required]
         [StringLength(11)]
         public string IdentityNo { get; set; } = string.Empty;
+
+        [Required]
+        [Phone]
+        public string Phone { get; set; } = string.Empty;
 
         [Required]
         public DateTime DateOfBirth { get; set; }
@@ -47,5 +56,7 @@ namespace LibraryAPI.Entities.DTOs.MemberDTO
         public List<int>? LoanIds { get; set; } = [];
 
         public List<int>? PenaltIds { get; set; } = [];
+
+        public string? UserImagePath { get; set; } = string.Empty;
     }
 }

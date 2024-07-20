@@ -1,108 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using LibraryAPI.DAL;
+﻿using Microsoft.AspNetCore.Mvc;
 using LibraryAPI.Entities.Models;
+using LibraryAPI.BLL.Interfaces;
+using LibraryAPI.Entities.DTOs.StudyTableDTO;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class StudyTablesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILibraryServiceManager<StudyTableGet, StudyTablePost, StudyTable> _libraryServiceManager;
 
-        public StudyTablesController(ApplicationDbContext context)
+        public StudyTablesController(ILibraryServiceManager<StudyTableGet, StudyTablePost, StudyTable> libraryServiceManager)
         {
-            _context = context;
+            _libraryServiceManager = libraryServiceManager;
         }
 
         // GET: api/StudyTables
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudyTable>>> GetStudyTables()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<StudyTableGet>>> GetAll()
         {
-            return await _context.StudyTables.ToListAsync();
+            var result = await _libraryServiceManager.GetAllAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData")]
+        public async Task<ActionResult<IEnumerable<StudyTable>>> GetAllData()
+        {
+            var result = await _libraryServiceManager.GetAllWithDataAsync();
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // GET: api/StudyTables/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<StudyTable>> GetStudyTable(int id)
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<StudyTableGet>> Get(int id)
         {
-            var studyTable = await _context.StudyTables.FindAsync(id);
+            var result = await _libraryServiceManager.GetByIdAsync(id);
 
-            if (studyTable == null)
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
 
-            return studyTable;
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetData/{id}")]
+        public async Task<ActionResult<StudyTable>> GetData(int id)
+        {
+            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result.Data);
         }
 
         // PUT: api/StudyTables/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudyTable(int id, StudyTable studyTable)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, StudyTablePost studyTable)
         {
-            if (id != studyTable.Id)
+            var result = await _libraryServiceManager.UpdateAsync(id, studyTable);
+
+            if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(result.ErrorMessage);
             }
 
-            _context.Entry(studyTable).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StudyTableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Data);
         }
 
         // POST: api/StudyTables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<StudyTable>> PostStudyTable(StudyTable studyTable)
+        [HttpPost("Post")]
+        public async Task<ActionResult<StudyTablePost>> Post(StudyTablePost studyTable)
         {
-            _context.StudyTables.Add(studyTable);
-            await _context.SaveChangesAsync();
+            var result = await _libraryServiceManager.AddAsync(studyTable);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
-            return CreatedAtAction("GetStudyTable", new { id = studyTable.Id }, studyTable);
+            return Ok(result.Data);
         }
 
         // DELETE: api/StudyTables/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudyTable(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var studyTable = await _context.StudyTables.FindAsync(id);
-            if (studyTable == null)
+            var result = await _libraryServiceManager.DeleteAsync(id);
+
+            if (!result.Success)
             {
-                return NotFound();
+                return BadRequest(result.ErrorMessage);
             }
-
-            _context.StudyTables.Remove(studyTable);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool StudyTableExists(int id)
-        {
-            return _context.StudyTables.Any(e => e.Id == id);
+            return Ok(result.Data);
         }
     }
 }

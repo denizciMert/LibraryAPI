@@ -1,6 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.SubCategoryDTO;
+﻿using LibraryAPI.Entities.DTOs.SubCategoryDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -19,37 +17,39 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
-        public Category PostEntity(CategoryPost dto)
+        public SubCategory PostEntity(SubCategoryPost subCategoryPost)
         {
-            var category = new Category
+            var subCategory = new SubCategory
             {
-                CategoryName = dto.CategoryName,
+                SubCategoryName = subCategoryPost.SubCategoryName,
+                CategoryId = subCategoryPost.CategoryId,
                 CreationDateLog = DateTime.Now,
                 UpdateDateLog = null,
                 DeleteDateLog = null,
                 State = State.Eklendi
             };
 
-            return category;
+            return subCategory;
         }
 
-        public Category UpdateEntity(Category category, CategoryPost categoryPost)
+        public SubCategory UpdateEntity(SubCategory subCategory, SubCategoryPost subCategoryPost)
         {
-            category.CategoryName = categoryPost.CategoryName;
-            category.CreationDateLog = category.CreationDateLog;
-            category.UpdateDateLog = DateTime.Now;
-            category.DeleteDateLog = null;
-            category.State = State.Güncellendi;
+            subCategory.SubCategoryName = subCategoryPost.SubCategoryName;
+            subCategory.CategoryId = subCategoryPost.CategoryId;
+            subCategory.CreationDateLog = subCategory.CreationDateLog;
+            subCategory.UpdateDateLog = DateTime.Now;
+            subCategory.DeleteDateLog = null;
+            subCategory.State = State.Güncellendi;
 
-            return category;
+            return subCategory;
         }
 
-        public Category DeleteEntity(Category category)
+        public SubCategory DeleteEntity(SubCategory subCategory)
         {
-            category.DeleteDateLog = DateTime.Now;
-            category.State = State.Silindi;
+            subCategory.DeleteDateLog = DateTime.Now;
+            subCategory.State = State.Silindi;
 
-            return category;
+            return subCategory;
         }
 
         public SubCategoryGet MapToDto(SubCategory subCategory)

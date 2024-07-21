@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var penalties = await _penaltyData.SelectAll();
+                var penalties = await _penaltyData.SelectAllFiltered();
                 if (penalties == null || penalties.Count == 0)
                 {
                     return ServiceResult<IEnumerable<PenaltyGet>>.FailureResult("Ceza verisi bulunmuyor.");

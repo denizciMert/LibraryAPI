@@ -1,23 +1,30 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.PenaltyDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class PenaltyData : IQueryBase<Penalty>
+    public class PenaltyData(ApplicationDbContext context) : IQueryBase<Penalty>
     {
-        private readonly ApplicationDbContext _context;
-
-        public PenaltyData(ApplicationDbContext context)
+        public async Task<List<Penalty>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Penalties
+                .Include(x => x.Member)
+                .ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.PenaltyType)
+                .Include(x => x.Loan).ThenInclude(x => x.Employee)
+                .ThenInclude(x => x.ApplicationUser)
+                .Where(x=>x.Active==true)
+                .Where(x=>x.State!=State.Silindi)
+                .ToListAsync();
         }
 
         public async Task<List<Penalty>> SelectAll()
         {
-            return await _context.Penalties
+            return await context.Penalties
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.PenaltyType)
                 .Include(x=>x.Loan).ThenInclude(x=>x.Employee).ThenInclude(x=>x.ApplicationUser)
@@ -26,7 +33,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Penalty> SelectForEntity(int id)
         {
-            return await _context.Penalties
+            return await context.Penalties
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.PenaltyType)
                 .Include(x => x.Loan).ThenInclude(x => x.Employee).ThenInclude(x => x.ApplicationUser)
@@ -35,7 +42,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Penalty> SelectForUser(string id)
         {
-            return await _context.Penalties
+            return await context.Penalties
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.PenaltyType)
                 .Include(x => x.Loan).ThenInclude(x => x.Employee).ThenInclude(x => x.ApplicationUser)
@@ -59,12 +66,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Penalty penalty)
         {
-            _context.Penalties.Add(penalty);
+            context.Penalties.Add(penalty);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

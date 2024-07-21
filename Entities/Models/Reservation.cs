@@ -22,5 +22,7 @@ namespace LibraryAPI.Entities.Models
 
         [ForeignKey(nameof(TableId))]
         public StudyTable? StudyTable { get; set; }
+
+        public bool Active { get; set; } = true;
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.EmployeeDTO;
-using LibraryAPI.Entities.DTOs.MemberDTO;
+﻿using LibraryAPI.Entities.DTOs.MemberDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -9,33 +6,6 @@ namespace LibraryAPI.BLL.Mappers
 {
     public class MemberMapper
     {
-        /*
-        public Member MapToEntity(MemberPost dto)
-        {
-            var member = new Member
-            {
-                Id = Guid.NewGuid().ToString(),
-                ApplicationUser = new ApplicationUser
-                {
-                    UserName = dto.UserName,
-                    IdentityNo = dto.IdentityNo,
-                    DateOfBirth = dto.DateOfBirth,
-                    Gender = (Gender)dto.GenderId,
-                    CountryId = dto.CountryId,
-                    UserRole = (UserRole)dto.UserRoleId,
-                    Email = dto.Email,
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    DateOfRegister = DateTime.Now,
-                    UserImagePath = 
-                    UpdateDateLog = null,
-                    DeleteDateLog = null,
-                    State = State.Eklendi
-                }
-            };
-            return member;
-        }
-        */
         public ApplicationUser PostUser(MemberPost tPost)
         {
             var user = new ApplicationUser

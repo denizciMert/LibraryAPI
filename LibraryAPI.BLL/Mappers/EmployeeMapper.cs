@@ -1,6 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.EmployeeDTO;
+﻿using LibraryAPI.Entities.DTOs.EmployeeDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -8,39 +6,6 @@ namespace LibraryAPI.BLL.Mappers
 {
     public class EmployeeMapper
     {
-        /*
-        public Employee MapToEntity(EmployeePost employeePost)
-        {
-            var employee = new Employee
-            {
-                ApplicationUser = new ApplicationUser
-                {
-                    FirstName = employeePost.FirstName,
-                    MiddleName = employeePost.MiddleName,
-                    LastName = employeePost.LastName,
-                    UserName = employeePost.UserName,
-                    IdentityNo = employeePost.IdentityNo,
-                    DateOfBirth = employeePost.DateOfBirth,
-                    Gender = (Gender)employeePost.GenderId,
-                    CountryId = employeePost.CountryId,
-                    UserRole = (UserRole)employeePost.UserRoleId!,
-                    DateOfRegister = DateTime.Now,
-                    Email = employeePost.Email,
-                    PhoneNumber = employeePost.Phone,
-                    Banned = false,
-                    UserImagePath = employeePost.UserImagePath,
-                    UpdateDateLog = null,
-                    DeleteDateLog = null,
-                    State = State.Eklendi
-                },
-                Salary = employeePost.Salary,
-                TitleId = employeePost.TitleId,
-                DepartmentId = employeePost.DepartmentId,
-                ShiftId = employeePost.ShiftId
-            };
-            return employee;
-        }
-        */
         public ApplicationUser PostUser(EmployeePost tPost)
         {
             var user = new ApplicationUser

@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var titles = await _titleData.SelectAll();
+                var titles = await _titleData.SelectAllFiltered();
                 if (titles == null || titles.Count == 0)
                 {
                     return ServiceResult<IEnumerable<TitleGet>>.FailureResult("Başlık verisi bulunmuyor.");

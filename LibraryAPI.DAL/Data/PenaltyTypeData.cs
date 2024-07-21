@@ -1,28 +1,27 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.PenaltyTypeDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class PenaltyTypeData : IQueryBase<PenaltyType>
+    public class PenaltyTypeData(ApplicationDbContext context) : IQueryBase<PenaltyType>
     {
-        private readonly ApplicationDbContext _context;
-
-        public PenaltyTypeData(ApplicationDbContext context)
+        public async Task<List<PenaltyType>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.PenaltyTypes.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<PenaltyType>> SelectAll()
         {
-            return await _context.PenaltyTypes.ToListAsync();
+            return await context.PenaltyTypes.ToListAsync();
         }
 
         public async Task<PenaltyType> SelectForEntity(int id)
         {
-            return await _context.PenaltyTypes.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.PenaltyTypes.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<PenaltyType> SelectForUser(string id)
@@ -46,12 +45,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(PenaltyType penaltyType)
         {
-            _context.PenaltyTypes.Add(penaltyType);
+            context.PenaltyTypes.Add(penaltyType);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

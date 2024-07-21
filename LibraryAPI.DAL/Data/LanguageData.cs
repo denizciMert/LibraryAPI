@@ -1,28 +1,27 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.LanguageDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class LanguageData : IQueryBase<Language>
+    public class LanguageData(ApplicationDbContext context) : IQueryBase<Language>
     {
-        private readonly ApplicationDbContext _context;
-
-        public LanguageData(ApplicationDbContext context)
+        public async Task<List<Language>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Languages.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Language>> SelectAll()
         {
-            return await _context.Languages.ToListAsync();
+            return await context.Languages.ToListAsync();
         }
 
         public async Task<Language> SelectForEntity(int id)
         {
-            return await _context.Languages.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Languages.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Language> SelectForUser(string id)
@@ -45,12 +44,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Language language)
         {
-            _context.Languages.Add(language);
+            context.Languages.Add(language);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

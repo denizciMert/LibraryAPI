@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var addresses = await _addressData.SelectAll();
+                var addresses = await _addressData.SelectAllFiltered();
                 if (addresses == null || addresses.Count == 0)
                 {
                     return ServiceResult<IEnumerable<AddressGet>>.FailureResult("Adres verisi bulunmuyor.");

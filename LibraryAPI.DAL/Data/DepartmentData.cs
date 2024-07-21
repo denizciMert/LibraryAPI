@@ -1,27 +1,27 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.DepartmentDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class DepartmentData : IQueryBase<Department>
+    public class DepartmentData(ApplicationDbContext context) : IQueryBase<Department>
     {
-        private readonly ApplicationDbContext _context;
-        public DepartmentData(ApplicationDbContext context)
+        public async Task<List<Department>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Departments.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Department>> SelectAll()
         {
-            return await _context.Departments.ToListAsync();
+            return await context.Departments.ToListAsync();
         }
 
         public async Task<Department> SelectForEntity(int id)
         {
-            return await _context.Departments.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Departments.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Department> SelectForUser(string id)
@@ -44,12 +44,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Department department)
         {
-            _context.Departments.Add(department);
+            context.Departments.Add(department);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

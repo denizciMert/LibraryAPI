@@ -1,27 +1,26 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AuthorDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class AuthorData : IQueryBase<Author>
+    public class AuthorData(ApplicationDbContext context) : IQueryBase<Author>
     {
-        private readonly ApplicationDbContext _context;
-
-        public AuthorData(ApplicationDbContext context)
+        public async Task<List<Author>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Authors.Where(x=>x.State!=State.Silindi).Include(x => x.AuthorBooks).ThenInclude(x => x.Book).ToListAsync();
         }
 
         public async Task<List<Author>> SelectAll()
         {
-            return await _context.Authors.Include(x => x.AuthorBooks).ThenInclude(x => x.Book).ToListAsync();
+            return await context.Authors.Include(x => x.AuthorBooks).ThenInclude(x => x.Book).ToListAsync();
         }
 
         public async Task<Author> SelectForEntity(int id)
         {
-            return await _context.Authors.Include(x => x.AuthorBooks).ThenInclude(x => x.Book).FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Authors.Include(x => x.AuthorBooks).ThenInclude(x => x.Book).FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Author> SelectForUser(string id)
@@ -31,7 +30,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<List<string>> SelectBooks(int authorId)
         {
-            return await _context.AuthorBooks
+            return await context.AuthorBooks
                 .Include(x => x.Author)
                 .Include(x=>x.Book)
                 .Where(x => x.AuthorsId == authorId)
@@ -54,12 +53,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Author author)
         {
-            _context.Authors.Add(author);
+            context.Authors.Add(author);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

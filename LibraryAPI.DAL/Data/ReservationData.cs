@@ -1,23 +1,29 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
-using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.ReservationDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class ReservationData : IQueryBase<Reservation>
+    public class ReservationData(ApplicationDbContext context) : IQueryBase<Reservation>
     {
-        private readonly ApplicationDbContext _context;
-
-        public ReservationData(ApplicationDbContext context)
+        public async Task<List<Reservation>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Reservations
+                .Include(x => x.Member)
+                .ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.Employee)
+                .ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.StudyTable)
+                .Where(x=>x.State!=State.Silindi)
+                .Where(x=>x.Active==true)
+                .ToListAsync();
         }
 
         public async Task<List<Reservation>> SelectAll()
         {
-            return await _context.Reservations
+            return await context.Reservations
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x=>x.Employee).ThenInclude(x=>x.ApplicationUser)
                 .Include(x => x.StudyTable)
@@ -26,7 +32,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Reservation> SelectForEntity(int id)
         {
-            return await _context.Reservations
+            return await context.Reservations
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.StudyTable)
@@ -35,7 +41,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Reservation> SelectForUser(string id)
         {
-            return await _context.Reservations
+            return await context.Reservations
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.StudyTable)
@@ -59,12 +65,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Reservation reservation)
         {
-            _context.Reservations.Add(reservation);
+            context.Reservations.Add(reservation);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

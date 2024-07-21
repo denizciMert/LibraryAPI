@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var districts = await _districtData.SelectAll();
+                var districts = await _districtData.SelectAllFiltered();
                 if (districts == null || districts.Count == 0)
                 {
                     return ServiceResult<IEnumerable<DistrictGet>>.FailureResult("Bölge verisi bulunmuyor.");

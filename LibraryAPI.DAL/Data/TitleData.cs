@@ -1,26 +1,26 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.TitleDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class TitleData : IQueryBase<Title>
+    public class TitleData(ApplicationDbContext context) : IQueryBase<Title>
     {
-        private readonly ApplicationDbContext _context;
-        public TitleData(ApplicationDbContext context)
+        public async Task<List<Title>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Titles.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Title>> SelectAll()
         {
-            return await _context.Titles.ToListAsync();
+            return await context.Titles.ToListAsync();
         }
 
         public async Task<Title> SelectForEntity(int id)
         {
-            return await _context.Titles.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Titles.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Title> SelectForUser(string id)
@@ -43,12 +43,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Title title)
         {
-            _context.Titles.Add(title);
+            context.Titles.Add(title);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

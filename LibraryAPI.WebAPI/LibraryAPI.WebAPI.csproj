@@ -25,4 +25,8 @@
     <ProjectReference Include="..\LibraryAPI.DAL\LibraryAPI.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,4 @@
+user actions kontrolcüsünü kur - login -logout -reset pass -forget pass
+diðer servislerin mantýk kontrollerini ekle
+book - member - employee kontrolcüsünden resim al ve images klasörüne ekle path döndür
+authorizaton ekle

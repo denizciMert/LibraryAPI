@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryAPI.Entities.DTOs.EmployeeDTO
 {
@@ -66,5 +68,8 @@ namespace LibraryAPI.Entities.DTOs.EmployeeDTO
         public int ShiftId { get; set; }
 
         public string? UserImagePath { get; set; } = string.Empty;
+
+        [NotMapped]
+        public IFormFile? FileForm { get; set; }
     }
 }

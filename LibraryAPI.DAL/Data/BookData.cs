@@ -1,37 +1,55 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.BookDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class BookData : IQueryBase<Book>
+    public class BookData(ApplicationDbContext context) : IQueryBase<Book>
     {
-        private readonly ApplicationDbContext _context;
-
-        public BookData(ApplicationDbContext context)
+        public async Task<List<Book>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Books
+                .Include(x => x.AuthorBooks)
+                .ThenInclude(x => x.Author)
+                .Include(x => x.BookLanguages)
+                .ThenInclude(x => x.Language)
+                .Include(x => x.BookSubCategories)
+                .ThenInclude(x => x.SubCategory)
+                .Include(x => x.Publisher)
+                .Include(x => x.Location)
+                .Where(x=>x.Banned==false)
+                .Where(x=>x.State!=State.Silindi)
+                .ToListAsync();
         }
 
         public async Task<List<Book>> SelectAll()
         {
-            return await _context.Books
-                .Include(x => x.AuthorBooks).ThenInclude(x => x.Author)
-                .Include(x => x.BookLanguages).ThenInclude(x => x.Language)
-                .Include(x=>x.BookSubCategories).ThenInclude(x=>x.SubCategory)
+            return await context.Books
+                .Include(x => x.AuthorBooks)
+                .ThenInclude(x => x.Author)
+                .Include(x => x.BookLanguages)
+                .ThenInclude(x => x.Language)
+                .Include(x=>x.BookSubCategories)
+                .ThenInclude(x=>x.SubCategory)
                 .Include(x=>x.Publisher)
-                .Include(x => x.Location).ToListAsync();
+                .Include(x => x.Location)
+                .ToListAsync();
         }
 
         public async Task<Book> SelectForEntity(int id)
         {
-            return await _context.Books
-                .Include(x => x.AuthorBooks).ThenInclude(x => x.Author)
-                .Include(x => x.BookLanguages).ThenInclude(x => x.Language)
-                .Include(x => x.BookSubCategories).ThenInclude(x => x.SubCategory)
+            return await context.Books
+                .Include(x => x.AuthorBooks)
+                .ThenInclude(x => x.Author)
+                .Include(x => x.BookLanguages)
+                .ThenInclude(x => x.Language)
+                .Include(x => x.BookSubCategories)
+                .ThenInclude(x => x.SubCategory)
                 .Include(x => x.Publisher)
-                .Include(x => x.Location).FirstOrDefaultAsync(x=>x.Id==id);
+                .Include(x => x.Location)
+                .FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Book> SelectForUser(string id)
@@ -54,12 +72,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Book book)
         {
-            _context.Books.Add(book);
+            context.Books.Add(book);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -9,9 +9,11 @@ using LibraryAPI.Entities.DTOs.CityDTO;
 using LibraryAPI.Entities.DTOs.CountryDTO;
 using LibraryAPI.Entities.DTOs.DepartmentDTO;
 using LibraryAPI.Entities.DTOs.DistrictDTO;
+using LibraryAPI.Entities.DTOs.EmployeeDTO;
 using LibraryAPI.Entities.DTOs.LanguageDTO;
 using LibraryAPI.Entities.DTOs.LoanDTO;
 using LibraryAPI.Entities.DTOs.LocationDTO;
+using LibraryAPI.Entities.DTOs.MemberDTO;
 using LibraryAPI.Entities.DTOs.PenaltyDTO;
 using LibraryAPI.Entities.DTOs.PenaltyTypeDTO;
 using LibraryAPI.Entities.DTOs.PublisherDTO;
@@ -61,6 +63,9 @@ namespace LibraryAPI.WebAPI
             builder.Services.AddScoped<ILibraryServiceManager<SubCategoryGet, SubCategoryPost, SubCategory>, SubCategoryService>();
             builder.Services.AddScoped<ILibraryServiceManager<TitleGet, TitlePost, Title>, TitleService>();
 
+            builder.Services.AddScoped<ILibraryUserManager<MemberGet, MemberPost, Member>, MemberService>();
+            builder.Services.AddScoped<ILibraryUserManager<EmployeeGet, EmployeePost, Employee>, EmployeeService>();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -74,6 +79,8 @@ namespace LibraryAPI.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+           
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 

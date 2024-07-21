@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var countries = await _countryData.SelectAll();
+                var countries = await _countryData.SelectAllFiltered();
                 if (countries == null || countries.Count == 0)
                 {
                     return ServiceResult<IEnumerable<CountryGet>>.FailureResult("Ülke verisi bulunmuyor.");

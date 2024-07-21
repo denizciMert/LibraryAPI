@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var cities = await _cityData.SelectAll();
+                var cities = await _cityData.SelectAllFiltered();
                 if (cities == null || cities.Count == 0)
                 {
                     return ServiceResult<IEnumerable<CityGet>>.FailureResult("Şehir verisi bulunmuyor.");

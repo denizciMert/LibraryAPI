@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var categories = await _categoryData.SelectAll();
+                var categories = await _categoryData.SelectAllFiltered();
                 if (categories == null || categories.Count == 0)
                 {
                     return ServiceResult<IEnumerable<CategoryGet>>.FailureResult("Kategori verisi bulunmuyor.");

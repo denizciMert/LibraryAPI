@@ -24,7 +24,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var studyTables = await _studyTableData.SelectAll();
+                var studyTables = await _studyTableData.SelectAllFiltered();
                 if (studyTables == null || studyTables.Count == 0)
                 {
                     return ServiceResult<IEnumerable<StudyTableGet>>.FailureResult("Çalışma tablosu verisi bulunmuyor.");

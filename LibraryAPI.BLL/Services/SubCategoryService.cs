@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var subCategories = await _subCategoryData.SelectAll();
+                var subCategories = await _subCategoryData.SelectAllFiltered();
                 if (subCategories == null || subCategories.Count == 0)
                 {
                     return ServiceResult<IEnumerable<SubCategoryGet>>.FailureResult("Alt kategori verisi bulunmuyor.");

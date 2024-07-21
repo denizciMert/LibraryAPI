@@ -28,7 +28,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var shifts = await _shiftData.SelectAll();
+                var shifts = await _shiftData.SelectAllFiltered();
                 if (shifts == null || shifts.Count == 0)
                 {
                     return ServiceResult<IEnumerable<ShiftGet>>.FailureResult("Vardiya verisi bulunmuyor.");

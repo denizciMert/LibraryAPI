@@ -1,28 +1,27 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.LocationDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class LocationData : IQueryBase<Location>
+    public class LocationData(ApplicationDbContext context) : IQueryBase<Location>
     {
-        private readonly ApplicationDbContext _context;
-
-        public LocationData(ApplicationDbContext context)
+        public async Task<List<Location>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Locations.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Location>> SelectAll()
         {
-            return await _context.Locations.ToListAsync();
+            return await context.Locations.ToListAsync();
         }
 
         public async Task<Location> SelectForEntity(int id)
         {
-            return await _context.Locations.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Locations.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Location> SelectForUser(string id)
@@ -45,12 +44,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Location location)
         {
-            _context.Locations.Add(location);
+            context.Locations.Add(location);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var locations = await _locationData.SelectAll();
+                var locations = await _locationData.SelectAllFiltered();
                 if (locations == null || locations.Count == 0)
                 {
                     return ServiceResult<IEnumerable<LocationGet>>.FailureResult("Konum verisi bulunmuyor.");

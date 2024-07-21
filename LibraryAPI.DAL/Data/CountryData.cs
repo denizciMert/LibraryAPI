@@ -1,27 +1,26 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.CountryDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class CountryData : IQueryBase<Country>
+    public class CountryData(ApplicationDbContext context) : IQueryBase<Country>
     {
-        private readonly ApplicationDbContext _context;
-
-        public CountryData(ApplicationDbContext context)
+        public async Task<List<Country>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Countries.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Country>> SelectAll()
         {
-            return await _context.Countries.ToListAsync();
+            return await context.Countries.ToListAsync();
         }
 
         public async Task<Country> SelectForEntity(int id)
         {
-            return await _context.Countries.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Countries.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Country> SelectForUser(string id)
@@ -44,12 +43,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Country country)
         {
-            _context.Countries.Add(country);
+            context.Countries.Add(country);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

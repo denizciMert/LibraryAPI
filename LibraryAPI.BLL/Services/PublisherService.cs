@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var publishers = await _publisherData.SelectAll();
+                var publishers = await _publisherData.SelectAllFiltered();
                 if (publishers == null || publishers.Count == 0)
                 {
                     return ServiceResult<IEnumerable<PublisherGet>>.FailureResult("Yayıncı verisi bulunmuyor.");

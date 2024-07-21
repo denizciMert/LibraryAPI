@@ -1,22 +1,27 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.LoanDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class LoanData : IQueryBase<Loan>
+    public class LoanData(ApplicationDbContext context) : IQueryBase<Loan>
     {
-        private readonly ApplicationDbContext _context;
-        public LoanData(ApplicationDbContext context)
+        public async Task<List<Loan>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Loans
+                .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.Book)
+                .Where(x=>x.State!=State.Silindi)
+                .ToListAsync();
         }
 
         public async Task<List<Loan>> SelectAll()
         {
-            return await _context.Loans
+            return await context.Loans
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Book)
@@ -25,7 +30,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Loan> SelectForEntity(int id)
         {
-            return await _context.Loans
+            return await context.Loans
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Book)
@@ -34,7 +39,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Loan> SelectForUser(string id)
         {
-            return await _context.Loans
+            return await context.Loans
                 .Include(x => x.Member).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Employee).ThenInclude(x => x.ApplicationUser)
                 .Include(x => x.Book)
@@ -58,12 +63,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Loan loan)
         {
-            _context.Loans.Add(loan);
+            context.Loans.Add(loan);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

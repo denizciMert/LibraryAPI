@@ -74,6 +74,7 @@ namespace LibraryAPI.BLL.Mappers
             bookPost.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s }));
             book.AuthorBooks = new List<AuthorBook>();
             bookPost.AuthorIds.ForEach(s => book.AuthorBooks.Add(new AuthorBook { AuthorsId = s }));
+            book.BookImagePath = bookPost.ImagePath;
             book.CreationDateLog = book.CreationDateLog;
             book.UpdateDateLog = DateTime.Now;
             book.DeleteDateLog = null;
@@ -106,6 +107,7 @@ namespace LibraryAPI.BLL.Mappers
                 Authors = entity.AuthorBooks?.Select(ab => ab.Author.AuthorFullName).ToList(),
                 SubCategories = entity.BookSubCategories?.Select(bsc => bsc.SubCategory.SubCategoryName).ToList(),
                 Languages = entity.BookLanguages?.Select(bl => bl.Language.LanguageName).ToList(),
+                ImagePath = entity.BookImagePath,
                 CreatinDateLog = entity.CreationDateLog,
                 UpdateDateLog = entity.UpdateDateLog,
                 DeleteDateLog = entity.DeleteDateLog,

@@ -15,6 +15,7 @@
         public List<string>? SubCategories { get; set; } = [];
         public List<string>? Languages { get; set; } = [];
         public List<int>? CopyNumbers { get; set; }
+        public string? ImagePath { get; set; } = string.Empty;
         public DateTime? CreatinDateLog { get; set; }
         public DateTime? UpdateDateLog { get; set; }
         public DateTime? DeleteDateLog { get; set; }

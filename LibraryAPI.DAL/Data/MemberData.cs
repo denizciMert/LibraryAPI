@@ -1,23 +1,28 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
-using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.MemberDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class MemberData : IQueryBase<Member>
+    public class MemberData(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : IQueryBase<Member>
     {
-        private readonly ApplicationDbContext _context;
-
-        public MemberData(ApplicationDbContext context)
+        public async Task<List<Member>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Members
+                .Include(x => x.ApplicationUser).ThenInclude(x => x.Country)
+                .Include(x => x.Loans)
+                .Include(x => x.Penalties)
+                .Where(x=>x.ApplicationUser.Banned==false)
+                .Where(x=>x.ApplicationUser.State!=State.Silindi)
+                .ToListAsync();
         }
 
         public async Task<List<Member>> SelectAll()
         {
-            return await _context.Members
+            return await context.Members
                 .Include(x => x.ApplicationUser).ThenInclude(x => x.Country)
                 .Include(x => x.Loans)
                 .Include(x => x.Penalties)
@@ -31,7 +36,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<Member> SelectForUser(string id)
         {
-            return await _context.Members
+            return await context.Members
                 .Include(x => x.ApplicationUser).ThenInclude(x => x.Country)
                 .Include(x => x.Loans)
                 .Include(x => x.Penalties)
@@ -53,14 +58,34 @@ namespace LibraryAPI.DAL.Data
             return false;
         }
 
+        public async Task SaveUser(ApplicationUser user, string password)
+        {
+            await userManager.CreateAsync(user, password);
+        }
+
+        public async Task UpdateUserPassword(ApplicationUser user, string currentPassword, string newPassword)
+        {
+            await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        }
+
+        public async Task UpdateUser(ApplicationUser user)
+        {
+            await userManager.UpdateAsync(user);
+        }
+
+        public async Task DeleteUser(ApplicationUser user)
+        {
+            await userManager.UpdateAsync(user);
+        }
+
         public void AddToContext(Member member)
         {
-            _context.Members.Add(member);
+            context.Members.Add(member);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

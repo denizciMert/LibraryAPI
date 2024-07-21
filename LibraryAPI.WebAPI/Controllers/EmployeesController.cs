@@ -1,26 +1,26 @@
 ﻿using LibraryAPI.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
+using LibraryAPI.Entities.DTOs.EmployeeDTO;
 using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
     [Route("api/[controller]/")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class EmployeesController : ControllerBase
     {
-        private readonly ILibraryServiceManager<CategoryGet,CategoryPost,Category> _libraryServiceManager;
+        private readonly ILibraryUserManager<EmployeeGet,EmployeePost,Employee> _libraryUserManager;
 
-        public CategoriesController(ILibraryServiceManager<CategoryGet, CategoryPost, Category> libraryServiceManager)
+        public EmployeesController(ILibraryUserManager<EmployeeGet, EmployeePost, Employee> libraryUserManager)
         {
-            _libraryServiceManager = libraryServiceManager;
+            _libraryUserManager = libraryUserManager;
         }
 
-        // GET: api/Categories
+        // GET: api/Employees
         [HttpGet("Get")]
-        public async Task<ActionResult<IEnumerable<CategoryGet>>> GetAll()
+        public async Task<ActionResult<IEnumerable<EmployeeGet>>> GetAll()
         {
-            var result = await _libraryServiceManager.GetAllAsync();
+            var result = await _libraryUserManager.GetAllAsync();
 
             if (!result.Success)
             {
@@ -31,9 +31,9 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         [HttpGet("GetData")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAllData()
+        public async Task<ActionResult<IEnumerable<Employee>>> GetAllData()
         {
-            var result = await _libraryServiceManager.GetAllWithDataAsync();
+            var result = await _libraryUserManager.GetAllWithDataAsync();
 
             if (!result.Success)
             {
@@ -43,11 +43,11 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        // GET: api/Categories/5
+        // GET: api/Employees/5
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<CategoryGet>> Get(int id)
+        public async Task<ActionResult<EmployeeGet>> Get(string id)
         {
-            var result = await _libraryServiceManager.GetByIdAsync(id);
+            var result = await _libraryUserManager.GetByIdAsync(id);
 
             if (!result.Success)
             {
@@ -58,9 +58,9 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         [HttpGet("GetData/{id}")]
-        public async Task<ActionResult<Category>> GetData(int id)
+        public async Task<ActionResult<Employee>> GetData(string id)
         {
-            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
+            var result = await _libraryUserManager.GetWithDataByIdAsync(id);
 
             if (!result.Success)
             {
@@ -70,12 +70,12 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        // PUT: api/Categories/5
+        // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Put/{id}")]
-        public async Task<IActionResult> Put(int id, CategoryPost category)
+        public async Task<IActionResult> Put(string id, EmployeePost employee)
         {
-            var result = await _libraryServiceManager.UpdateAsync(id, category);
+            var result = await _libraryUserManager.UpdateAsync(id, employee);
 
             if (!result.Success)
             {
@@ -85,14 +85,12 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        // POST: api/Categories
+        // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Post")]
-        public async Task<ActionResult<CategoryPost>> Post(CategoryPost category)
+        public async Task<ActionResult<EmployeePost>> Post(EmployeePost employee)
         {
-            //UploadController uploadController = new UploadController();
-            //var image = await uploadController.UploadImage(category.FileForm);
-            var result = await _libraryServiceManager.AddAsync(category);
+            var result = await _libraryUserManager.AddAsync(employee);
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);
@@ -101,11 +99,11 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        // DELETE: api/Categories/5
+        // DELETE: api/Employees/5
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var result = await _libraryServiceManager.DeleteAsync(id);
+            var result = await _libraryUserManager.DeleteAsync(id);
 
             if (!result.Success)
             {

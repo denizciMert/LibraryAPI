@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var reservations = await _reservationData.SelectAll();
+                var reservations = await _reservationData.SelectAllFiltered();
                 if (reservations == null || reservations.Count == 0)
                 {
                     return ServiceResult<IEnumerable<ReservationGet>>.FailureResult("Rezervasyon verisi bulunmuyor.");

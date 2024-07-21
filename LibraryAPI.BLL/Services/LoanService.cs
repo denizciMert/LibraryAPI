@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var loans = await _loanData.SelectAll();
+                var loans = await _loanData.SelectAllFiltered();
                 if (loans == null || loans.Count == 0)
                 {
                     return ServiceResult<IEnumerable<LoanGet>>.FailureResult("Kredi verisi bulunmuyor.");

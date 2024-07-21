@@ -1,27 +1,34 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.CityDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class CityData : IQueryBase<City>
+    public class CityData(ApplicationDbContext context) : IQueryBase<City>
     {
-        private readonly ApplicationDbContext _context;
-        public CityData(ApplicationDbContext context)
+        public async Task<List<City>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Cities
+                .Include(x => x.Country)
+                .Where(x=>x.State!=State.Silindi)
+                .ToListAsync();
         }
 
         public async Task<List<City>> SelectAll()
         {
-            return await _context.Cities.Include(x=>x.Country).ToListAsync();
+            return await context.Cities
+                .Include(x=>x.Country)
+                .ToListAsync();
         }
 
         public async Task<City> SelectForEntity(int id)
         {
-            return await _context.Cities.Include(x => x.Country).FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Cities
+                .Include(x => x.Country)
+                .FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<City> SelectForUser(string id)
@@ -45,12 +52,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(City city)
         {
-            _context.Cities.Add(city);
+            context.Cities.Add(city);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

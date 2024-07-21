@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var penaltyTypes = await _penaltyTypeData.SelectAll();
+                var penaltyTypes = await _penaltyTypeData.SelectAllFiltered();
                 if (penaltyTypes == null || penaltyTypes.Count == 0)
                 {
                     return ServiceResult<IEnumerable<PenaltyTypeGet>>.FailureResult("Ceza türü verisi bulunmuyor.");

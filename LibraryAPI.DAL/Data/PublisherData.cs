@@ -1,27 +1,26 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.PublisherDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class PublisherData : IQueryBase<Publisher>
+    public class PublisherData(ApplicationDbContext context) : IQueryBase<Publisher>
     {
-        private readonly ApplicationDbContext _context;
-
-        public PublisherData(ApplicationDbContext context)
+        public async Task<List<Publisher>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Publishers.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Publisher>> SelectAll()
         {
-            return await _context.Publishers.ToListAsync();
+            return await context.Publishers.ToListAsync();
         }
 
         public async Task<Publisher> SelectForEntity(int id)
         {
-            return await _context.Publishers.FirstOrDefaultAsync(x => x.Id == id);
+            return await context.Publishers.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Publisher> SelectForUser(string id)
@@ -44,12 +43,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Publisher publisher)
         {
-            _context.Publishers.Add(publisher);
+            context.Publishers.Add(publisher);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

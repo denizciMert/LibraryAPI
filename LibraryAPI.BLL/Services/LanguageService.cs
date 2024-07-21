@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var languages = await _languageData.SelectAll();
+                var languages = await _languageData.SelectAllFiltered();
                 if (languages == null || languages.Count == 0)
                 {
                     return ServiceResult<IEnumerable<LanguageGet>>.FailureResult("Dil verisi bulunmuyor.");

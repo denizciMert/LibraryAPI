@@ -1,28 +1,27 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.ShiftDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class ShiftData : IQueryBase<Shift>
+    public class ShiftData(ApplicationDbContext context) : IQueryBase<Shift>
     {
-        private readonly ApplicationDbContext _context;
-
-        public ShiftData(ApplicationDbContext context)
+        public async Task<List<Shift>> SelectAllFiltered()
         {
-            _context = context;
+            return await context.Shifts.Where(x=>x.State!=State.Silindi).ToListAsync();
         }
 
         public async Task<List<Shift>> SelectAll()
         {
-            return await _context.Shifts.ToListAsync();
+            return await context.Shifts.ToListAsync();
         }
 
         public async Task<Shift> SelectForEntity(int id)
         {
-            return await _context.Shifts.FirstOrDefaultAsync(x=>x.Id==id);
+            return await context.Shifts.FirstOrDefaultAsync(x=>x.Id==id);
         }
 
         public async Task<Shift> SelectForUser(string id)
@@ -45,12 +44,12 @@ namespace LibraryAPI.DAL.Data
 
         public void AddToContext(Shift shift)
         {
-            _context.Shifts.Add(shift);
+            context.Shifts.Add(shift);
         }
 
         public async Task SaveContext()
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

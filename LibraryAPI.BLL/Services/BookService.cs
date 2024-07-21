@@ -24,7 +24,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var books = await _bookData.SelectAll();
+                var books = await _bookData.SelectAllFiltered();
                 if (books == null || books.Count == 0)
                 {
                     return ServiceResult<IEnumerable<BookGet>>.FailureResult("Kitap verisi bulunmuyor.");

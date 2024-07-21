@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var departments = await _departmentData.SelectAll();
+                var departments = await _departmentData.SelectAllFiltered();
                 if (departments == null || departments.Count == 0)
                 {
                     return ServiceResult<IEnumerable<DepartmentGet>>.FailureResult("Bölüm verisi bulunmuyor.");

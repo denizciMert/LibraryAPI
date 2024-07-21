@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                var authors = await _authorData.SelectAll();
+                var authors = await _authorData.SelectAllFiltered();
                 if (authors == null || authors.Count == 0)
                 {
                     return ServiceResult<IEnumerable<AuthorGet>>.FailureResult("Yazar verisi bulunmuyor.");

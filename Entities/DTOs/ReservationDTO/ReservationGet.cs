@@ -8,6 +8,7 @@
         public string? StudyTable { get; set; } = string.Empty;
         public DateTime? ReservationStart { get; set; }
         public DateTime? ReservationEnd { get; set; }
+        public bool? Active { get; set; }
         public DateTime? CreatinDateLog { get; set; }
         public DateTime? UpdateDateLog { get; set; }
         public DateTime? DeleteDateLog { get; set; }

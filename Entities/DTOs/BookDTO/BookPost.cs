@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryAPI.Entities.DTOs.BookDTO
 {
@@ -37,5 +39,10 @@ namespace LibraryAPI.Entities.DTOs.BookDTO
 
         [Required]
         public List<int> AuthorIds { get; set; } = [];
+
+        public string? ImagePath { get; set; } = string.Empty;
+
+        [NotMapped]
+        public IFormFile? FileForm { get; set; }
     }
 }

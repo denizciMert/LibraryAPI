@@ -4,6 +4,7 @@ using LibraryAPI.BLL.Mappers;
 using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.MemberDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -114,6 +115,7 @@ namespace LibraryAPI.BLL.Services
                 var newMember = _memberMapper.PostMember(newUser, tPost);
                 _memberData.AddToContext(newMember);
                 await _memberData.SaveContext();
+                await _memberData.AddRoleToUser(newMember.ApplicationUser, ((UserRole)tPost.UserRoleId).ToString());
                 var result = await GetByIdAsync(newMember.Id);
                 return ServiceResult<MemberGet>.SuccessResult(result.Data);
             }

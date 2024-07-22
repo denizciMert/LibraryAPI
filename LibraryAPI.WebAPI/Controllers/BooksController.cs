@@ -10,10 +10,12 @@ namespace LibraryAPI.WebAPI.Controllers
     public class BooksController : ControllerBase
     {
         private readonly ILibraryServiceManager<BookGet, BookPost, Book> _libraryServiceManager;
+        private readonly IFileUploadService _fileUploadService;
 
-        public BooksController(ILibraryServiceManager<BookGet, BookPost, Book> libraryServiceManager)
+        public BooksController(ILibraryServiceManager<BookGet, BookPost, Book> libraryServiceManager, IFileUploadService fileUploadService)
         {
             _libraryServiceManager = libraryServiceManager;
+            _fileUploadService = fileUploadService;
         }
 
         // GET: api/Books
@@ -75,6 +77,16 @@ namespace LibraryAPI.WebAPI.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, BookPost book)
         {
+            if (book.FileForm != null)
+            {
+                var imagePath = await _fileUploadService.UploadImage(book.FileForm);
+                if (!imagePath.Success)
+                {
+                    return BadRequest(imagePath.ErrorMessage);
+                }
+                book.ImagePath = imagePath.Data;
+            }
+
             var result = await _libraryServiceManager.UpdateAsync(id, book);
 
             if (!result.Success)
@@ -90,6 +102,20 @@ namespace LibraryAPI.WebAPI.Controllers
         [HttpPost("Post")]
         public async Task<ActionResult<BookLanguage>> Post(BookPost book)
         {
+            if (book.FileForm != null)
+            {
+                var imagePath = await _fileUploadService.UploadImage(book.FileForm);
+                if (!imagePath.Success)
+                {
+                    return BadRequest(imagePath.ErrorMessage);
+                }
+                book.ImagePath = imagePath.Data;
+            }
+            else
+            {
+                book.ImagePath = null;
+            }
+
             var result = await _libraryServiceManager.AddAsync(book);
             if (!result.Success)
             {

@@ -34,6 +34,11 @@ namespace LibraryAPI.DAL.Data
             throw new NotImplementedException();
         }
 
+        public async Task AddRoleToUser(ApplicationUser user,string role)
+        {
+            await userManager.AddToRoleAsync(user, role);
+        }
+
         public async Task<Employee> SelectForUser(string id)
         {
             return await context.Employees
@@ -57,6 +62,8 @@ namespace LibraryAPI.DAL.Data
             }
             return false;
         }
+
+
 
         public async Task SaveUser(ApplicationUser user, string password)
         {

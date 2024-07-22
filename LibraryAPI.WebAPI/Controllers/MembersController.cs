@@ -10,10 +10,12 @@ namespace LibraryAPI.WebAPI.Controllers
     public class MembersController : ControllerBase
     {
         private readonly ILibraryUserManager<MemberGet, MemberPost, Member> _libraryUserManager;
+        private readonly IFileUploadService _fileUploadService;
 
-        public MembersController(ILibraryUserManager<MemberGet, MemberPost, Member> libraryUserManager)
+        public MembersController(ILibraryUserManager<MemberGet, MemberPost, Member> libraryUserManager, IFileUploadService fileUploadService)
         {
             _libraryUserManager = libraryUserManager;
+            _fileUploadService = fileUploadService;
         }
 
         // GET: api/Members
@@ -75,6 +77,16 @@ namespace LibraryAPI.WebAPI.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(string id, MemberPost member)
         {
+            if (member.FileForm != null)
+            {
+                var imagePath = await _fileUploadService.UploadImage(member.FileForm);
+                if (!imagePath.Success)
+                {
+                    return BadRequest(imagePath.ErrorMessage);
+                }
+                member.UserImagePath = imagePath.Data;
+            }
+
             var result = await _libraryUserManager.UpdateAsync(id, member);
 
             if (!result.Success)
@@ -90,7 +102,22 @@ namespace LibraryAPI.WebAPI.Controllers
         [HttpPost("Post")]
         public async Task<ActionResult<MemberPost>> Post(MemberPost member)
         {
+            if (member.FileForm != null)
+            {
+                var imagePath = await _fileUploadService.UploadImage(member.FileForm);
+                if (!imagePath.Success)
+                {
+                    return BadRequest(imagePath.ErrorMessage);
+                }
+                member.UserImagePath = imagePath.Data;
+            }
+            else
+            {
+                member.UserImagePath = null;
+            }
+
             var result = await _libraryUserManager.AddAsync(member);
+            
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);

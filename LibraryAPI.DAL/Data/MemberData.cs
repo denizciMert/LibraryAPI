@@ -58,6 +58,11 @@ namespace LibraryAPI.DAL.Data
             return false;
         }
 
+        public async Task AddRoleToUser(ApplicationUser user, string role)
+        {
+            await userManager.AddToRoleAsync(user, role);
+        }
+
         public async Task SaveUser(ApplicationUser user, string password)
         {
             await userManager.CreateAsync(user, password);

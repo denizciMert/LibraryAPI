@@ -4,6 +4,7 @@ using LibraryAPI.BLL.Mappers;
 using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.EmployeeDTO;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -109,6 +110,7 @@ namespace LibraryAPI.BLL.Services
                 var newEmployee = _employeeMapper.PostEmployee(newUser, tPost);
                 _employeeData.AddToContext(newEmployee);
                 await _employeeData.SaveContext();
+                await _employeeData.AddRoleToUser(newEmployee.ApplicationUser, ((UserRole)tPost.UserRoleId).ToString());
                 var result = await GetByIdAsync(newEmployee.Id);
                 return ServiceResult<EmployeeGet>.SuccessResult(result.Data);
             }

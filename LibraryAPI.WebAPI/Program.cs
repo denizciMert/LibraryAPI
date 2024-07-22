@@ -1,5 +1,6 @@
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.BLL.Services;
+using LibraryAPI.BLL.Core;
 using LibraryAPI.DAL;
 using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.AuthorDTO;
@@ -30,7 +31,7 @@ namespace LibraryAPI.WebAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,9 @@ namespace LibraryAPI.WebAPI
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddAuthentication();
+            builder.Services.AddAuthorization();
 
             builder.Services.AddScoped<ILibraryServiceManager<AddressGet, AddressPost, Address>, AddressService>();
             builder.Services.AddScoped<ILibraryServiceManager<AuthorGet, AuthorPost, Author>, AuthorService>();
@@ -66,6 +70,8 @@ namespace LibraryAPI.WebAPI
             builder.Services.AddScoped<ILibraryUserManager<MemberGet, MemberPost, Member>, MemberService>();
             builder.Services.AddScoped<ILibraryUserManager<EmployeeGet, EmployeePost, Employee>, EmployeeService>();
 
+            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -84,12 +90,26 @@ namespace LibraryAPI.WebAPI
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 
-            app.Run();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    await RolesService.CreateRoles(services);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while creating roles.");
+                }
+            }
+
+            await app.RunAsync();
         }
     }
 }

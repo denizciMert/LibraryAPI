@@ -10,10 +10,12 @@ namespace LibraryAPI.WebAPI.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly ILibraryUserManager<EmployeeGet,EmployeePost,Employee> _libraryUserManager;
+        private readonly IFileUploadService _fileUploadService;
 
-        public EmployeesController(ILibraryUserManager<EmployeeGet, EmployeePost, Employee> libraryUserManager)
+        public EmployeesController(ILibraryUserManager<EmployeeGet, EmployeePost, Employee> libraryUserManager, IFileUploadService fileUploadService)
         {
             _libraryUserManager = libraryUserManager;
+            _fileUploadService = fileUploadService;
         }
 
         // GET: api/Employees
@@ -75,13 +77,20 @@ namespace LibraryAPI.WebAPI.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(string id, EmployeePost employee)
         {
+            if (employee.FileForm != null)
+            {
+                var imagePath = await _fileUploadService.UploadImage(employee.FileForm);
+                if (!imagePath.Success)
+                {
+                    return BadRequest(imagePath.ErrorMessage);
+                }
+                employee.UserImagePath = imagePath.Data;
+            }
             var result = await _libraryUserManager.UpdateAsync(id, employee);
-
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);
             }
-
             return Ok(result.Data);
         }
 
@@ -90,12 +99,25 @@ namespace LibraryAPI.WebAPI.Controllers
         [HttpPost("Post")]
         public async Task<ActionResult<EmployeePost>> Post(EmployeePost employee)
         {
+            if (employee.FileForm!=null)
+            {
+                var imagePath= await _fileUploadService.UploadImage(employee.FileForm);
+                if (!imagePath.Success)
+                {
+                    return BadRequest(imagePath.ErrorMessage);
+                }
+                employee.UserImagePath = imagePath.Data;
+            }
+            else
+            {
+                employee.UserImagePath = null;
+            }
+
             var result = await _libraryUserManager.AddAsync(employee);
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);
             }
-
             return Ok(result.Data);
         }
 

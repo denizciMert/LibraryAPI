@@ -18,5 +18,6 @@ namespace LibraryAPI.DAL.Data.Interfaces
         public Task<bool> PasswordChange(ApplicationUser user, string newPassword, string token);
         public Task<bool> EmailChange(ApplicationUser user, string newEmail, string token);
         public Task<bool> EmailConfirm(ApplicationUser user, string token);
+        public Task<bool> ChangeUserRole(ApplicationUser user);
     }
 }

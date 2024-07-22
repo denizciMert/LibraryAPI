@@ -116,6 +116,7 @@ namespace LibraryAPI.WebAPI.Controllers
                 member.UserImagePath = null;
             }
 
+            member.UserRoleId = 0;
             var result = await _libraryUserManager.AddAsync(member);
             
             if (!result.Success)

@@ -1,10 +1,6 @@
-﻿using LibraryAPI.Entities.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using mailslurp.Api;
-using mailslurp.Client;
-using mailslurp.Model;
+using LibraryAPI.BLL.Interfaces;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
@@ -12,94 +8,139 @@ namespace LibraryAPI.WebAPI.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILibraryAccountManager _accountManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController( ILibraryAccountManager accountManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _accountManager = accountManager;
         }
 
         [HttpPost("Login")]
         public async Task<ActionResult> Login(string userName, string password)
         {
-            var applicationUser = _userManager.FindByNameAsync(userName).Result;
-
-            if (applicationUser != null)
+            var user = await _accountManager.FindUserByUserName(userName);
+            if (!user.Success)
             {
-                var signInResult = _signInManager.PasswordSignInAsync(applicationUser, password, false, false).Result;
-                if (signInResult.Succeeded == true)
-                {
-                    return Ok("Başarıyle giriş yapıldı.");
-                }
+                return NotFound(user.ErrorMessage);
             }
-            return Unauthorized();
+            var result = await _accountManager.Login(user.Data, password);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            return Ok(result.Data);
         }
 
-        [HttpGet("Logout")]
         [Authorize]
+        [HttpGet("Logout")]
         public async Task<ActionResult> Logout()
         {
-            try
+            var result = await _accountManager.Logout();
+            if (!result.Success)
             {
-                await _signInManager.SignOutAsync();
-                return Ok("Hesabınızdan başarıyla çıkış yaptınız.");
+                return Unauthorized(result.ErrorMessage);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Çıkış işlemi esnasında bir hata meydana geldi. Hata:", details = ex.Message });
-            }
+            return Ok(result.Data);
         }
 
         [HttpPost("ForgetPassword")]
         public async Task<ActionResult<string>> ForgetPassword(string userName)
         {
-            var applicationUser = await _userManager.FindByNameAsync(userName);
-            if (applicationUser == null)
+            var applicationUser = await _accountManager.FindUserByUserName(userName);
+            if (!applicationUser.Success)
             {
-                return BadRequest("Kullanıcı bulunamadı.");
+                return BadRequest(applicationUser.ErrorMessage);
             }
-
-            string token = await _userManager.GeneratePasswordResetTokenAsync(applicationUser);
-
-            var email = new SendEmailOptions
+            var token = await _accountManager.ForgetPassword(applicationUser.Data);
+            if (!token.Success)
             {
-                To = new List<string> { applicationUser.Email },
-                Subject = "Denizci Kütüphanesi Şifre Sıfırlama",
-                Body = $"Şifre sıfırlama talebinizi aldık. Bu kodu kullanarak şifrenizi sıfırlayabilirsiniz. \n Token: {token}"
-            };
-
-            try
-            {
-                var configuration = new Configuration();
-                configuration.ApiKey.Add("x-api-key", "4a7785812f96534025ddbe3b4d5c5f266f323a43b15c13b478ec8d9732a59f1c");
-                configuration.Timeout = 120_000;
-
-                var inboxController = new InboxControllerApi(configuration);
-                var inbox = inboxController.CreateInboxWithDefaults();
-                await inboxController.SendEmailAsync(inbox.Id, email);
-
-                return Ok(token);
+                return BadRequest(token.ErrorMessage);
             }
-            catch (ApiException e)
-            {
-                return StatusCode(500, $"E-posta gönderimi sırasında bir hata oluştu: {e.Message}");
-            }
+            return Ok(token.Data);
         }
 
-
-
-
         [HttpPost("ResetPassword")]
-        public ActionResult ResetPassword(string userName, string token, string newPassword)
+        public async Task<ActionResult> ResetPassword(string userName, string token, string newPassword)
         {
+            var applicationUser = await _accountManager.FindUserByUserName(userName);
+            if (!applicationUser.Success)
+            {
+                return BadRequest(applicationUser.ErrorMessage);
+            }
+            var result = await _accountManager.ResetPassword(applicationUser.Data, newPassword, token);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            return Ok(result.Data);
+        }
 
-            ApplicationUser applicationUser = _userManager.FindByNameAsync(userName).Result;
+        [Authorize]
+        [HttpPost("RequestEmailChange")]
+        public async Task<ActionResult<string>> RequestEmailChange(string userName, string newEmail)
+        {
+            var applicationUser = await _accountManager.FindUserByUserName(userName);
+            if (!applicationUser.Success)
+            {
+                return BadRequest(applicationUser.ErrorMessage);
+            }
+            var token = await _accountManager.RequestEmailChange(applicationUser.Data,newEmail);
+            if (!token.Success)
+            {
+                return BadRequest(token.ErrorMessage);
+            }
+            return Ok(token.Data);
+        }
 
-            _userManager.ResetPasswordAsync(applicationUser, token, newPassword).Wait();
+        [Authorize]
+        [HttpPost("ChangeEmail")]
+        public async Task<ActionResult<string>> ChangeEmail(string userName, string newEmail, string token)
+        {
+            var applicationUser = await _accountManager.FindUserByUserName(userName);
+            if (!applicationUser.Success)
+            {
+                return BadRequest(applicationUser.ErrorMessage);
+            }
+            var result = await _accountManager.ChangeEmail(applicationUser.Data, newEmail, token);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            return Ok(result.Data);
+        }
 
-            return Ok();
+        [Authorize]
+        [HttpPost("RequestEmailConfirm")]
+        public async Task<ActionResult<string>> RequestEmailConfirm(string userName)
+        {
+            var applicationUser = await _accountManager.FindUserByUserName(userName);
+            if (!applicationUser.Success)
+            {
+                return BadRequest(applicationUser.ErrorMessage);
+            }
+            var token = await _accountManager.RequestEmailConfirm(applicationUser.Data);
+            if (!token.Success)
+            {
+                return BadRequest(token.ErrorMessage);
+            }
+            return Ok(token.Data);
+        }
+
+        [Authorize]
+        [HttpPost("ConfirmEmail")]
+        public async Task<ActionResult<string>> ConfirmEmail(string userName, string token)
+        {
+            var applicationUser = await _accountManager.FindUserByUserName(userName);
+            if (!applicationUser.Success)
+            {
+                return BadRequest(applicationUser.ErrorMessage);
+            }
+            var result = await _accountManager.ConfirmEmail(applicationUser.Data, token);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            return Ok(result.Data);
         }
     }
 }

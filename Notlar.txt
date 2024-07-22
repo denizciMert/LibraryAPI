@@ -1,4 +1,3 @@
-user actions kontrolcüsünü kur - login -logout -reset pass -forget pass
 diðer servislerin mantýk kontrollerini ekle
 authorizaton ekle
 WGGZLUVE5KA24P3BAYGJCGBA

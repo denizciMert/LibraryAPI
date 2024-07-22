@@ -38,7 +38,7 @@ namespace LibraryAPI.WebAPI
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>
                 (options => options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext"),
-                    b=>b.MigrationsAssembly("LibraryAPI.DAL")));
+                    b => b.MigrationsAssembly("LibraryAPI.DAL")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -70,7 +70,11 @@ namespace LibraryAPI.WebAPI
             builder.Services.AddScoped<ILibraryUserManager<MemberGet, MemberPost, Member>, MemberService>();
             builder.Services.AddScoped<ILibraryUserManager<EmployeeGet, EmployeePost, Employee>, EmployeeService>();
 
+            builder.Services.AddScoped<ILibraryAccountManager, AccountService>();
+
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+
+            builder.Services.AddScoped<MailService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -85,7 +89,7 @@ namespace LibraryAPI.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-           
+
             app.UseStaticFiles();
 
             app.UseHttpsRedirection();

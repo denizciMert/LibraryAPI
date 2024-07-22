@@ -1,20 +1,22 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace LibraryAPI.DAL.Data
 {
-    public class AccountData(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager) : IAccountBase
+    public class AccountData(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : IAccountBase
     {
         public async Task<ApplicationUser> FindUserByUserNameAsync(string userName)
         {
-            return await userManager.FindByNameAsync(userName);
+            var user = await userManager.FindByNameAsync(userName);
+            
+            return user;
         }
 
         public async Task<bool> UserSignInAsync(ApplicationUser user, string password)
         {
-            var result = signInManager.PasswordSignInAsync(user, password, false, false).Result;
-            return result.Succeeded;
+            return signInManager.PasswordSignInAsync(user, password, false, false).Result.Succeeded;
         }
 
         public Task<bool> UserSignOutAsync()
@@ -29,7 +31,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<string> GenerateEmailChangeToken(ApplicationUser user, string newEmail)
         {
-            return await userManager.GenerateChangeEmailTokenAsync(user,newEmail);
+            return await userManager.GenerateChangeEmailTokenAsync(user, newEmail);
         }
 
         public async Task<string> GenerateEmailConfirmToken(ApplicationUser user)
@@ -44,12 +46,42 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> EmailChange(ApplicationUser user, string newEmail, string token)
         {
-            return userManager.ChangeEmailAsync(user,newEmail, token).Result.Succeeded;
+            return userManager.ChangeEmailAsync(user, newEmail, token).Result.Succeeded;
         }
 
         public async Task<bool> EmailConfirm(ApplicationUser user, string token)
         {
             return userManager.ConfirmEmailAsync(user, token).Result.Succeeded;
+        }
+
+        public async Task<bool> ChangeUserRole(ApplicationUser user)
+        {
+            var role0 = 0;
+            var role1 = 1;
+            var role0Name = ((UserRole)role0).ToString();
+            var role1Name = ((UserRole)role1).ToString();
+            var isUserRole0 = await userManager.IsInRoleAsync(user, role0Name);
+            if (!isUserRole0)
+            {
+                var isUserRole1 = await userManager.IsInRoleAsync(user, role1Name);
+                if (!isUserRole1)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            var removeRole = userManager.RemoveFromRoleAsync(user, role0Name).Result;
+            if (!removeRole.Succeeded)
+            {
+                return false;
+            }
+            var addRole = userManager.AddToRoleAsync(user, role1Name).Result;
+            if (!addRole.Succeeded)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

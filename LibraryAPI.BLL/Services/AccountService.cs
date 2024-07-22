@@ -2,121 +2,195 @@
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.Models;
-using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Identity;
 
 namespace LibraryAPI.BLL.Services
 {
     public class AccountService : ILibraryAccountManager
     {
         private readonly AccountData _accountData;
+        private readonly MailService _mailService;
 
-        public AccountService(AccountData accountData)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, MailService mailService)
         {
-            _accountData = accountData;
+            _accountData = new AccountData(userManager, signInManager);
+            _mailService = mailService;
         }
 
-        public async Task<ServiceResult<bool>> Login(ApplicationUser user, string password)
+        public async Task<ServiceResult<ApplicationUser>> FindUserByUserName(string userName)
         {
             try
             {
-                if (await _accountData.FindUserByUserNameAsync(user.UserName) == null)
+                ApplicationUser nullUser = new ApplicationUser();
+                nullUser = null;
+                var user = await _accountData.FindUserByUserNameAsync(userName);
+                if (user == nullUser )
                 {
-                    return ServiceResult<bool>.FailureResult("Kullanıcı bulunamadı.");
+                    return ServiceResult<ApplicationUser>.FailureResult("Kullanıcı bilgileriniz hatalı.");
                 }
-                await _accountData.UserSignInAsync(user, password);
+                return ServiceResult<ApplicationUser>.SuccessResult(user);
             }
             catch (Exception e)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<ApplicationUser>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
             }
-            return ServiceResult<bool>.SuccessResult(true);
         }
 
-        public async Task<ServiceResult<bool>> Logout()
+        public async Task<ServiceResult<string>> Login(ApplicationUser user, string password)
         {
             try
             {
-                await _accountData.UserSignOutAsync();
+                var result = _accountData.UserSignInAsync(user, password).Result;
+                if (result == false)
+                {
+                    return ServiceResult<string>.FailureResult("Kullanıcı bilgileriniz hatalı.");
+                }
+                return ServiceResult<string>.SuccessResult("Başarıyla giriş yapıldı.");
             }
             catch (Exception e)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
             }
-            return ServiceResult<bool>.SuccessResult(true);
         }
 
-        public async Task<ServiceResult<bool>> ForgetPassword(ApplicationUser user)
+        public async Task<ServiceResult<string>> Logout()
         {
             try
             {
-                await _accountData.GeneratePasswordResetToken(user);
+                var result = _accountData.UserSignOutAsync().Result;
+                if (result == false)
+                {
+                    return ServiceResult<string>.FailureResult("Çıkış yapılamıyor. Bir süre bekleyin ve tekrar deneyin.");
+                }
+                return ServiceResult<string>.SuccessResult("Başarıyla çıkış yapıldı.");
             }
             catch (Exception e)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
             }
-            return ServiceResult<bool>.SuccessResult(true);
         }
 
-        public async Task<ServiceResult<bool>> ResetPassword(ApplicationUser user, string newPassword, string token)
+        public async Task<ServiceResult<string>> ForgetPassword(ApplicationUser user)
         {
             try
             {
-                await _accountData.PasswordChange(user,newPassword, token);
+                var result = await _accountData.GeneratePasswordResetToken(user);
+                if (result is null or "")
+                {
+                    return ServiceResult<string>.FailureResult("Token oluşturulamıyor. Bir süre bekleyin ve tekrar deneyin.");
+                }
+                var mail= await _mailService.SendPasswordResetTokenMail(user.Email, result);
+                if (!mail.Success)
+                {
+                    return ServiceResult<string>.FailureResult("Oluşturulan token mail adresinize gönderilemedi.");
+                }
+                return ServiceResult<string>.SuccessResult(result);
             }
             catch (Exception e)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
             }
-            return ServiceResult<bool>.SuccessResult(true);
         }
 
-        public async Task<ServiceResult<bool>> RequestEmailChange(ApplicationUser user, string newEmail)
+        public async Task<ServiceResult<string>> ResetPassword(ApplicationUser user, string newPassword, string token)
         {
             try
             {
-                await _accountData.GenerateEmailChangeToken(user, newEmail);
+                var result = await _accountData.PasswordChange(user, newPassword, token);
+                if (!result)
+                {
+                    return ServiceResult<string>.SuccessResult("Şifreniz güncellenemedi.");
+                }
+                return ServiceResult<string>.SuccessResult("Şifreniz başarıyla güncellendi.");
             }
             catch (Exception e)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
             }
-            return ServiceResult<bool>.SuccessResult(true);
         }
 
-        public async Task<ServiceResult<bool>> RequestEmailConfirm()
+        public async Task<ServiceResult<string>> RequestEmailChange(ApplicationUser user, string newEmail)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await _accountData.GenerateEmailChangeToken(user, newEmail);
+                if (result is null or "")
+                {
+                    return ServiceResult<string>.FailureResult("Token oluşturulamıyor. Bir süre bekleyin ve tekrar deneyin.");
+                }
+                var mail =await _mailService.SendEmailChangeTokenMail(newEmail, result);
+                if (!mail.Success)
+                {
+                    return ServiceResult<string>.FailureResult("Oluşturulan token mail adresinize gönderilemedi.");
+                }
+                return ServiceResult<string>.SuccessResult(result);
+            }
+            catch (Exception e)
+            {
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+            }
         }
 
-        public async Task<ServiceResult<bool>> ChangeEmail()
+        public async Task<ServiceResult<string>> RequestEmailConfirm(ApplicationUser user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await _accountData.GenerateEmailConfirmToken(user);
+                if (result is null or "")
+                {
+                    return ServiceResult<string>.FailureResult("Token oluşturulamıyor. Bir süre bekleyin ve tekrar deneyin.");
+                }
+                var mail = await _mailService.SendEmailConfirmTokenMail(user.Email, result);
+                if (!mail.Success)
+                {
+                    return ServiceResult<string>.FailureResult("Oluşturulan token mail adresinize gönderilemedi.");
+                }
+                return ServiceResult<string>.SuccessResult(result);
+            }
+            catch (Exception e)
+            {
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+            }
         }
 
-        public async Task<ServiceResult<bool>> ConfirmEmail()
+        public async Task<ServiceResult<string>> ChangeEmail(ApplicationUser user, string newEmail, string token)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = _accountData.EmailChange(user, newEmail, token).Result;
+                if (!result)
+                {
+                    return ServiceResult<string>.FailureResult("Mail adresiniz değiştirilemedi. Bir süre bekleyin ve tekrar deneyin.");
+                }
+
+                return ServiceResult<string>.SuccessResult("Mail adresiniz başarıyla değiştirildi.");
+            }
+            catch (Exception e)
+            {
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+            }
+        }
+
+        public async Task<ServiceResult<string>> ConfirmEmail(ApplicationUser user, string token)
+        {
+            try
+            {
+                var result = _accountData.EmailConfirm(user, token).Result;
+                if (!result)
+                {
+                    return ServiceResult<string>.FailureResult("Mail adresiniz doğrulanamadı. Bir süre bekleyin ve tekrar deneyin.");
+                }
+                var roleResult = _accountData.ChangeUserRole(user).Result;
+                if (!roleResult)
+                {
+                    return ServiceResult<string>.FailureResult("Rol atamaları sırasında hata meydana geldi.");
+                }
+                return ServiceResult<string>.SuccessResult("Mail adresiniz başarıyla doğrulandı.");
+            }
+            catch (Exception e)
+            {
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+            }
         }
     }
 }
-/*
- * try
-            {
-                var addresses = await _addressData.SelectAllFiltered();
-                if (addresses == null || addresses.Count == 0)
-                {
-                    return ServiceResult<IEnumerable<AddressGet>>.FailureResult("Adres verisi bulunmuyor.");
-                }
-                List<AddressGet> addressGets = new List<AddressGet>();
-                foreach (var address in addresses)
-                {
-                    var addressGet = _addressMapper.MapToDto(address);
-                    addressGets.Add(addressGet);
-                }
-                return ServiceResult<IEnumerable<AddressGet>>.SuccessResult(addressGets);
-            }
-            catch (Exception ex)
-            {
-                return ServiceResult<IEnumerable<AddressGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
-            }*/

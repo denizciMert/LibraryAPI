@@ -20,7 +20,7 @@ namespace LibraryAPI.Entities.Models
 
         public List<Address>? Addresses { get; set; }
 
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
 
         [ForeignKey(nameof(CountryId))]
         public Country? Country { get; set; }

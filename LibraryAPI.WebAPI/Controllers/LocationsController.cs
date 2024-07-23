@@ -2,6 +2,7 @@
 using LibraryAPI.Entities.Models;
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.Entities.DTOs.LocationDTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
@@ -17,6 +18,8 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Locations
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LocationGet>>> GetAll()
         {
@@ -30,6 +33,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
+        [Authorize("Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Location>>> GetAllData()
         {
@@ -44,6 +48,8 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Locations/5
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<LocationGet>> Get(int id)
         {
@@ -57,6 +63,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
+        [Authorize("Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Location>> GetData(int id)
         {
@@ -72,6 +79,8 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Locations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, LocationPost location)
         {
@@ -87,6 +96,8 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Locations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<LocationPost>> Post(LocationPost location)
         {
@@ -100,6 +111,8 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Locations/5
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

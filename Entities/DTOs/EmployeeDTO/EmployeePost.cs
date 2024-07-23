@@ -51,7 +51,6 @@ namespace LibraryAPI.Entities.DTOs.EmployeeDTO
         [Range(0, 2)]
         public int GenderId { get; set; } = 0;
 
-        [Required]
         public int CountryId { get; set; }
 
         [Required]

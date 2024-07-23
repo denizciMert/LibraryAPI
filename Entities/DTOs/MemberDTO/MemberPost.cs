@@ -47,7 +47,6 @@ namespace LibraryAPI.Entities.DTOs.MemberDTO
         [Range(0, 2)]
         public int? GenderId { get; set; } = 0;
 
-        [Required]
         public int CountryId { get; set; }
 
         [StringLength(100, MinimumLength = 0)]

@@ -2,6 +2,7 @@
 using LibraryAPI.Entities.Models;
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.Entities.DTOs.AddressDTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
@@ -17,6 +18,8 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Addresses
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<AddressGet>>> GetAll()
         {
@@ -30,6 +33,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
+        [Authorize("Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Address>>> GetAllData()
         {
@@ -44,6 +48,9 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Addresses/5
+        [Authorize("Kullanıcı")]
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<AddressGet>> Get(int id)
         {
@@ -57,6 +64,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
+        [Authorize("Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Address>> GetData(int id)
         {
@@ -72,6 +80,9 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Addresses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize("Kullanıcı")]
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, AddressPost address)
         {
@@ -87,6 +98,9 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Addresses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize("Kullanıcı")]
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<AddressPost>> Post(AddressPost address)
         {
@@ -100,6 +114,9 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Addresses/5
+        [Authorize("Kullanıcı")]
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

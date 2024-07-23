@@ -2,6 +2,7 @@
 using LibraryAPI.Entities.Models;
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.Entities.DTOs.TitleDTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryAPI.WebAPI.Controllers
 {
@@ -17,6 +18,8 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Titles
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<TitleGet>>> GetAll()
         {
@@ -30,6 +33,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
+        [Authorize("Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Title>>> GetAllData()
         {
@@ -44,6 +48,8 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Titles/5
+        [Authorize("Çalışan")]
+        [Authorize("Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<TitleGet>> Get(int id)
         {
@@ -57,6 +63,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
+        [Authorize("Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Title>> GetData(int id)
         {
@@ -72,6 +79,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Titles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize("Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, TitlePost title)
         {
@@ -87,6 +95,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Titles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize("Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<TitlePost>> Post(TitlePost title)
         {
@@ -100,6 +109,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Titles/5
+        [Authorize("Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

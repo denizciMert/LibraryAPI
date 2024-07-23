@@ -46,12 +46,19 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> EmailChange(ApplicationUser user, string newEmail, string token)
         {
-            return userManager.ChangeEmailAsync(user, newEmail, token).Result.Succeeded;
+            var result = userManager.ChangeEmailAsync(user, newEmail, token).Result.Succeeded;
+            await userManager.UpdateNormalizedEmailAsync(user);
+            return result;
         }
 
         public async Task<bool> EmailConfirm(ApplicationUser user, string token)
         {
             return userManager.ConfirmEmailAsync(user, token).Result.Succeeded;
+        }
+
+        public async Task<bool> IsEmailConfirmed(ApplicationUser user)
+        {
+            return userManager.IsEmailConfirmedAsync(user).Result;
         }
 
         public async Task<bool> ChangeUserRole(ApplicationUser user)

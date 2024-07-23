@@ -175,6 +175,11 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
+                var isConfirmed = _accountData.IsEmailConfirmed(user).Result;
+                if (isConfirmed)
+                {
+                    return ServiceResult<string>.SuccessResult("Mail adresiniz zaten doğrulanmış.");
+                }
                 var result = _accountData.EmailConfirm(user, token).Result;
                 if (!result)
                 {

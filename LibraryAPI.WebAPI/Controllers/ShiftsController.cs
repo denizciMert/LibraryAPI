@@ -18,8 +18,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Shifts
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<ShiftGet>>> GetAll()
         {
@@ -33,7 +32,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Shift>>> GetAllData()
         {
@@ -48,8 +47,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Shifts/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<ShiftGet>> Get(int id)
         {
@@ -63,7 +61,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Shift>> GetData(int id)
         {
@@ -79,7 +77,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Shifts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, ShiftPost shift)
         {
@@ -95,7 +93,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Shifts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<ShiftPost>> Post(ShiftPost shift)
         {
@@ -109,7 +107,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Shifts/5
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

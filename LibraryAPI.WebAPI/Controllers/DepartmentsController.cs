@@ -18,8 +18,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Departments
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<DepartmentGet>>> GetAll()
         {
@@ -33,7 +32,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Department>>> GetAllData()
         {
@@ -48,8 +47,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Departments/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<DepartmentGet>> Get(int id)
         {
@@ -63,7 +61,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Department>> GetData(int id)
         {
@@ -79,8 +77,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, DepartmentPost department)
         {
@@ -96,8 +93,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Departments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<DepartmentPost>> Post(DepartmentPost department)
         {
@@ -111,8 +107,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Departments/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

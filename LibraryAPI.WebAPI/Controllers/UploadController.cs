@@ -1,4 +1,5 @@
 ﻿using LibraryAPI.BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryAPI.WebAPI.Controllers
@@ -14,6 +15,7 @@ namespace LibraryAPI.WebAPI.Controllers
             _uploadService = uploadService;
         }
 
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPost("Upload")]
         public async Task<IActionResult> UploadImage(IFormFile? imageFile)
         {

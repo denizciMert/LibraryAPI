@@ -18,8 +18,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Loans
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LoanGet>>> GetAll()
         {
@@ -33,7 +32,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Loan>>> GetAllData()
         {
@@ -48,8 +47,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Loans/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<LoanGet>> Get(int id)
         {
@@ -79,8 +77,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Loans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, LoanPost loan)
         {
@@ -96,8 +93,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Loans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<LoanPost>> Post(LoanPost loan)
         {
@@ -111,8 +107,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Loans/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

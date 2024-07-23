@@ -18,9 +18,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/StudyTables
-        [Authorize("Kullanıcı")]
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Kullanıcı,Çalışan,Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<StudyTableGet>>> GetAll()
         {
@@ -34,7 +32,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<StudyTable>>> GetAllData()
         {
@@ -49,9 +47,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/StudyTables/5
-        [Authorize("Kullanıcı")]
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Kullanıcı,Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<StudyTableGet>> Get(int id)
         {
@@ -65,7 +61,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<StudyTable>> GetData(int id)
         {
@@ -81,8 +77,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/StudyTables/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, StudyTablePost studyTable)
         {
@@ -98,8 +93,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/StudyTables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<StudyTablePost>> Post(StudyTablePost studyTable)
         {
@@ -113,8 +107,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/StudyTables/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

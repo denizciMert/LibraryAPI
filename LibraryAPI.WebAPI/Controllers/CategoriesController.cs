@@ -18,10 +18,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Categories
-        [Authorize("Ziyaretçi")]
-        [Authorize("Kullanıcı")]
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<CategoryGet>>> GetAll()
         {
@@ -35,7 +32,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Category>>> GetAllData()
         {
@@ -50,9 +47,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Categories/5
-        [Authorize("Kullanıcı")]
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Kullanıcı,Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<CategoryGet>> Get(int id)
         {
@@ -66,7 +61,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Category>> GetData(int id)
         {
@@ -82,8 +77,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, CategoryPost category)
         {
@@ -99,8 +93,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<CategoryPost>> Post(CategoryPost category)
         {
@@ -116,8 +109,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Categories/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -20,8 +20,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Members
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<MemberGet>>> GetAll()
         {
@@ -35,7 +34,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<Member>>> GetAllData()
         {
@@ -50,8 +49,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Members/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<MemberGet>> Get(string id)
         {
@@ -65,7 +63,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<Member>> GetData(string id)
         {
@@ -81,8 +79,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Members/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(string id, MemberPost member)
         {
@@ -108,9 +105,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Kullanıcı")]
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Kullanıcı,Çalışan,Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<MemberPost>> Post(MemberPost member)
         {
@@ -140,8 +135,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Members/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {

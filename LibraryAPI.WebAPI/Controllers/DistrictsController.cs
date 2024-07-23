@@ -18,8 +18,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Districts
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<DistrictGet>>> GetAll()
         {
@@ -33,7 +32,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData")]
         public async Task<ActionResult<IEnumerable<District>>> GetAllData()
         {
@@ -48,8 +47,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // GET: api/Districts/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<DistrictGet>> Get(int id)
         {
@@ -63,7 +61,7 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Yönetici")]
         [HttpGet("GetData/{id}")]
         public async Task<ActionResult<District>> GetData(int id)
         {
@@ -80,8 +78,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // PUT: api/Districts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, DistrictPost district)
         {
@@ -97,8 +94,7 @@ namespace LibraryAPI.WebAPI.Controllers
 
         // POST: api/Districts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpPost("Post")]
         public async Task<ActionResult<DistrictPost>> Post(DistrictPost district)
         {
@@ -112,8 +108,7 @@ namespace LibraryAPI.WebAPI.Controllers
         }
 
         // DELETE: api/Districts/5
-        [Authorize("Çalışan")]
-        [Authorize("Yönetici")]
+        [Authorize(Roles = "Çalışan,Yönetici")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

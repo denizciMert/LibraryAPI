@@ -1,3 +1,69 @@
 diðer servislerin mantýk kontrollerini ekle
-authorizaton ekle
-WGGZLUVE5KA24P3BAYGJCGBA
+account controller - GetProfile - UpdateProfile(Patch) - GetLoans - ReturnLoan - GetPenalties - PayPenalties endpointlerini ekle
+
+BookCopy?
+BookRating?
+
+mantýklar:
+
+adres- ayný adres ayný kullanýcýda olamaz
+
+yazar- ayný yazar tekrar kaydedilemez, yazar 18 yaþýndan küçük olamaz, yazar ölüm yýlý doðum tarihinden önce olamaz
+
+kitaplar- 
+			ayný ISBN e sahip sadece bir kayýt olabilir, diðer örnekleri BookCopy tablosuna eklenir, bookCount buradan list.count ile güncellenir.
+			rezerve edilen kitabýn kopya numarasý rezerve olarak ayarlanýr, book count tekrar hesaplanýr.
+			kitap hakkýnda deðerlendirmeyi sadece kitabý bir kere almýþ kiþiler yapabilir.
+
+kategoriler- ayný kategori tekrar kaydedilemez, bir kategori ayný alt kategoriden 2 adet tutamaz
+
+þehirler- ayný þehir tekrar kaydedilemez, bir ülkede ayný þehirden 2 adet tutamaz
+
+ülkeler- ayný ülke tekar kaydedilemez
+
+departmanlar- ayný departman tekrar kaydedilemez
+
+ilçeler - ayný ilçe tekrar kaydedilemez, bir þehir ayný ilçeden 2 adet tutamaz
+
+ApplicationUser- 
+				benzersiz kullanýcýadý
+				benzersiz mailadresi
+				benzersiz kimlik numarasý
+				18 yaþýndan küçük olamaz
+
+diller- ayný dil sadece bir kez kayýt edilebilir
+
+ödünç alýnanlar- 
+				bir üye tek seferde bir kitap alabilir
+				geri getirme tarihi dolarsa kiþiye ceza verilir
+				ceza verilen kiþi tüm cezayý ödemeden tekrar iþlem yapamaz
+				cezalý kiþi yasaklanýr
+				kitap ödünç almamýþ kiþi kitap iade edemez
+				cezasý olmayan kiþi ceza ödeyemez
+
+raflar- ayný raf tekrar kaydedilemez
+
+cezalar- 
+		geri getirme tarihi dolarsa kiþiye ceza verilir
+		ceza verilen kiþi tüm cezayý ödemeden tekrar iþlem yapamaz
+		cezalý kiþi yasaklanýr
+		cezasý olmayan kiþi ceza ödeyemez
+
+ceza tipleri- ayný ceza tipi sadece bir kez kaydedilebilir
+
+yayýncýlar- ayný yayýncý sadece bir kez kaydedilebilir
+
+rezervasyonlar- 
+				kullanýcý tek seferde bir rezervasyon alabilir
+				rezerve edilen masa rezerve olarak deðiþir
+				kullaným süresi dolduðunda masa uygun duruma düþer ve rezervasyon biter
+
+vardiyalar- ayný vardiya sadece bir kere kaydedilebilir
+
+masalar- ayný masa sadece bir kere kaydedilebilir
+
+alt kategoriler- ayný alt kategori sadece bir kere kayýt edilebilir, ayný alt kategori bir kategoriye sadece bir kere kayýt edilebilir
+
+ünvanlar- ayný ünvan sadece bir kere kayýt edilebilir
+
+mailslurp api kurtarma anahtarý= WGGZLUVE5KA24P3BAYGJCGBA

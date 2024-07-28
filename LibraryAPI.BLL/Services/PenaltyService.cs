@@ -110,7 +110,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<PenaltyGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<PenaltyGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 

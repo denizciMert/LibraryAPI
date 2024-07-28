@@ -56,7 +56,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> IsRegistered(AddressPost tPost)
         {
-            var addresses = await SelectAll();
+            var addresses = await SelectAllFiltered();
             foreach (var address in  addresses)
             {
                 if (address.UserId==tPost.UserId &&

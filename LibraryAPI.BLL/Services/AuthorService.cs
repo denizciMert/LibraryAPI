@@ -102,6 +102,14 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Bu yazar zaten eklenmiş.");
                 }
+                if (tPost.DateOfBirth > (DateTime.Now.Year-4))
+                {
+                    return ServiceResult<AuthorGet>.FailureResult("Yazar 4 yaşından küçük olamaz.");
+                }
+                if (tPost.DateOfDeath<tPost.DateOfBirth+4 || tPost.DateOfDeath>DateTime.Now.Year)
+                {
+                    return ServiceResult<AuthorGet>.FailureResult("Yazar ölüm yılı hatalı.");
+                }
                 var newAuthor = _authorMapper.PostEntity(tPost);
                 _authorData.AddToContext(newAuthor);
                 await _authorData.SaveContext();
@@ -122,6 +130,18 @@ namespace LibraryAPI.BLL.Services
                 if (author == null)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar verisi bulunmuyor.");
+                }
+                if (await _authorData.IsRegistered(tPost))
+                {
+                    return ServiceResult<AuthorGet>.FailureResult("Bu yazar zaten eklenmiş.");
+                }
+                if (tPost.DateOfBirth > DateTime.Now.AddYears(-4).Year)
+                {
+                    return ServiceResult<AuthorGet>.FailureResult("Yazar 4 yaşından küçük olamaz.");
+                }
+                if (tPost.DateOfDeath < tPost.DateOfBirth && tPost.DateOfDeath > DateTime.Now.Year)
+                {
+                    return ServiceResult<AuthorGet>.FailureResult("Yazar ölüm yılı hatalı.");
                 }
                 _authorMapper.UpdateEntity(author, tPost);
                 await _authorData.SaveContext();

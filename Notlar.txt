@@ -1,69 +1,76 @@
-diğer servislerin mantık kontrollerini ekle
-account controller - GetProfile - UpdateProfile(Patch) - GetLoans - ReturnLoan - GetPenalties - PayPenalties endpointlerini ekle
+diÄŸer servislerin mantÄ±k kontrollerini ekle
+*account controller - GetProfile - UpdateProfile(Patch) - GetLoans - ReturnLoan - GetPenalties - PayPenalties endpointlerini ekle
 
-BookCopy?
-BookRating?
+*BookCopy?
+*BookRating?
 
-mantıklar:
+mantÄ±klar:
 
-adres- aynı adres aynı kullanıcıda olamaz
+*adres- aynÄ± adres aynÄ± kullanÄ±cÄ±da olamaz
 
-yazar- aynı yazar tekrar kaydedilemez, yazar 18 yaşından küçük olamaz, yazar ölüm yılı doğum tarihinden önce olamaz
+*yazar- aynÄ± yazar tekrar kaydedilemez, yazar 18 yaÅŸÄ±ndan kÃ¼Ã§Ã¼k olamaz, yazar Ã¶lÃ¼m yÄ±lÄ± doÄŸum tarihinden Ã¶nce olamaz
 
 kitaplar- 
-			aynı ISBN e sahip sadece bir kayıt olabilir, diğer örnekleri BookCopy tablosuna eklenir, bookCount buradan list.count ile güncellenir.
-			rezerve edilen kitabın kopya numarası rezerve olarak ayarlanır, book count tekrar hesaplanır.
-			kitap hakkında değerlendirmeyi sadece kitabı bir kere almış kişiler yapabilir.
+			*aynÄ± ISBN e sahip sadece bir kayÄ±t olabilir, diÄŸer Ã¶rnekleri BookCopy tablosuna eklenir, bookCount buradan list.count ile gÃ¼ncellenir.
+			rezerve edilen kitabÄ±n kopya numarasÄ± rezerve olarak ayarlanÄ±r, book count tekrar hesaplanÄ±r.
+			kitap hakkÄ±nda deÄŸerlendirmeyi sadece kitabÄ± bir kere almÄ±ÅŸ kiÅŸiler yapabilir.
 
-kategoriler- aynı kategori tekrar kaydedilemez, bir kategori aynı alt kategoriden 2 adet tutamaz
+kategoriler- aynÄ± kategori tekrar kaydedilemez, bir kategori aynÄ± alt kategoriden 2 adet tutamaz
 
-şehirler- aynı şehir tekrar kaydedilemez, bir ülkede aynı şehirden 2 adet tutamaz
+ÅŸehirler- aynÄ± ÅŸehir tekrar kaydedilemez, bir Ã¼lkede aynÄ± ÅŸehirden 2 adet tutamaz
 
-ülkeler- aynı ülke tekar kaydedilemez
+Ã¼lkeler- aynÄ± Ã¼lke tekar kaydedilemez
 
-departmanlar- aynı departman tekrar kaydedilemez
+departmanlar- aynÄ± departman tekrar kaydedilemez
 
-ilçeler - aynı ilçe tekrar kaydedilemez, bir şehir aynı ilçeden 2 adet tutamaz
+ilÃ§eler - aynÄ± ilÃ§e tekrar kaydedilemez, bir ÅŸehir aynÄ± ilÃ§eden 2 adet tutamaz
 
 ApplicationUser- 
-				benzersiz kullanıcıadı
+				benzersiz kullanÄ±cÄ±adÄ±
 				benzersiz mailadresi
-				benzersiz kimlik numarası
-				18 yaşından küçük olamaz
+				benzersiz kimlik numarasÄ±
+				18 yaÅŸÄ±ndan kÃ¼Ã§Ã¼k olamaz
 
-diller- aynı dil sadece bir kez kayıt edilebilir
+diller- aynÄ± dil sadece bir kez kayÄ±t edilebilir
 
-ödünç alınanlar- 
-				bir üye tek seferde bir kitap alabilir
-				geri getirme tarihi dolarsa kişiye ceza verilir
-				ceza verilen kişi tüm cezayı ödemeden tekrar işlem yapamaz
-				cezalı kişi yasaklanır
-				kitap ödünç almamış kişi kitap iade edemez
-				cezası olmayan kişi ceza ödeyemez
+Ã¶dÃ¼nÃ§ alÄ±nanlar- 
+				bir Ã¼ye tek seferde bir kitap alabilir
+				geri getirme tarihi dolarsa kiÅŸiye ceza verilir
+				ceza verilen kiÅŸi tÃ¼m cezayÄ± Ã¶demeden tekrar iÅŸlem yapamaz
+				cezalÄ± kiÅŸi yasaklanÄ±r
+				kitap Ã¶dÃ¼nÃ§ almamÄ±ÅŸ kiÅŸi kitap iade edemez
+				cezasÄ± olmayan kiÅŸi ceza Ã¶deyemez
 
-raflar- aynı raf tekrar kaydedilemez
+raflar- aynÄ± raf tekrar kaydedilemez
 
 cezalar- 
-		geri getirme tarihi dolarsa kişiye ceza verilir
-		ceza verilen kişi tüm cezayı ödemeden tekrar işlem yapamaz
-		cezalı kişi yasaklanır
-		cezası olmayan kişi ceza ödeyemez
+		geri getirme tarihi dolarsa kiÅŸiye ceza verilir
+		ceza verilen kiÅŸi tÃ¼m cezayÄ± Ã¶demeden tekrar iÅŸlem yapamaz
+		cezalÄ± kiÅŸi yasaklanÄ±r
+		cezasÄ± olmayan kiÅŸi ceza Ã¶deyemez
 
-ceza tipleri- aynı ceza tipi sadece bir kez kaydedilebilir
+ceza tipleri- aynÄ± ceza tipi sadece bir kez kaydedilebilir
 
-yayıncılar- aynı yayıncı sadece bir kez kaydedilebilir
+yayÄ±ncÄ±lar- aynÄ± yayÄ±ncÄ± sadece bir kez kaydedilebilir
 
 rezervasyonlar- 
-				kullanıcı tek seferde bir rezervasyon alabilir
-				rezerve edilen masa rezerve olarak değişir
-				kullanım süresi dolduğunda masa uygun duruma düşer ve rezervasyon biter
+				kullanÄ±cÄ± tek seferde bir rezervasyon alabilir
+				rezerve edilen masa rezerve olarak deÄŸiÅŸir
+				kullanÄ±m sÃ¼resi dolduÄŸunda masa uygun duruma dÃ¼ÅŸer ve rezervasyon biter
 
-vardiyalar- aynı vardiya sadece bir kere kaydedilebilir
+vardiyalar- aynÄ± vardiya sadece bir kere kaydedilebilir
 
-masalar- aynı masa sadece bir kere kaydedilebilir
+masalar- aynÄ± masa sadece bir kere kaydedilebilir
 
-alt kategoriler- aynı alt kategori sadece bir kere kayıt edilebilir, aynı alt kategori bir kategoriye sadece bir kere kayıt edilebilir
+alt kategoriler- aynÄ± alt kategori sadece bir kere kayÄ±t edilebilir, aynÄ± alt kategori bir kategoriye sadece bir kere kayÄ±t edilebilir
 
-ünvanlar- aynı ünvan sadece bir kere kayıt edilebilir
+Ã¼nvanlar- aynÄ± Ã¼nvan sadece bir kere kayÄ±t edilebilir
 
-mailslurp api kurtarma anahtarı= WGGZLUVE5KA24P3BAYGJCGBA
+mailslurp api kurtarma anahtarÄ±= WGGZLUVE5KA24P3BAYGJCGBA
+
+--BookCopy--
+CopyMapper
+CopyService
+CopyData
+CopyGet
+CopyPost

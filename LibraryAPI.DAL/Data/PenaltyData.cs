@@ -51,7 +51,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> IsRegistered(PenaltyPost tPost)
         {
-            var penalties = await SelectAll();
+            var penalties = await SelectAllFiltered();
             foreach (var penalty in penalties)
             {
                 if (penalty.PenaltiedMembeId == tPost.PenaltiedMemberId &&

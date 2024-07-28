@@ -61,6 +61,41 @@ namespace LibraryAPI.DAL.Data
             return false;
         }
 
+        public async Task<bool> CanTakeLoanAndCalculateStorage(int bookId, int bookCopyNo)
+        {
+            var book = await context.Books.Include(x => x.BookCopies).FirstOrDefaultAsync(x => x.Id == bookId);
+
+            var copies = book.BookCopies.ToList();
+
+            foreach(var copy in copies)
+            {
+                if (copy.CopyNo == bookCopyNo)
+                {
+                    if (copy.Reserved == false)
+                    {
+                        copy.Reserved = true;
+                        book.CopyCount = (short)copies.Where(x => x.Reserved == false).ToList().Count;
+                        await context.SaveChangesAsync();
+                        return true;
+                    }
+                    else
+                    {
+                        book.CopyCount = (short)copies.Where(x => x.Reserved == false).ToList().Count;
+                        await context.SaveChangesAsync();
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task ChangeReserveBook(int bookId, int copyNo)
+        {
+            var book = await context.Books.Include(x => x.BookCopies).FirstOrDefaultAsync(x => x.Id == bookId);
+            book.BookCopies.FirstOrDefault(x => x.CopyNo == copyNo).Reserved = false;
+            await context.SaveChangesAsync();
+        }
+
         public void AddToContext(Loan loan)
         {
             context.Loans.Add(loan);

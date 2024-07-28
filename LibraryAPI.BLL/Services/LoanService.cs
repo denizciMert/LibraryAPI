@@ -26,7 +26,7 @@ namespace LibraryAPI.BLL.Services
                 var loans = await _loanData.SelectAllFiltered();
                 if (loans == null || loans.Count == 0)
                 {
-                    return ServiceResult<IEnumerable<LoanGet>>.FailureResult("Kredi verisi bulunmuyor.");
+                    return ServiceResult<IEnumerable<LoanGet>>.FailureResult("Ödünç alma verisi bulunmuyor.");
                 }
                 List<LoanGet> loanGets = new List<LoanGet>();
                 foreach (var loan in loans)
@@ -49,7 +49,7 @@ namespace LibraryAPI.BLL.Services
                 var loans = await _loanData.SelectAll();
                 if (loans == null || loans.Count == 0)
                 {
-                    return ServiceResult<IEnumerable<Loan>>.FailureResult("Kredi verisi bulunmuyor.");
+                    return ServiceResult<IEnumerable<Loan>>.FailureResult("Ödünç alma verisi bulunmuyor.");
                 }
                 return ServiceResult<IEnumerable<Loan>>.SuccessResult(loans);
             }
@@ -66,7 +66,7 @@ namespace LibraryAPI.BLL.Services
                 var loan = await _loanData.SelectForEntity(id);
                 if (loan == null)
                 {
-                    return ServiceResult<LoanGet>.FailureResult("Kredi verisi bulunmuyor.");
+                    return ServiceResult<LoanGet>.FailureResult("Ödünç alma verisi bulunmuyor.");
                 }
                 var loanGet = _loanMapper.MapToDto(loan);
                 return ServiceResult<LoanGet>.SuccessResult(loanGet);
@@ -84,7 +84,7 @@ namespace LibraryAPI.BLL.Services
                 var loan = await _loanData.SelectForEntity(id);
                 if (loan == null)
                 {
-                    return ServiceResult<Loan>.FailureResult("Kredi verisi bulunmuyor.");
+                    return ServiceResult<Loan>.FailureResult("Ödünç alma verisi bulunmuyor.");
                 }
                 return ServiceResult<Loan>.SuccessResult(loan);
             }
@@ -100,7 +100,12 @@ namespace LibraryAPI.BLL.Services
             {
                 if (await _loanData.IsRegistered(tPost))
                 {
-                    return ServiceResult<LoanGet>.FailureResult("Bu kredi zaten eklenmiş.");
+                    return ServiceResult<LoanGet>.FailureResult("Bu kayıt zaten eklenmiş.");
+                }
+                var copyResult = await _loanData.CanTakeLoanAndCalculateStorage(tPost.BookId, tPost.CopyNo);
+                if (!copyResult)
+                {
+                    return ServiceResult<LoanGet>.FailureResult("Girilen kopya numarası uygun değil");
                 }
                 var newLoan = _loanMapper.PostEntity(tPost);
                 _loanData.AddToContext(newLoan);
@@ -121,7 +126,16 @@ namespace LibraryAPI.BLL.Services
                 var loan = await _loanData.SelectForEntity(id);
                 if (loan == null)
                 {
-                    return ServiceResult<LoanGet>.FailureResult("Kredi verisi bulunmuyor.");
+                    return ServiceResult<LoanGet>.FailureResult("Ödünç alma verisi bulunmuyor.");
+                }
+                if(tPost.CopyNo != loan.CopyNo)
+                {
+                    await _loanData.ChangeReserveBook(loan.BookId, loan.CopyNo);
+                    var copyResult = await _loanData.CanTakeLoanAndCalculateStorage(tPost.BookId, tPost.CopyNo);
+                    if (!copyResult)
+                    {
+                        return ServiceResult<LoanGet>.FailureResult("Girilen kopya numarası uygun değil");
+                    }
                 }
                 _loanMapper.UpdateEntity(loan, tPost);
                 await _loanData.SaveContext();
@@ -141,7 +155,7 @@ namespace LibraryAPI.BLL.Services
                 var loan = await _loanData.SelectForEntity(id);
                 if (loan == null)
                 {
-                    return ServiceResult<bool>.FailureResult("Kredi verisi bulunmuyor.");
+                    return ServiceResult<bool>.FailureResult("Ödünç alma verisi bulunmuyor.");
                 }
                 _loanMapper.DeleteEntity(loan);
                 await _loanData.SaveContext();

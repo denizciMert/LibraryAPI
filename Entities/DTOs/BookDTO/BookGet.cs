@@ -16,6 +16,7 @@
         public List<string>? Languages { get; set; } = [];
         public List<int>? CopyNumbers { get; set; }
         public string? ImagePath { get; set; } = string.Empty;
+        public bool? Banned { get; set; }
         public DateTime? CreatinDateLog { get; set; }
         public DateTime? UpdateDateLog { get; set; }
         public DateTime? DeleteDateLog { get; set; }

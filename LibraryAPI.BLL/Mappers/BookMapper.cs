@@ -24,16 +24,16 @@ namespace LibraryAPI.BLL.Mappers
         public Book CrossTables(Book book, BookPost dto)
         {
             book.BookSubCategories = new List<BookSubCategory>();
-            dto.SubCategoryIds.ForEach(s => book.BookSubCategories.Add(new BookSubCategory { SubCategoriesId = s }));
+            dto.SubCategoryIds.ForEach(s => book.BookSubCategories.Add(new BookSubCategory { SubCategoriesId = s , BooksId = book.Id }));
 
             book.BookLanguages = new List<BookLanguage>();
-            dto.LanguageIds.ForEach(s => book.BookLanguages.Add(new BookLanguage { LanguagesId = s }));
+            dto.LanguageIds.ForEach(s => book.BookLanguages.Add(new BookLanguage { LanguagesId = s , BooksId = book.Id }));
 
             book.BookCopies = new List<BookCopy>();
-            dto.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s }));
+            dto.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s ,BookId = book.Id }));
 
             book.AuthorBooks = new List<AuthorBook>();
-            dto.AuthorIds.ForEach(s => book.AuthorBooks.Add(new AuthorBook { AuthorsId = s }));
+            dto.AuthorIds.ForEach(s => book.AuthorBooks.Add(new AuthorBook { AuthorsId = s , BooksId = book.Id }));
 
             return book;
         }
@@ -52,7 +52,8 @@ namespace LibraryAPI.BLL.Mappers
                 BookSubCategories = dto.SubCategoryIds.Select(id => new BookSubCategory { SubCategoriesId = id }).ToList(),
                 BookLanguages = dto.LanguageIds.Select(id => new BookLanguage { LanguagesId = id }).ToList(),
                 AuthorBooks = dto.AuthorIds.Select(id => new AuthorBook { AuthorsId = id }).ToList(),
-                BookCopies = dto.CopyNumbers.Select(id => new BookCopy { CopyNo = id }).ToList()
+                BookCopies = dto.CopyNumbers.Select(id => new BookCopy { CopyNo = id, Reserved = false}).ToList(),
+                BookImagePath = dto.ImagePath
             };
             return book;
         }
@@ -71,7 +72,7 @@ namespace LibraryAPI.BLL.Mappers
             book.BookLanguages = new List<BookLanguage>();
             bookPost.LanguageIds.ForEach(s => book.BookLanguages.Add(new BookLanguage { LanguagesId = s }));
             book.BookCopies = new List<BookCopy>();
-            bookPost.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s }));
+            bookPost.CopyNumbers.ForEach(s => book.BookCopies.Add(new BookCopy { CopyNo = s , Reserved = false}));
             book.AuthorBooks = new List<AuthorBook>();
             bookPost.AuthorIds.ForEach(s => book.AuthorBooks.Add(new AuthorBook { AuthorsId = s }));
             book.BookImagePath = bookPost.ImagePath;
@@ -104,9 +105,11 @@ namespace LibraryAPI.BLL.Mappers
                 CopyCount = entity.CopyCount,
                 Location = entity.Location?.ShelfCode,
                 Rating = entity.Rating,
+                Banned = entity.Banned,
                 Authors = entity.AuthorBooks?.Select(ab => ab.Author.AuthorFullName).ToList(),
                 SubCategories = entity.BookSubCategories?.Select(bsc => bsc.SubCategory.SubCategoryName).ToList(),
                 Languages = entity.BookLanguages?.Select(bl => bl.Language.LanguageName).ToList(),
+                CopyNumbers = entity.BookCopies?.Select(bc => bc.CopyNo).ToList(),
                 ImagePath = entity.BookImagePath,
                 CreatinDateLog = entity.CreationDateLog,
                 UpdateDateLog = entity.UpdateDateLog,

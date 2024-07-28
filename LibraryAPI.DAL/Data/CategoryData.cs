@@ -46,7 +46,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> IsRegistered(CategoryPost tPost)
         {
-            var categories = await SelectAll();
+            var categories = await SelectAllFiltered();
             foreach (var category in categories)
             {
                 if (category.CategoryName == tPost.CategoryName)

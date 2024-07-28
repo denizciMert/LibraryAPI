@@ -123,6 +123,10 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<CategoryGet>.FailureResult("Kategori verisi bulunmuyor.");
                 }
+                if ((await _categoryData.SelectForEntityName(tPost.CategoryName)) != null)
+                {
+                    return ServiceResult<CategoryGet>.FailureResult("Bu kategori zaten eklenmiş.");
+                }
                 _categoryMapper.UpdateEntity(category, tPost);
                 await _categoryData.SaveContext();
                 var newCategory = _categoryMapper.MapToDto(category);

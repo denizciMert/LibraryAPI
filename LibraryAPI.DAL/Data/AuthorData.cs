@@ -40,7 +40,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> IsRegistered(AuthorPost tPost)
         {
-            var authors = await SelectAll();
+            var authors = await SelectAllFiltered();
             foreach (var author in authors)
             {
                 if (author.AuthorFullName==tPost.AuthorName)

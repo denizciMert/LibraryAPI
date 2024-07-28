@@ -11,7 +11,7 @@ namespace LibraryAPI.BLL.Mappers
         {
             var penalty = new Penalty
             {
-                PenaltyTypeId = dto.PenaltyId,
+                PenaltyTypeId = dto.PenaltyTypeId,
                 PenaltiedMembeId = dto.PenaltiedMemberId,
                 LoanId = dto.LoanId
             };
@@ -23,7 +23,7 @@ namespace LibraryAPI.BLL.Mappers
         {
             var penalty = new Penalty
             {
-                PenaltyTypeId = dto.PenaltyId,
+                PenaltyTypeId = dto.PenaltyTypeId,
                 PenaltiedMembeId = dto.PenaltiedMemberId,
                 LoanId = dto.LoanId,
                 CreationDateLog = DateTime.Now,

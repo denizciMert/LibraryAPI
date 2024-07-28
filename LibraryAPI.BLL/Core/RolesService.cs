@@ -1,6 +1,9 @@
-﻿using LibraryAPI.Entities.Enums;
+﻿using LibraryAPI.DAL;
+using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryAPI.BLL.Core
@@ -11,6 +14,7 @@ namespace LibraryAPI.BLL.Core
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
             var roles = Enum.GetValues(typeof(UserRole)).Cast<UserRole>();
 
@@ -22,14 +26,17 @@ namespace LibraryAPI.BLL.Core
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
-            await CreateAdminUser(userManager);
+            await CreateAdminUser(userManager, serviceProvider);
+            await CreateBasePenalty(context, serviceProvider);
         }
 
-        private static async Task CreateAdminUser(UserManager<ApplicationUser> userManager)
+        private static async Task CreateAdminUser(UserManager<ApplicationUser> userManager, IServiceProvider serviceProvider)
         {
-            const string adminUserName = "admin";
-            const string adminEmail = "admin@poweruser.com";
-            const string adminPassword = "Admin123!";
+            var configuraiton = serviceProvider.GetRequiredService<IConfiguration>();
+            
+            string adminUserName = configuraiton["Sudo:Username"];
+            string adminEmail = configuraiton["Sudo:Mail"];
+            string adminPassword = configuraiton["Sudo:Password"];
 
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
@@ -59,5 +66,29 @@ namespace LibraryAPI.BLL.Core
             }
         }
 
+        private static async Task CreateBasePenalty(ApplicationDbContext context, IServiceProvider serviceProvider)
+        {
+            var configuraiton = serviceProvider.GetRequiredService<IConfiguration>();
+
+            string penaltyName = configuraiton["BasePenalty:Name"];
+            int penaltyAmount = Convert.ToInt32(configuraiton["BasePenalty:Amount"]);
+
+            var penalty = await context.PenaltyTypes.FirstOrDefaultAsync(x => x.PenaltyName == penaltyName);
+            if (penalty==null)
+            {
+                var newPenalty = new PenaltyType
+                {
+                    AmountToPay = penaltyAmount,
+                    PenaltyName = penaltyName,
+                    CreationDateLog = DateTime.Now,
+                    DeleteDateLog = null,
+                    UpdateDateLog = null,
+                    State = State.Eklendi
+                };
+
+                context.PenaltyTypes.Add(newPenalty);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

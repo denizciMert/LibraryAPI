@@ -110,7 +110,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LanguageGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<LanguageGet>.FailureResult($"Bir hata ADD oluştu: {ex.Message}");
             }
         }
 

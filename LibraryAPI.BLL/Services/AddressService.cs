@@ -123,6 +123,10 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AddressGet>.FailureResult("Adres verisi bulunmuyor.");
                 }
+                if (await _addressData.IsRegistered(tPost))
+                {
+                    return ServiceResult<AddressGet>.FailureResult("Bu adres zaten eklenmiş.");
+                }
                 _addressMapper.UpdateEntity(address, tPost);
                 await _addressData.SaveContext();
                 var newAddress = _addressMapper.MapToDto(address);

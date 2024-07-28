@@ -1,5 +1,4 @@
 ﻿using LibraryAPI.DAL.Data.Interfaces;
-using LibraryAPI.Entities.DTOs.AddressDTO;
 using LibraryAPI.Entities.DTOs.LanguageDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
@@ -31,7 +30,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> IsRegistered(LanguagePost tPost)
         {
-            var languages = await SelectAll();
+            var languages = await SelectAllFiltered();
             foreach (var language in languages)
             {
                 if (language.LanguageCode == tPost.LanguageCode)

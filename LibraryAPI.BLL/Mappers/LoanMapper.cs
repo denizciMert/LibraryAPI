@@ -1,6 +1,4 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.LoanDTO;
+﻿using LibraryAPI.Entities.DTOs.LoanDTO;
 using LibraryAPI.Entities.Enums;
 using LibraryAPI.Entities.Models;
 
@@ -13,7 +11,7 @@ namespace LibraryAPI.BLL.Mappers
             var loan = new Loan
             {
                 LoanedMemberId = dto.MemberId,
-                EmployeeId = dto.EmployeeId, // Assuming EmployeeId is a string in Loan model
+                EmployeeId = dto.EmployeeId,
                 BookId = dto.BookId,
                 CopyNo = dto.CopyNo
                 //LoanDate = DateTime.Now, // Varsayılan olarak şu anki zamanı atıyoruz
@@ -64,6 +62,7 @@ namespace LibraryAPI.BLL.Mappers
 
         public Loan DeleteEntity(Loan loan)
         {
+            loan.Active = false;
             loan.DeleteDateLog = DateTime.Now;
             loan.State = State.Silindi;
 

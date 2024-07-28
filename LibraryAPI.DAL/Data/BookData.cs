@@ -19,6 +19,7 @@ namespace LibraryAPI.DAL.Data
                 .ThenInclude(x => x.SubCategory)
                 .Include(x => x.Publisher)
                 .Include(x => x.Location)
+                .Include(x=>x.BookCopies)
                 .Where(x=>x.Banned==false)
                 .Where(x=>x.State!=State.Silindi)
                 .ToListAsync();
@@ -59,7 +60,7 @@ namespace LibraryAPI.DAL.Data
 
         public async Task<bool> IsRegistered(BookPost tPost)
         {
-            var books = await SelectAll();
+            var books = await SelectAllFiltered();
             foreach (var book in books)
             {
                 if (book.Isbn==tPost.Isbn)
@@ -73,6 +74,11 @@ namespace LibraryAPI.DAL.Data
         public void AddToContext(Book book)
         {
             context.Books.Add(book);
+        }
+
+        public void AddToCopyContext(BookCopy copy)
+        {
+            context.BookCopies.Add(copy);
         }
 
         public async Task SaveContext()

@@ -32,20 +32,6 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize(Roles = "Yönetici")]
-        [HttpGet("GetData")]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAllData()
-        {
-            var result = await _libraryServiceManager.GetAllWithDataAsync();
-
-            if (!result.Success)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-
-            return Ok(result.Data);
-        }
-
 
         // GET: api/Authors/5
         [Authorize(Roles = "Kullanıcı,Çalışan,Yönetici")]
@@ -53,20 +39,6 @@ namespace LibraryAPI.WebAPI.Controllers
         public async Task<ActionResult<AuthorGet>> Get(int id)
         {
             var result = await _libraryServiceManager.GetByIdAsync(id);
-
-            if (!result.Success)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-
-            return Ok(result.Data);
-        }
-
-        [Authorize(Roles = "Yönetici")]
-        [HttpGet("GetData/{id}")]
-        public async Task<ActionResult<Author>> GetData(int id)
-        {
-            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
 
             if (!result.Success)
             {

@@ -2,7 +2,7 @@
 
 namespace LibraryAPI.Entities.Models
 {
-    public class BookCopy
+    public class BookCopy : AbstractEntity
     {
         public int BookId { get; set; }
 

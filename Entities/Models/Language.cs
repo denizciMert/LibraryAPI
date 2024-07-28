@@ -4,7 +4,7 @@ namespace LibraryAPI.Entities.Models
 {
     public class Language : AbstractEntity
     {
-        [Column(TypeName = "Char(3)")]
+        [Column(TypeName = "Varchar(3)")]
         public string LanguageCode { get; set; } = string.Empty;
 
         [Column(TypeName = "Varchar(100)")]

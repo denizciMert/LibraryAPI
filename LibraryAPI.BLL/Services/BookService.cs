@@ -5,7 +5,6 @@ using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.BookDTO;
 using LibraryAPI.Entities.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.BLL.Services
 {
@@ -124,10 +123,14 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<BookGet>.FailureResult("Kitap verisi bulunmuyor.");
                 }
+                if (await _bookData.IsRegistered(tPost))
+                {
+                    return ServiceResult<BookGet>.FailureResult("Bu kitap zaten eklenmiş.");
+                }
                 _bookMapper.UpdateEntity(book, tPost);
                 await _bookData.SaveContext();
-                var newBook = _bookMapper.MapToDto(book);
-                return ServiceResult<BookGet>.SuccessResult(newBook);
+                var result = _bookMapper.MapToDto(book);
+                return ServiceResult<BookGet>.SuccessResult(result);
             }
             catch (Exception ex)
             {

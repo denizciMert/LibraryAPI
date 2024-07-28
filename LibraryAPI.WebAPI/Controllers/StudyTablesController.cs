@@ -32,40 +32,12 @@ namespace LibraryAPI.WebAPI.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize(Roles = "Yönetici")]
-        [HttpGet("GetData")]
-        public async Task<ActionResult<IEnumerable<StudyTable>>> GetAllData()
-        {
-            var result = await _libraryServiceManager.GetAllWithDataAsync();
-
-            if (!result.Success)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-
-            return Ok(result.Data);
-        }
-
         // GET: api/StudyTables/5
         [Authorize(Roles = "Kullanıcı,Çalışan,Yönetici")]
         [HttpGet("Get/{id}")]
         public async Task<ActionResult<StudyTableGet>> Get(int id)
         {
             var result = await _libraryServiceManager.GetByIdAsync(id);
-
-            if (!result.Success)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-
-            return Ok(result.Data);
-        }
-
-        [Authorize(Roles = "Yönetici")]
-        [HttpGet("GetData/{id}")]
-        public async Task<ActionResult<StudyTable>> GetData(int id)
-        {
-            var result = await _libraryServiceManager.GetWithDataByIdAsync(id);
 
             if (!result.Success)
             {

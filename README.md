@@ -115,12 +115,12 @@ My goal is to offer a comprehensive API for managing library operations such as 
 ### Installation
 
 1. Clone the repository:
+   
    ```bash
    git clone https://github.com/denizciMert/LibraryAPI.git
-   cd BlogAPI
    ```
 
-2. Set up the database connection string in appsettings.json:
+3. Set up the database connection string in appsettings.json:
 
     ```json
     {
@@ -137,7 +137,7 @@ My goal is to offer a comprehensive API for managing library operations such as 
     }
     ```
 
-3. Build and run the project:
+4. Build and run the project:
 
     ```bash
     dotnet build

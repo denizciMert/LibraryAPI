@@ -8,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
-    public class LanguageService : ILibraryServiceManager<LanguageGet,LanguagePost,Language>
+    /// <summary>
+    /// LanguageService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to language management.
+    /// </summary>
+    public class LanguageService : ILibraryServiceManager<LanguageGet, LanguagePost, Language>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly LanguageData _languageData;
         private readonly LanguageMapper _languageMapper;
 
+        /// <summary>
+        /// Constructor to initialize the LanguageService with necessary dependencies.
+        /// </summary>
         public LanguageService(ApplicationDbContext context)
         {
             _languageData = new LanguageData(context);
             _languageMapper = new LanguageMapper();
         }
 
+        /// <summary>
+        /// Retrieves all languages.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<LanguageGet>>> GetAllAsync()
         {
             try
             {
                 var languages = await _languageData.SelectAllFiltered();
-                if (languages == null || languages.Count == 0)
+                if (languages.Count == 0)
                 {
                     return ServiceResult<IEnumerable<LanguageGet>>.FailureResult("Dil verisi bulunmuyor.");
                 }
@@ -38,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<LanguageGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<LanguageGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all languages with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Language>>> GetAllWithDataAsync()
         {
             try
             {
                 var languages = await _languageData.SelectAll();
-                if (languages == null || languages.Count == 0)
+                if (languages.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Language>>.FailureResult("Dil verisi bulunmuyor.");
                 }
@@ -55,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Language>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Language>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a language by its ID.
+        /// </summary>
         public async Task<ServiceResult<LanguageGet>> GetByIdAsync(int id)
         {
             try
             {
+                Language? nulLanguage = null;
                 var language = await _languageData.SelectForEntity(id);
-                if (language == null)
+                if (language == nulLanguage)
                 {
                     return ServiceResult<LanguageGet>.FailureResult("Dil verisi bulunmuyor.");
                 }
@@ -73,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LanguageGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<LanguageGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a language with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Language>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Language? nulLanguage = null;
                 var language = await _languageData.SelectForEntity(id);
-                if (language == null)
+                if (language == nulLanguage)
                 {
                     return ServiceResult<Language>.FailureResult("Dil verisi bulunmuyor.");
                 }
@@ -90,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Language>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Language>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new language.
+        /// </summary>
         public async Task<ServiceResult<LanguageGet>> AddAsync(LanguagePost tPost)
         {
             try
@@ -110,16 +135,24 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LanguageGet>.FailureResult($"Bir hata ADD oluştu: {ex.Message}");
+                return ServiceResult<LanguageGet>.FailureResult($"Bir hata ADD oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing language.
+        /// </summary>
         public async Task<ServiceResult<LanguageGet>> UpdateAsync(int id, LanguagePost tPost)
         {
             try
             {
+                if (await _languageData.IsRegistered(tPost))
+                {
+                    return ServiceResult<LanguageGet>.FailureResult("Bu dil zaten eklenmiş.");
+                }
+                Language? nulLanguage = null;
                 var language = await _languageData.SelectForEntity(id);
-                if (language == null)
+                if (language == nulLanguage)
                 {
                     return ServiceResult<LanguageGet>.FailureResult("Dil verisi bulunmuyor.");
                 }
@@ -130,16 +163,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LanguageGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<LanguageGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a language by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Language? nulLanguage = null;
                 var language = await _languageData.SelectForEntity(id);
-                if (language == null)
+                if (language == nulLanguage)
                 {
                     return ServiceResult<bool>.FailureResult("Dil verisi bulunmuyor.");
                 }
@@ -149,7 +186,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }

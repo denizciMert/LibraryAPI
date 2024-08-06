@@ -5,26 +5,38 @@ using LibraryAPI.DAL;
 using LibraryAPI.DAL.Data;
 using LibraryAPI.Entities.DTOs.PenaltyDTO;
 using LibraryAPI.Entities.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace LibraryAPI.BLL.Services
 {
-    public class PenaltyService : ILibraryServiceManager<PenaltyGet,PenaltyPost,Penalty>
+    /// <summary>
+    /// PenaltyService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to penalty management.
+    /// </summary>
+    public class PenaltyService : ILibraryServiceManager<PenaltyGet, PenaltyPost, Penalty>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly PenaltyData _penaltyData;
         private readonly PenaltyMapper _penaltyMapper;
 
-        public PenaltyService(ApplicationDbContext context)
+        /// <summary>
+        /// Constructor to initialize the PenaltyService with necessary dependencies.
+        /// </summary>
+        public PenaltyService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _penaltyData = new PenaltyData(context);
+            _penaltyData = new PenaltyData(context, userManager);
             _penaltyMapper = new PenaltyMapper();
         }
 
+        /// <summary>
+        /// Retrieves all penalties.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<PenaltyGet>>> GetAllAsync()
         {
             try
             {
                 var penalties = await _penaltyData.SelectAllFiltered();
-                if (penalties == null || penalties.Count == 0)
+                if (penalties.Count == 0)
                 {
                     return ServiceResult<IEnumerable<PenaltyGet>>.FailureResult("Ceza verisi bulunmuyor.");
                 }
@@ -38,16 +50,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<PenaltyGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<PenaltyGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all penalties with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Penalty>>> GetAllWithDataAsync()
         {
             try
             {
                 var penalties = await _penaltyData.SelectAll();
-                if (penalties == null || penalties.Count == 0)
+                if (penalties.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Penalty>>.FailureResult("Ceza verisi bulunmuyor.");
                 }
@@ -55,16 +70,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Penalty>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Penalty>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a penalty by its ID.
+        /// </summary>
         public async Task<ServiceResult<PenaltyGet>> GetByIdAsync(int id)
         {
             try
             {
+                Penalty? nullPenalty = null;
                 var penalty = await _penaltyData.SelectForEntity(id);
-                if (penalty == null)
+                if (penalty == nullPenalty)
                 {
                     return ServiceResult<PenaltyGet>.FailureResult("Ceza verisi bulunmuyor.");
                 }
@@ -73,16 +92,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<PenaltyGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<PenaltyGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a penalty with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Penalty>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Penalty? nullPenalty = null;
                 var penalty = await _penaltyData.SelectForEntity(id);
-                if (penalty == null)
+                if (penalty == nullPenalty)
                 {
                     return ServiceResult<Penalty>.FailureResult("Ceza verisi bulunmuyor.");
                 }
@@ -90,10 +113,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Penalty>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Penalty>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new penalty.
+        /// </summary>
         public async Task<ServiceResult<PenaltyGet>> AddAsync(PenaltyPost tPost)
         {
             try
@@ -105,6 +131,7 @@ namespace LibraryAPI.BLL.Services
                 var newPenalty = _penaltyMapper.PostEntity(tPost);
                 _penaltyData.AddToContext(newPenalty);
                 await _penaltyData.SaveContext();
+                await _penaltyData.BanUser(tPost.PenaltiedMemberId);
                 var result = await GetByIdAsync(newPenalty.Id);
                 return ServiceResult<PenaltyGet>.SuccessResult(result.Data);
             }
@@ -114,14 +141,27 @@ namespace LibraryAPI.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Updates an existing penalty.
+        /// </summary>
         public async Task<ServiceResult<PenaltyGet>> UpdateAsync(int id, PenaltyPost tPost)
         {
             try
             {
+                if (await _penaltyData.IsRegistered(tPost))
+                {
+                    return ServiceResult<PenaltyGet>.FailureResult("Bu ceza zaten eklenmiş.");
+                }
+                Penalty? nullPenalty = null;
                 var penalty = await _penaltyData.SelectForEntity(id);
-                if (penalty == null)
+                if (penalty == nullPenalty)
                 {
                     return ServiceResult<PenaltyGet>.FailureResult("Ceza verisi bulunmuyor.");
+                }
+                if (tPost.PenaltiedMemberId != penalty.PenaltiedMembeId)
+                {
+                    await _penaltyData.UnBanUser(penalty.PenaltiedMembeId);
+                    await _penaltyData.BanUser(tPost.PenaltiedMemberId);
                 }
                 _penaltyMapper.UpdateEntity(penalty, tPost);
                 await _penaltyData.SaveContext();
@@ -130,26 +170,31 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<PenaltyGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<PenaltyGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a penalty by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Penalty? nullPenalty = null;
                 var penalty = await _penaltyData.SelectForEntity(id);
-                if (penalty == null)
+                if (penalty == nullPenalty)
                 {
                     return ServiceResult<bool>.FailureResult("Ceza verisi bulunmuyor.");
                 }
                 _penaltyMapper.DeleteEntity(penalty);
                 await _penaltyData.SaveContext();
+                await _penaltyData.UnBanUser(penalty.PenaltiedMembeId);
                 return ServiceResult<bool>.SuccessResult(true);
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }

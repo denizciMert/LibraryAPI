@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.CityDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.CityDTO; // Importing the DTOs for City
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class CityMapper
-	{
+    // Mapper class for converting between City entities and DTOs
+    public class CityMapper
+    {
+        // Method to map CityPost DTO to City entity
         public City MapToEntity(CityPost dto)
         {
             var city = new City
@@ -17,6 +19,7 @@ namespace LibraryAPI.BLL.Mappers
             return city;
         }
 
+        // Method to map CityPost DTO to City entity with additional fields
         public City PostEntity(CityPost dto)
         {
             var city = new City
@@ -32,6 +35,7 @@ namespace LibraryAPI.BLL.Mappers
             return city;
         }
 
+        // Method to update an existing City entity with CityPost DTO data
         public City UpdateEntity(City city, CityPost cityPost)
         {
             city.CityName = cityPost.CityName;
@@ -44,6 +48,7 @@ namespace LibraryAPI.BLL.Mappers
             return city;
         }
 
+        // Method to mark a City entity as deleted
         public City DeleteEntity(City city)
         {
             city.DeleteDateLog = DateTime.Now;
@@ -52,6 +57,7 @@ namespace LibraryAPI.BLL.Mappers
             return city;
         }
 
+        // Method to map City entity to CityGet DTO
         public CityGet MapToDto(City entity)
         {
             var dto = new CityGet
@@ -67,6 +73,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
+    }
 }
-}
-

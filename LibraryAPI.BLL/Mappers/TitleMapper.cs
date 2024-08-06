@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.TitleDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.TitleDTO; // Importing DTOs related to Title
+using LibraryAPI.Entities.Enums; // Importing enums used in the project
+using LibraryAPI.Entities.Models; // Importing entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class TitleMapper
-	{
+    // Mapper class for converting between Title entities and DTOs
+    public class TitleMapper
+    {
+        // Method to map TitlePost DTO to Title entity
         public Title MapToEntity(TitlePost dto)
         {
             var entity = new Title
@@ -16,6 +18,7 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
+        // Method to map TitlePost DTO to Title entity with additional fields
         public Title PostEntity(TitlePost dto)
         {
             var title = new Title
@@ -30,6 +33,7 @@ namespace LibraryAPI.BLL.Mappers
             return title;
         }
 
+        // Method to update an existing Title entity with TitlePost DTO data
         public Title UpdateEntity(Title title, TitlePost titlePost)
         {
             title.TitleName = titlePost.TitleName;
@@ -41,6 +45,7 @@ namespace LibraryAPI.BLL.Mappers
             return title;
         }
 
+        // Method to mark a Title entity as deleted
         public Title DeleteEntity(Title title)
         {
             title.DeleteDateLog = DateTime.Now;
@@ -49,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return title;
         }
 
+        // Method to map Title entity to TitleGet DTO
         public TitleGet MapToDto(Title entity)
         {
             var dto = new TitleGet
@@ -65,4 +71,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

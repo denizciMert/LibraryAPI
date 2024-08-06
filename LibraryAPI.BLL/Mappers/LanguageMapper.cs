@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.LanguageDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.LanguageDTO; // Importing the DTOs for Language
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class LanguageMapper
-	{
+    // Mapper class for converting between Language entities and DTOs
+    public class LanguageMapper
+    {
+        // Method to map LanguagePost DTO to Language entity
         public Language MapToEntity(LanguagePost dto)
         {
             var language = new Language
@@ -17,6 +19,7 @@ namespace LibraryAPI.BLL.Mappers
             return language;
         }
 
+        // Method to map LanguagePost DTO to Language entity with additional fields
         public Language PostEntity(LanguagePost dto)
         {
             var language = new Language
@@ -32,6 +35,7 @@ namespace LibraryAPI.BLL.Mappers
             return language;
         }
 
+        // Method to update an existing Language entity with LanguagePost DTO data
         public Language UpdateEntity(Language language, LanguagePost languagePost)
         {
             language.LanguageCode = languagePost.LanguageCode;
@@ -44,6 +48,7 @@ namespace LibraryAPI.BLL.Mappers
             return language;
         }
 
+        // Method to mark a Language entity as deleted
         public Language DeleteEntity(Language language)
         {
             language.DeleteDateLog = DateTime.Now;
@@ -52,6 +57,7 @@ namespace LibraryAPI.BLL.Mappers
             return language;
         }
 
+        // Method to map Language entity to LanguageGet DTO
         public LanguageGet MapToDto(Language entity)
         {
             var dto = new LanguageGet
@@ -67,6 +73,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
+    }
 }
-}
-

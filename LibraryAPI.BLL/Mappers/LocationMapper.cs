@@ -1,13 +1,13 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.LocationDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.LocationDTO; // Importing the DTOs for Location
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
+    // Mapper class for converting between Location entities and DTOs
     public class LocationMapper
     {
+        // Method to map LocationPost DTO to Location entity
         public Location MapToEntity(LocationPost dto)
         {
             var location = new Location
@@ -18,6 +18,7 @@ namespace LibraryAPI.BLL.Mappers
             return location;
         }
 
+        // Method to map LocationPost DTO to Location entity with additional fields
         public Location PostEntity(LocationPost dto)
         {
             var location = new Location
@@ -32,6 +33,7 @@ namespace LibraryAPI.BLL.Mappers
             return location;
         }
 
+        // Method to update an existing Location entity with LocationPost DTO data
         public Location UpdateEntity(Location location, LocationPost locationPost)
         {
             location.ShelfCode = locationPost.ShelfCode;
@@ -43,6 +45,7 @@ namespace LibraryAPI.BLL.Mappers
             return location;
         }
 
+        // Method to mark a Location entity as deleted
         public Location DeleteEntity(Location location)
         {
             location.DeleteDateLog = DateTime.Now;
@@ -51,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return location;
         }
 
+        // Method to map Location entity to LocationGet DTO
         public LocationGet MapToDto(Location entity)
         {
             var dto = new LocationGet
@@ -67,4 +71,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

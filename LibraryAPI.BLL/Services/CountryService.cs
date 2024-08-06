@@ -8,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
+    /// <summary>
+    /// CountryService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to country management.
+    /// </summary>
     public class CountryService : ILibraryServiceManager<CountryGet, CountryPost, Country>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly CountryData _countryData;
         private readonly CountryMapper _countryMapper;
 
+        /// <summary>
+        /// Constructor to initialize the CountryService with necessary dependencies.
+        /// </summary>
         public CountryService(ApplicationDbContext context)
         {
             _countryData = new CountryData(context);
             _countryMapper = new CountryMapper();
         }
 
+        /// <summary>
+        /// Retrieves all countries.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<CountryGet>>> GetAllAsync()
         {
             try
             {
                 var countries = await _countryData.SelectAllFiltered();
-                if (countries == null || countries.Count == 0)
+                if (countries.Count == 0)
                 {
                     return ServiceResult<IEnumerable<CountryGet>>.FailureResult("Ülke verisi bulunmuyor.");
                 }
@@ -38,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<CountryGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<CountryGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all countries with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Country>>> GetAllWithDataAsync()
         {
             try
             {
                 var countries = await _countryData.SelectAll();
-                if (countries == null || countries.Count == 0)
+                if (countries.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Country>>.FailureResult("Ülke verisi bulunmuyor.");
                 }
@@ -55,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Country>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Country>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a country by its ID.
+        /// </summary>
         public async Task<ServiceResult<CountryGet>> GetByIdAsync(int id)
         {
             try
             {
+                Country? nullCountry = null;
                 var country = await _countryData.SelectForEntity(id);
-                if (country == null)
+                if (country == nullCountry)
                 {
                     return ServiceResult<CountryGet>.FailureResult("Ülke verisi bulunmuyor.");
                 }
@@ -73,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<CountryGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<CountryGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a country with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Country>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Country? nullCountry = null;
                 var country = await _countryData.SelectForEntity(id);
-                if (country == null)
+                if (country == nullCountry)
                 {
                     return ServiceResult<Country>.FailureResult("Ülke verisi bulunmuyor.");
                 }
@@ -90,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Country>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Country>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new country.
+        /// </summary>
         public async Task<ServiceResult<CountryGet>> AddAsync(CountryPost tPost)
         {
             try
@@ -110,18 +135,26 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<CountryGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<CountryGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing country.
+        /// </summary>
         public async Task<ServiceResult<CountryGet>> UpdateAsync(int id, CountryPost tPost)
         {
             try
             {
+                Country? nullCountry = null;
                 var country = await _countryData.SelectForEntity(id);
-                if (country == null)
+                if (country == nullCountry)
                 {
                     return ServiceResult<CountryGet>.FailureResult("Ülke verisi bulunmuyor.");
+                }
+                if (await _countryData.IsRegistered(tPost))
+                {
+                    return ServiceResult<CountryGet>.FailureResult("Bu ülke zaten eklenmiş.");
                 }
                 _countryMapper.UpdateEntity(country, tPost);
                 await _countryData.SaveContext();
@@ -130,16 +163,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<CountryGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<CountryGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a country by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Country? nullCountry = null;
                 var country = await _countryData.SelectForEntity(id);
-                if (country == null)
+                if (country == nullCountry)
                 {
                     return ServiceResult<bool>.FailureResult("Ülke verisi bulunmuyor.");
                 }
@@ -149,7 +186,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }

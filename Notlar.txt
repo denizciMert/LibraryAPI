@@ -1,3 +1,16 @@
+
+---sadece çalışanın yapması gereken işlemlerde, kişinin çalışan olduğunu kontrol et, direkt ID bilgisini tokendan al
+
+---member engellendiğinde endpointlere ulaşmasını engelle???????
+
+---tüm endpointlerin put metodlarını kontrol et
+
+---***tüm controllerlar için patch metodunu araştır
+
+---***loan endpointte get all metodunu düzelt ve tekillik kontrolünü düzelt
+
+---***tüm kodu uyarılardan arındır düzenle ve yorum ekle
+
 diğer servislerin mantık kontrollerini ekle
 *account controller - GetProfile - UpdateProfile(Patch) - GetLoans - ReturnLoan - GetPenalties - PayPenalties endpointlerini ekle
 
@@ -8,32 +21,32 @@ mantıklar:
 
 *adres- aynı adres aynı kullanıcıda olamaz
 
-*yazar- aynı yazar tekrar kaydedilemez, yazar 18 yaşından küçük olamaz, yazar ölüm yılı doğum tarihinden önce olamaz
+*yazar- aynı yazar tekrar kaydedilemez, yazar 4 yaşından küçük olamaz, yazar ölüm yılı doğum tarihinden önce olamaz
 
 kitaplar- 
 			*aynı ISBN e sahip sadece bir kayıt olabilir, diğer örnekleri BookCopy tablosuna eklenir, bookCount buradan list.count ile güncellenir.
-			rezerve edilen kitabın kopya numarası rezerve olarak ayarlanır, book count tekrar hesaplanır.
-			kitap hakkında değerlendirmeyi sadece kitabı bir kere almış kişiler yapabilir.
+			*rezerve edilen kitabın kopya numarası rezerve olarak ayarlanır, book count tekrar hesaplanır.
+			*kitap hakkında değerlendirmeyi sadece kitabı bir kere almış kişiler yapabilir.
 
-kategoriler- aynı kategori tekrar kaydedilemez, bir kategori aynı alt kategoriden 2 adet tutamaz
+*kategoriler- aynı kategori tekrar kaydedilemez, bir kategori aynı alt kategoriden 2 adet tutamaz
 
-şehirler- aynı şehir tekrar kaydedilemez, bir ülkede aynı şehirden 2 adet tutamaz
+*şehirler- aynı şehir tekrar kaydedilemez, bir ülkede aynı şehirden 2 adet tutamaz
 
-ülkeler- aynı ülke tekar kaydedilemez
+*ülkeler- aynı ülke tekar kaydedilemez
 
-departmanlar- aynı departman tekrar kaydedilemez
+*departmanlar- aynı departman tekrar kaydedilemez
 
-ilçeler - aynı ilçe tekrar kaydedilemez, bir şehir aynı ilçeden 2 adet tutamaz
+*ilçeler - aynı ilçe tekrar kaydedilemez, bir şehir aynı ilçeden 2 adet tutamaz
 
-ApplicationUser- 
+*ApplicationUser- 
 				benzersiz kullanıcıadı
 				benzersiz mailadresi
 				benzersiz kimlik numarası
 				18 yaşından küçük olamaz
 
-diller- aynı dil sadece bir kez kayıt edilebilir
+*diller- aynı dil sadece bir kez kayıt edilebilir
 
-ödünç alınanlar- 
+*ödünç alınanlar- 
 				bir üye tek seferde bir kitap alabilir
 				geri getirme tarihi dolarsa kişiye ceza verilir
 				ceza verilen kişi tüm cezayı ödemeden tekrar işlem yapamaz
@@ -41,32 +54,30 @@ diller- aynı dil sadece bir kez kayıt edilebilir
 				kitap ödünç almamış kişi kitap iade edemez
 				cezası olmayan kişi ceza ödeyemez
 
-raflar- aynı raf tekrar kaydedilemez
+*raflar- aynı raf tekrar kaydedilemez
 
-cezalar- 
+*cezalar- 
 		geri getirme tarihi dolarsa kişiye ceza verilir
 		ceza verilen kişi tüm cezayı ödemeden tekrar işlem yapamaz
 		cezalı kişi yasaklanır
 		cezası olmayan kişi ceza ödeyemez
 
-ceza tipleri- aynı ceza tipi sadece bir kez kaydedilebilir
+*ceza tipleri- aynı ceza tipi sadece bir kez kaydedilebilir
 
-yayıncılar- aynı yayıncı sadece bir kez kaydedilebilir
+*yayıncılar- aynı yayıncı sadece bir kez kaydedilebilir
 
-rezervasyonlar- 
+*rezervasyonlar- 
 				kullanıcı tek seferde bir rezervasyon alabilir
 				rezerve edilen masa rezerve olarak değişir
 				kullanım süresi dolduğunda masa uygun duruma düşer ve rezervasyon biter
 
-vardiyalar- aynı vardiya sadece bir kere kaydedilebilir
+*vardiyalar- aynı vardiya sadece bir kere kaydedilebilir
 
-masalar- aynı masa sadece bir kere kaydedilebilir
+*masalar- aynı masa sadece bir kere kaydedilebilir
 
-alt kategoriler- aynı alt kategori sadece bir kere kayıt edilebilir, aynı alt kategori bir kategoriye sadece bir kere kayıt edilebilir
+*alt kategoriler- aynı alt kategori sadece bir kere kayıt edilebilir, aynı alt kategori bir kategoriye sadece bir kere kayıt edilebilir
 
-ünvanlar- aynı ünvan sadece bir kere kayıt edilebilir
-
-mailslurp api kurtarma anahtarı= WGGZLUVE5KA24P3BAYGJCGBA
+*ünvanlar- aynı ünvan sadece bir kere kayıt edilebilir
 
 --BookCopy--
 CopyMapper

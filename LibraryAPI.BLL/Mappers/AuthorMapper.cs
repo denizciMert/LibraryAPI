@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.AuthorDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.AuthorDTO; // Importing the DTOs for Author
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class AuthorMapper
-	{
+    // Mapper class for converting between Author entities and DTOs
+    public class AuthorMapper
+    {
+        // Method to map AuthorPost DTO to Author entity
         public Author MapToEntity(AuthorPost dto)
         {
             var author = new Author
@@ -19,6 +21,7 @@ namespace LibraryAPI.BLL.Mappers
             return author;
         }
 
+        // Method to map AuthorPost DTO to Author entity with additional fields
         public Author PostEntity(AuthorPost dto)
         {
             var author = new Author
@@ -36,6 +39,7 @@ namespace LibraryAPI.BLL.Mappers
             return author;
         }
 
+        // Method to update an existing Author entity with AuthorPost DTO data
         public Author UpdateEntity(Author author, AuthorPost authorPost)
         {
             author.AuthorFullName = authorPost.AuthorName;
@@ -50,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return author;
         }
 
+        // Method to mark an Author entity as deleted
         public Author DeleteEntity(Author author)
         {
             author.DeleteDateLog = DateTime.Now;
@@ -58,6 +63,7 @@ namespace LibraryAPI.BLL.Mappers
             return author;
         }
 
+        // Method to map Author entity to AuthorGet DTO
         public AuthorGet MapToDto(Author entity)
         {
             var dto = new AuthorGet
@@ -67,7 +73,7 @@ namespace LibraryAPI.BLL.Mappers
                 Biography = entity.Biography,
                 DateOfBirth = entity.DateOfBirth,
                 DateOfDeath = entity.DateOfDeath,
-                Books = entity.AuthorBooks?.Select(ab => ab.Book.BookTitle).ToList(),
+                Books = entity.AuthorBooks?.Select(ab => ab.Book!.BookTitle).ToList(),
                 CreatinDateLog = entity.CreationDateLog,
                 UpdateDateLog = entity.UpdateDateLog,
                 DeleteDateLog = entity.DeleteDateLog,
@@ -76,6 +82,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
+    }
 }
-}
-

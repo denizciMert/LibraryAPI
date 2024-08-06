@@ -1,12 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.PenaltyDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.PenaltyDTO; // Importing the DTOs for Penalty
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class PenaltyMapper
-	{
+    // Mapper class for converting between Penalty entities and DTOs
+    public class PenaltyMapper
+    {
+        // Method to map PenaltyPost DTO to Penalty entity
         public Penalty MapToEntity(PenaltyPost dto)
         {
             var penalty = new Penalty
@@ -19,6 +20,7 @@ namespace LibraryAPI.BLL.Mappers
             return penalty;
         }
 
+        // Method to map PenaltyPost DTO to Penalty entity with additional fields
         public Penalty PostEntity(PenaltyPost dto)
         {
             var penalty = new Penalty
@@ -35,6 +37,7 @@ namespace LibraryAPI.BLL.Mappers
             return penalty;
         }
 
+        // Method to update an existing Penalty entity with PenaltyPost DTO data
         public Penalty UpdateEntity(Penalty penalty, PenaltyPost penaltyPost)
         {
             penalty.PenaltyTypeId = penaltyPost.PenaltyTypeId;
@@ -48,6 +51,7 @@ namespace LibraryAPI.BLL.Mappers
             return penalty;
         }
 
+        // Method to mark a Penalty entity as deleted
         public Penalty DeleteEntity(Penalty penalty)
         {
             penalty.DeleteDateLog = DateTime.Now;
@@ -56,6 +60,7 @@ namespace LibraryAPI.BLL.Mappers
             return penalty;
         }
 
+        // Method to map Penalty entity to PenaltyGet DTO
         public PenaltyGet MapToDto(Penalty entity)
         {
             var dto = new PenaltyGet
@@ -79,4 +84,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

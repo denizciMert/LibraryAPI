@@ -1,12 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.PublisherDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.PublisherDTO; // Importing the DTOs for Publisher
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class PublisherMapper
-	{
+    // Mapper class for converting between Publisher entities and DTOs
+    public class PublisherMapper
+    {
+        // Method to map PublisherPost DTO to Publisher entity
         public Publisher MapToEntity(PublisherPost dto)
         {
             var entity = new Publisher
@@ -20,6 +21,7 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
+        // Method to map PublisherPost DTO to Publisher entity with additional fields
         public Publisher PostEntity(PublisherPost dto)
         {
             var publisher = new Publisher
@@ -37,6 +39,7 @@ namespace LibraryAPI.BLL.Mappers
             return publisher;
         }
 
+        // Method to update an existing Publisher entity with PublisherPost DTO data
         public Publisher UpdateEntity(Publisher publisher, PublisherPost publisherPost)
         {
             publisher.PublisherName = publisherPost.PublisherName;
@@ -51,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return publisher;
         }
 
+        // Method to mark a Publisher entity as deleted
         public Publisher DeleteEntity(Publisher publisher)
         {
             publisher.DeleteDateLog = DateTime.Now;
@@ -59,6 +63,7 @@ namespace LibraryAPI.BLL.Mappers
             return publisher;
         }
 
+        // Method to map Publisher entity to PublisherGet DTO
         public PublisherGet MapToDto(Publisher entity)
         {
             var dto = new PublisherGet
@@ -78,4 +83,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

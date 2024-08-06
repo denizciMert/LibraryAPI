@@ -8,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
-    public class ReservationService : ILibraryServiceManager<ReservationGet,ReservationPost,Reservation>
+    /// <summary>
+    /// ReservationService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to reservation management.
+    /// </summary>
+    public class ReservationService : ILibraryServiceManager<ReservationGet, ReservationPost, Reservation>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly ReservationData _reservationData;
         private readonly ReservationMapper _reservationMapper;
 
+        /// <summary>
+        /// Constructor to initialize the ReservationService with necessary dependencies.
+        /// </summary>
         public ReservationService(ApplicationDbContext context)
         {
             _reservationData = new ReservationData(context);
             _reservationMapper = new ReservationMapper();
         }
 
+        /// <summary>
+        /// Retrieves all reservations.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<ReservationGet>>> GetAllAsync()
         {
             try
             {
                 var reservations = await _reservationData.SelectAllFiltered();
-                if (reservations == null || reservations.Count == 0)
+                if (reservations.Count == 0)
                 {
                     return ServiceResult<IEnumerable<ReservationGet>>.FailureResult("Rezervasyon verisi bulunmuyor.");
                 }
@@ -38,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<ReservationGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<ReservationGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all reservations with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Reservation>>> GetAllWithDataAsync()
         {
             try
             {
                 var reservations = await _reservationData.SelectAll();
-                if (reservations == null || reservations.Count == 0)
+                if (reservations.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Reservation>>.FailureResult("Rezervasyon verisi bulunmuyor.");
                 }
@@ -55,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Reservation>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Reservation>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a reservation by its ID.
+        /// </summary>
         public async Task<ServiceResult<ReservationGet>> GetByIdAsync(int id)
         {
             try
             {
+                Reservation? nullReservation = null;
                 var reservation = await _reservationData.SelectForEntity(id);
-                if (reservation == null)
+                if (reservation == nullReservation)
                 {
                     return ServiceResult<ReservationGet>.FailureResult("Rezervasyon verisi bulunmuyor.");
                 }
@@ -73,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<ReservationGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<ReservationGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a reservation with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Reservation>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Reservation? nullReservation = null;
                 var reservation = await _reservationData.SelectForEntity(id);
-                if (reservation == null)
+                if (reservation == nullReservation)
                 {
                     return ServiceResult<Reservation>.FailureResult("Rezervasyon verisi bulunmuyor.");
                 }
@@ -90,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Reservation>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Reservation>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new reservation.
+        /// </summary>
         public async Task<ServiceResult<ReservationGet>> AddAsync(ReservationPost tPost)
         {
             try
@@ -110,16 +135,24 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<ReservationGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<ReservationGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing reservation.
+        /// </summary>
         public async Task<ServiceResult<ReservationGet>> UpdateAsync(int id, ReservationPost tPost)
         {
             try
             {
+                if (await _reservationData.IsRegistered(tPost))
+                {
+                    return ServiceResult<ReservationGet>.FailureResult("Bu rezervasyon zaten eklenmiş.");
+                }
+                Reservation? nullReservation = null;
                 var reservation = await _reservationData.SelectForEntity(id);
-                if (reservation == null)
+                if (reservation == nullReservation)
                 {
                     return ServiceResult<ReservationGet>.FailureResult("Rezervasyon verisi bulunmuyor.");
                 }
@@ -130,16 +163,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<ReservationGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<ReservationGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a reservation by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Reservation? nullReservation = null;
                 var reservation = await _reservationData.SelectForEntity(id);
-                if (reservation == null)
+                if (reservation == nullReservation)
                 {
                     return ServiceResult<bool>.FailureResult("Rezervasyon verisi bulunmuyor.");
                 }
@@ -149,7 +186,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }

@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.DistrictDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.DistrictDTO; // Importing the DTOs for District
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class DistrictMapper
-	{
+    // Mapper class for converting between District entities and DTOs
+    public class DistrictMapper
+    {
+        // Method to map DistrictPost DTO to District entity
         public District MapToEntity(DistrictPost dto)
         {
             var district = new District
@@ -17,6 +19,7 @@ namespace LibraryAPI.BLL.Mappers
             return district;
         }
 
+        // Method to map DistrictPost DTO to District entity with additional fields
         public District PostEntity(DistrictPost dto)
         {
             var district = new District
@@ -32,6 +35,7 @@ namespace LibraryAPI.BLL.Mappers
             return district;
         }
 
+        // Method to update an existing District entity with DistrictPost DTO data
         public District UpdateEntity(District district, DistrictPost districtPost)
         {
             district.DistrictName = districtPost.District;
@@ -44,6 +48,7 @@ namespace LibraryAPI.BLL.Mappers
             return district;
         }
 
+        // Method to mark a District entity as deleted
         public District DeleteEntity(District district)
         {
             district.DeleteDateLog = DateTime.Now;
@@ -51,6 +56,8 @@ namespace LibraryAPI.BLL.Mappers
 
             return district;
         }
+
+        // Method to map District entity to DistrictGet DTO
         public DistrictGet MapToDto(District entity)
         {
             var dto = new DistrictGet
@@ -67,6 +74,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
+    }
 }
-}
-

@@ -8,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
-    public class BookService : ILibraryServiceManager<BookGet,BookPost,Book>
+    /// <summary>
+    /// BookService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to book management.
+    /// </summary>
+    public class BookService : ILibraryServiceManager<BookGet, BookPost, Book>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly BookData _bookData;
         private readonly BookMapper _bookMapper;
 
+        /// <summary>
+        /// Constructor to initialize the BookService with necessary dependencies.
+        /// </summary>
         public BookService(ApplicationDbContext context)
         {
             _bookData = new BookData(context);
             _bookMapper = new BookMapper();
         }
 
+        /// <summary>
+        /// Retrieves all books.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<BookGet>>> GetAllAsync()
         {
             try
             {
                 var books = await _bookData.SelectAllFiltered();
-                if (books == null || books.Count == 0)
+                if (books.Count == 0)
                 {
                     return ServiceResult<IEnumerable<BookGet>>.FailureResult("Kitap verisi bulunmuyor.");
                 }
@@ -38,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<BookGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<BookGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all books with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Book>>> GetAllWithDataAsync()
         {
             try
             {
                 var books = await _bookData.SelectAll();
-                if (books == null || books.Count == 0)
+                if (books.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Book>>.FailureResult("Kitap verisi bulunmuyor.");
                 }
@@ -55,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Book>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Book>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a book by its ID.
+        /// </summary>
         public async Task<ServiceResult<BookGet>> GetByIdAsync(int id)
         {
             try
             {
+                Book? nullBook = null;
                 var book = await _bookData.SelectForEntity(id);
-                if (book == null)
+                if (book == nullBook)
                 {
                     return ServiceResult<BookGet>.FailureResult("Kitap verisi bulunmuyor.");
                 }
@@ -73,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<BookGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<BookGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a book with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Book>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Book? nullBook = null;
                 var book = await _bookData.SelectForEntity(id);
-                if (book == null)
+                if (book == nullBook)
                 {
                     return ServiceResult<Book>.FailureResult("Kitap verisi bulunmuyor.");
                 }
@@ -90,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Book>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Book>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new book.
+        /// </summary>
         public async Task<ServiceResult<BookGet>> AddAsync(BookPost tPost)
         {
             try
@@ -110,16 +135,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<BookGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<BookGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing book.
+        /// </summary>
         public async Task<ServiceResult<BookGet>> UpdateAsync(int id, BookPost tPost)
         {
             try
             {
+                Book? nullBook = null;
                 var book = await _bookData.SelectForEntity(id);
-                if (book == null)
+                if (book == nullBook)
                 {
                     return ServiceResult<BookGet>.FailureResult("Kitap verisi bulunmuyor.");
                 }
@@ -134,16 +163,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<BookGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<BookGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a book by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Book? nullBook = null;
                 var book = await _bookData.SelectForEntity(id);
-                if (book == null)
+                if (book == nullBook)
                 {
                     return ServiceResult<bool>.FailureResult("Kitap verisi bulunmuyor.");
                 }
@@ -153,7 +186,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }

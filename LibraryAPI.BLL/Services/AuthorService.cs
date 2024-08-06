@@ -8,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
+    /// <summary>
+    /// AuthorService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to author management.
+    /// </summary>
     public class AuthorService : ILibraryServiceManager<AuthorGet, AuthorPost, Author>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly AuthorData _authorData;
         private readonly AuthorMapper _authorMapper;
 
+        /// <summary>
+        /// Constructor to initialize the AuthorService with necessary dependencies.
+        /// </summary>
         public AuthorService(ApplicationDbContext context)
         {
             _authorData = new AuthorData(context);
             _authorMapper = new AuthorMapper();
         }
 
+        /// <summary>
+        /// Retrieves all authors.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<AuthorGet>>> GetAllAsync()
         {
             try
             {
                 var authors = await _authorData.SelectAllFiltered();
-                if (authors == null || authors.Count == 0)
+                if (authors.Count == 0)
                 {
                     return ServiceResult<IEnumerable<AuthorGet>>.FailureResult("Yazar verisi bulunmuyor.");
                 }
@@ -38,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<AuthorGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<AuthorGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all authors with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Author>>> GetAllWithDataAsync()
         {
             try
             {
                 var authors = await _authorData.SelectAll();
-                if (authors == null || authors.Count == 0)
+                if (authors.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Author>>.FailureResult("Yazar verisi bulunmuyor.");
                 }
@@ -55,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Author>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Author>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves an author by its ID.
+        /// </summary>
         public async Task<ServiceResult<AuthorGet>> GetByIdAsync(int id)
         {
             try
             {
+                Author? nullAuthor = null;
                 var author = await _authorData.SelectForEntity(id);
-                if (author == null)
+                if (author == nullAuthor)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar verisi bulunmuyor.");
                 }
@@ -73,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<AuthorGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<AuthorGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves an author with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Author>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Author? nullAuthor = null;
                 var author = await _authorData.SelectForEntity(id);
-                if (author == null)
+                if (author == nullAuthor)
                 {
                     return ServiceResult<Author>.FailureResult("Yazar verisi bulunmuyor.");
                 }
@@ -90,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Author>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Author>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new author.
+        /// </summary>
         public async Task<ServiceResult<AuthorGet>> AddAsync(AuthorPost tPost)
         {
             try
@@ -102,11 +127,13 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Bu yazar zaten eklenmiş.");
                 }
-                if (tPost.DateOfBirth > (DateTime.Now.Year-4))
+                if (tPost.DateOfBirth > (DateTime.Now.Year - 4))
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar 4 yaşından küçük olamaz.");
                 }
-                if (tPost.DateOfDeath<tPost.DateOfBirth+4 || tPost.DateOfDeath>DateTime.Now.Year)
+                if (tPost.DateOfDeath < tPost.DateOfBirth + 4
+                    || tPost.DateOfDeath > DateTime.Now.Year
+                    || tPost.DateOfDeath - tPost.DateOfBirth > 123)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar ölüm yılı hatalı.");
                 }
@@ -118,16 +145,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<AuthorGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<AuthorGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing author.
+        /// </summary>
         public async Task<ServiceResult<AuthorGet>> UpdateAsync(int id, AuthorPost tPost)
         {
             try
             {
+                Author? nullAuthor = null;
                 var author = await _authorData.SelectForEntity(id);
-                if (author == null)
+                if (author == nullAuthor)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar verisi bulunmuyor.");
                 }
@@ -150,16 +181,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<AuthorGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<AuthorGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes an author by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Author? nullAuthor = null;
                 var author = await _authorData.SelectForEntity(id);
-                if (author == null)
+                if (author == nullAuthor)
                 {
                     return ServiceResult<bool>.FailureResult("Yazar verisi bulunmuyor.");
                 }
@@ -169,10 +204,8 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }
-
 }
-

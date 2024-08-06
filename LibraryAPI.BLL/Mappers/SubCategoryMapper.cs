@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.SubCategoryDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.SubCategoryDTO; // Importing DTOs related to SubCategory
+using LibraryAPI.Entities.Enums; // Importing enums used in the project
+using LibraryAPI.Entities.Models; // Importing entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class SubCategoryMapper
-	{
+    // Mapper class for converting between SubCategory entities and DTOs
+    public class SubCategoryMapper
+    {
+        // Method to map SubCategoryPost DTO to SubCategory entity
         public SubCategory MapToEntity(SubCategoryPost subCategoryPost)
         {
             var entity = new SubCategory
@@ -17,6 +19,7 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
+        // Method to map SubCategoryPost DTO to SubCategory entity with additional fields
         public SubCategory PostEntity(SubCategoryPost subCategoryPost)
         {
             var subCategory = new SubCategory
@@ -32,6 +35,7 @@ namespace LibraryAPI.BLL.Mappers
             return subCategory;
         }
 
+        // Method to update an existing SubCategory entity with SubCategoryPost DTO data
         public SubCategory UpdateEntity(SubCategory subCategory, SubCategoryPost subCategoryPost)
         {
             subCategory.SubCategoryName = subCategoryPost.SubCategoryName;
@@ -44,6 +48,7 @@ namespace LibraryAPI.BLL.Mappers
             return subCategory;
         }
 
+        // Method to mark a SubCategory entity as deleted
         public SubCategory DeleteEntity(SubCategory subCategory)
         {
             subCategory.DeleteDateLog = DateTime.Now;
@@ -52,6 +57,7 @@ namespace LibraryAPI.BLL.Mappers
             return subCategory;
         }
 
+        // Method to map SubCategory entity to SubCategoryGet DTO
         public SubCategoryGet MapToDto(SubCategory subCategory)
         {
             var dto = new SubCategoryGet
@@ -69,4 +75,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

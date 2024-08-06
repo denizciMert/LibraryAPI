@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using LibraryAPI.BLL.Core;
@@ -17,8 +18,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryAPI.BLL.Services
 {
+    /// <summary>
+    /// AccountService class implements the ILibraryAccountManager interface and provides
+    /// functionalities related to user account management.
+    /// </summary>
     public class AccountService : ILibraryAccountManager
     {
+        // Private fields to hold instances of data and services.
         private readonly AccountData _accountData;
         private readonly MailService _mailService;
         private readonly IConfiguration _configuration;
@@ -26,6 +32,9 @@ namespace LibraryAPI.BLL.Services
         private readonly LoanMapper _loanMapper;
         private readonly PenaltyMapper _penaltyMapper;
 
+        /// <summary>
+        /// Constructor to initialize the AccountService with necessary dependencies.
+        /// </summary>
         public AccountService(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
@@ -41,14 +50,16 @@ namespace LibraryAPI.BLL.Services
             _penaltyMapper = new PenaltyMapper();
         }
 
+        /// <summary>
+        /// Finds a user by username.
+        /// </summary>
         public async Task<ServiceResult<ApplicationUser>> FindUserByUserName(string userName)
         {
             try
             {
-                ApplicationUser nullUser = new ApplicationUser();
-                nullUser = null;
+                ApplicationUser? nullUser = null;
                 var user = await _accountData.FindUserByUserNameAsync(userName);
-                if (user == nullUser )
+                if (user == nullUser)
                 {
                     return ServiceResult<ApplicationUser>.FailureResult("Kullanıcı bilgileriniz hatalı.");
                 }
@@ -56,10 +67,34 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<ApplicationUser>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<ApplicationUser>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Finds a user by ID.
+        /// </summary>
+        public async Task<ServiceResult<ApplicationUser>> FindUserById(string id)
+        {
+            try
+            {
+                ApplicationUser? nullUser = null;
+                var user = await _accountData.FindUserByIdAsync(id);
+                if (user == nullUser)
+                {
+                    return ServiceResult<ApplicationUser>.FailureResult("Kullanıcı bilgileriniz hatalı.");
+                }
+                return ServiceResult<ApplicationUser>.SuccessResult(user);
+            }
+            catch (Exception e)
+            {
+                return ServiceResult<ApplicationUser>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
+            }
+        }
+
+        /// <summary>
+        /// Handles user login.
+        /// </summary>
         public async Task<ServiceResult<string>> Login(ApplicationUser user, string password)
         {
             try
@@ -71,7 +106,7 @@ namespace LibraryAPI.BLL.Services
                 }
                 await _accountData.CheckUserStatus(user);
                 var jwt = GenerateJwtToken(user);
-                if (user.Banned==true)
+                if (user.Banned)
                 {
                     return ServiceResult<string>.SuccessResult($"Giriş işlemi başarılı ancak hesabınızın engellenmesine sebep olan bir cezanız var. \nJWT Token: {jwt[0]} \nToken Valid To: {jwt[1]}");
                 }
@@ -80,27 +115,33 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
-        public async Task<ServiceResult<string>> Logout()
+        /// <summary>
+        /// Handles user logout.
+        /// </summary>
+        public Task<ServiceResult<string>> Logout()
         {
             try
             {
                 var result = _accountData.UserSignOutAsync().Result;
                 if (result == false)
                 {
-                    return ServiceResult<string>.FailureResult("Çıkış yapılamıyor. Bir süre bekleyin ve tekrar deneyin.");
+                    return Task.FromResult(ServiceResult<string>.FailureResult("Çıkış yapılamıyor. Bir süre bekleyin ve tekrar deneyin."));
                 }
-                return ServiceResult<string>.SuccessResult("Başarıyla çıkış yapıldı.");
+                return Task.FromResult(ServiceResult<string>.SuccessResult("Başarıyla çıkış yapıldı."));
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return Task.FromResult(ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}"));
             }
         }
 
+        /// <summary>
+        /// Handles password reset token generation.
+        /// </summary>
         public async Task<ServiceResult<string>> ForgetPassword(ApplicationUser user)
         {
             try
@@ -110,7 +151,7 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<string>.FailureResult("Token oluşturulamıyor. Bir süre bekleyin ve tekrar deneyin.");
                 }
-                var mail= await _mailService.SendPasswordResetTokenMail(user.Email, result);
+                var mail = await _mailService.SendPasswordResetTokenMail(user.Email!, result);
                 if (!mail.Success)
                 {
                     return ServiceResult<string>.FailureResult("Oluşturulan token mail adresinize gönderilemedi.");
@@ -119,10 +160,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Handles password reset using the provided token.
+        /// </summary>
         public async Task<ServiceResult<string>> ResetPassword(ApplicationUser user, string newPassword, string token)
         {
             try
@@ -136,10 +180,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Handles request for email change.
+        /// </summary>
         public async Task<ServiceResult<string>> RequestEmailChange(ApplicationUser user, string newEmail)
         {
             try
@@ -149,7 +196,7 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<string>.FailureResult("Token oluşturulamıyor. Bir süre bekleyin ve tekrar deneyin.");
                 }
-                var mail =await _mailService.SendEmailChangeTokenMail(newEmail, result);
+                var mail = await _mailService.SendEmailChangeTokenMail(newEmail, result);
                 if (!mail.Success)
                 {
                     return ServiceResult<string>.FailureResult("Oluşturulan token mail adresinize gönderilemedi.");
@@ -158,10 +205,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Handles request for email confirmation token.
+        /// </summary>
         public async Task<ServiceResult<string>> RequestEmailConfirm(ApplicationUser user)
         {
             try
@@ -171,7 +221,7 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<string>.FailureResult("Token oluşturulamıyor. Bir süre bekleyin ve tekrar deneyin.");
                 }
-                var mail = await _mailService.SendEmailConfirmTokenMail(user.Email, result);
+                var mail = await _mailService.SendEmailConfirmTokenMail(user.Email!, result);
                 if (!mail.Success)
                 {
                     return ServiceResult<string>.FailureResult("Oluşturulan token mail adresinize gönderilemedi.");
@@ -180,55 +230,72 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
-        public async Task<ServiceResult<string>> ChangeEmail(ApplicationUser user, string newEmail, string token)
+        /// <summary>
+        /// Handles email change using the provided token.
+        /// </summary>
+        public Task<ServiceResult<string>> ChangeEmail(ApplicationUser user, string newEmail, string token)
         {
             try
             {
                 var result = _accountData.EmailChange(user, newEmail, token).Result;
                 if (!result)
                 {
-                    return ServiceResult<string>.FailureResult("Mail adresiniz değiştirilemedi. Bir süre bekleyin ve tekrar deneyin.");
+                    return Task.FromResult(ServiceResult<string>.FailureResult("Mail adresiniz değiştirilemedi. Bir süre bekleyin ve tekrar deneyin."));
                 }
 
-                return ServiceResult<string>.SuccessResult("Mail adresiniz başarıyla değiştirildi.");
+                return Task.FromResult(ServiceResult<string>.SuccessResult("Mail adresiniz başarıyla değiştirildi."));
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return Task.FromResult(ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}"));
             }
         }
 
-        public async Task<ServiceResult<string>> ConfirmEmail(ApplicationUser user, string token)
+        /// <summary>
+        /// Confirms email using the provided token.
+        /// </summary>
+        public Task<ServiceResult<string>> ConfirmEmail(ApplicationUser user, string token)
         {
             try
             {
                 var isConfirmed = _accountData.IsEmailConfirmed(user).Result;
                 if (isConfirmed)
                 {
-                    return ServiceResult<string>.SuccessResult("Mail adresiniz zaten doğrulanmış.");
+                    return Task.FromResult(ServiceResult<string>.SuccessResult("Mail adresiniz zaten doğrulanmış."));
                 }
                 var result = _accountData.EmailConfirm(user, token).Result;
                 if (!result)
                 {
-                    return ServiceResult<string>.FailureResult("Mail adresiniz doğrulanamadı. Bir süre bekleyin ve tekrar deneyin.");
+                    return Task.FromResult(ServiceResult<string>.FailureResult("Mail adresiniz doğrulanamadı. Bir süre bekleyin ve tekrar deneyin."));
                 }
                 var roleResult = _accountData.ChangeUserRole(user).Result;
                 if (!roleResult)
                 {
-                    return ServiceResult<string>.FailureResult("Rol atamaları sırasında hata meydana geldi.");
+                    return Task.FromResult(ServiceResult<string>.FailureResult("Rol atamaları sırasında hata meydana geldi."));
                 }
-                return ServiceResult<string>.SuccessResult("Mail adresiniz başarıyla doğrulandı.");
+                return Task.FromResult(ServiceResult<string>.SuccessResult("Mail adresiniz başarıyla doğrulandı."));
             }
             catch (Exception e)
             {
-                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return Task.FromResult(ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}"));
             }
         }
 
+        /// <summary>
+        /// Updates user profile.
+        /// </summary>
+        public Task<ServiceResult<ApplicationUser>> UpdateProfileAsync(string userName, ApplicationUserPatch patchDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Generates JWT token for the authenticated user.
+        /// </summary>
         public string[] GenerateJwtToken(ApplicationUser user)
         {
             var userClaims = _accountData.GetClaims(user).Result;
@@ -237,26 +304,29 @@ namespace LibraryAPI.BLL.Services
             var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role));
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim("UserName",user.UserName),
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+            new Claim("UserName",user.UserName!),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         }
             .Union(userClaims)
             .Union(roleClaims);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidOperationException()));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: creds);
 
-            return new string[] { new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo.ToString()};
+            return new string[] { new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo.ToString(CultureInfo.InvariantCulture) };
         }
 
+        /// <summary>
+        /// Updates user profile.
+        /// </summary>
         public async Task<ServiceResult<ApplicationUser>> UpdateeProfileAsync(string userName, ApplicationUserPatch patchDto)
         {
             try
@@ -283,14 +353,17 @@ namespace LibraryAPI.BLL.Services
             }
         }
 
-        public async Task<ServiceResult<List<LoanGet>>> GetUserLoans(ApplicationUser user)
+        /// <summary>
+        /// Retrieves user's active loans.
+        /// </summary>
+        public Task<ServiceResult<List<LoanGet>>> GetUserLoans(ApplicationUser user)
         {
             try
             {
                 var result = _accountData.GetLoans(user).Result;
-                if (result.Count ==0)
+                if (result.Count == 0)
                 {
-                    return ServiceResult<List<LoanGet>>.FailureResult("Ödünç alınan kitap kaydınız bulunamadı.");
+                    return Task.FromResult(ServiceResult<List<LoanGet>>.FailureResult("Ödünç alınan kitap kaydınız bulunamadı."));
                 }
                 List<LoanGet> loanGets = new List<LoanGet>();
                 foreach (var loan in result)
@@ -298,22 +371,25 @@ namespace LibraryAPI.BLL.Services
                     var loanGet = _loanMapper.MapToDto(loan);
                     loanGets.Add(loanGet);
                 }
-                return ServiceResult<List<LoanGet>>.SuccessResult(loanGets);
+                return Task.FromResult(ServiceResult<List<LoanGet>>.SuccessResult(loanGets));
             }
             catch (Exception e)
             {
-                return ServiceResult<List<LoanGet>>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
+                return Task.FromResult(ServiceResult<List<LoanGet>>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}"));
             }
         }
 
-        public async Task<ServiceResult<List<LoanGet>>> GetReturnedUserLoans(ApplicationUser user)
+        /// <summary>
+        /// Retrieves user's returned loans.
+        /// </summary>
+        public Task<ServiceResult<List<LoanGet>>> GetReturnedUserLoans(ApplicationUser user)
         {
             try
             {
                 var result = _accountData.GetReturnedLoans(user).Result;
                 if (result.Count == 0)
                 {
-                    return ServiceResult<List<LoanGet>>.FailureResult("Ödünç alınan kitap kaydınız bulunamadı.");
+                    return Task.FromResult(ServiceResult<List<LoanGet>>.FailureResult("Ödünç alınan kitap kaydınız bulunamadı."));
                 }
                 List<LoanGet> loanGets = new List<LoanGet>();
                 foreach (var loan in result)
@@ -321,14 +397,17 @@ namespace LibraryAPI.BLL.Services
                     var loanGet = _loanMapper.MapToDto(loan);
                     loanGets.Add(loanGet);
                 }
-                return ServiceResult<List<LoanGet>>.SuccessResult(loanGets);
+                return Task.FromResult(ServiceResult<List<LoanGet>>.SuccessResult(loanGets));
             }
             catch (Exception e)
             {
-                return ServiceResult<List<LoanGet>>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
+                return Task.FromResult(ServiceResult<List<LoanGet>>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}"));
             }
         }
 
+        /// <summary>
+        /// Handles the return of user's loans.
+        /// </summary>
         public async Task<ServiceResult<bool>> ReturnUserLoans(ApplicationUser user, int bookId)
         {
             try
@@ -339,10 +418,10 @@ namespace LibraryAPI.BLL.Services
                     return ServiceResult<bool>.FailureResult("Ödünç alınan kitap kaydınız bulunamadı.");
                 }
 
-                
+
                 foreach (var loan in result)
                 {
-                    if (loan.BookId==bookId)
+                    if (loan.BookId == bookId)
                     {
                         loan.Active = false;
                         await _accountData.ChangeReserveValueForReturnedLoan(bookId, loan.CopyNo);
@@ -359,18 +438,21 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception e)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e}");
+                return ServiceResult<bool>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
             }
         }
 
-        public async Task<ServiceResult<List<PenaltyGet>>> GetUserPenalties(ApplicationUser user)
+        /// <summary>
+        /// Retrieves user's penalties.
+        /// </summary>
+        public Task<ServiceResult<List<PenaltyGet>>> GetUserPenalties(ApplicationUser user)
         {
             try
             {
                 var result = _accountData.GetPenalties(user).Result;
                 if (result.Count == 0)
                 {
-                    return ServiceResult<List<PenaltyGet>>.FailureResult("Ceza kaydınız bulunamadı.");
+                    return Task.FromResult(ServiceResult<List<PenaltyGet>>.FailureResult("Ceza kaydınız bulunamadı."));
                 }
                 List<PenaltyGet> penaltyGets = new List<PenaltyGet>();
                 foreach (var penalty in result)
@@ -378,14 +460,17 @@ namespace LibraryAPI.BLL.Services
                     var loanGet = _penaltyMapper.MapToDto(penalty);
                     penaltyGets.Add(loanGet);
                 }
-                return ServiceResult<List<PenaltyGet>>.SuccessResult(penaltyGets);
+                return Task.FromResult(ServiceResult<List<PenaltyGet>>.SuccessResult(penaltyGets));
             }
             catch (Exception e)
             {
-                return ServiceResult<List<PenaltyGet>>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}");
+                return Task.FromResult(ServiceResult<List<PenaltyGet>>.FailureResult($"Bir hata meydana geldi. Hata: {e.InnerException}"));
             }
         }
 
+        /// <summary>
+        /// Handles payment of user's penalties.
+        /// </summary>
         public async Task<ServiceResult<bool>> PayUserPenalty(ApplicationUser user, int penaltyId, float amount)
         {
             try
@@ -400,12 +485,13 @@ namespace LibraryAPI.BLL.Services
                 {
                     if (penalty.Id == penaltyId)
                     {
-                        if (penalty.PenaltyType.AmountToPay == amount)
+                        // ReSharper disable once CompareOfFloatsByEqualityOperator
+                        if (penalty.PenaltyType?.AmountToPay == amount)
                         {
                             penalty.Active = false;
                             isPaid = true;
                             user.Banned = false;
-                            penalty.UpdateDateLog= DateTime.Now;
+                            penalty.UpdateDateLog = DateTime.Now;
                             penalty.State = State.Eklendi;
                         }
                         else
@@ -430,6 +516,9 @@ namespace LibraryAPI.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Handles rating of a book by the user.
+        /// </summary>
         public async Task<ServiceResult<string>> RateBook(ApplicationUser user, int bookId, float rating)
         {
             try
@@ -440,7 +529,7 @@ namespace LibraryAPI.BLL.Services
                     return ServiceResult<string>.FailureResult("Geri getirilen kitap bulunamadı.");
                 }
 
-                if (await _accountData.IsRatedBefore(user,bookId,rating))
+                if (await _accountData.IsRatedBefore(user, bookId, rating))
                 {
                     return ServiceResult<string>.SuccessResult("Puanlamanız değiştirildi.");
                 }
@@ -468,6 +557,9 @@ namespace LibraryAPI.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Bans the user.
+        /// </summary>
         public async Task<ServiceResult<string>> BanUser(ApplicationUser user)
         {
             try
@@ -486,6 +578,9 @@ namespace LibraryAPI.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Unbans the user.
+        /// </summary>
         public async Task<ServiceResult<string>> UnBanUser(ApplicationUser user)
         {
             try
@@ -493,6 +588,42 @@ namespace LibraryAPI.BLL.Services
                 user.Banned = false;
                 await _accountData.UpdateUser(user);
                 return ServiceResult<string>.SuccessResult($"{user.UserName} kullanıcısının engeli kaldırıldı.");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<string>.FailureResult($"Bir hata meydana geldi. Hata: {ex.InnerException}");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves user's reservations.
+        /// </summary>
+        public async Task<ServiceResult<List<Reservation>>> GetReservations(ApplicationUser user)
+        {
+            try
+            {
+                var result = await _accountData.GetReservations(user.UserName!);
+                if (result.Count == 0)
+                {
+                    return ServiceResult<List<Reservation>>.FailureResult("Kayıtlı rezervasyonunuz bulunmuyor.");
+                }
+                return ServiceResult<List<Reservation>>.SuccessResult(result);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<List<Reservation>>.FailureResult($"Bir hata meydana geldi. Hata: {ex.InnerException}");
+            }
+        }
+
+        /// <summary>
+        /// Ends user's reservation.
+        /// </summary>
+        public async Task<ServiceResult<string>> EndReservations(ApplicationUser user, int reservationId)
+        {
+            try
+            {
+                await _accountData.EndReservations(user.UserName!, reservationId);
+                return ServiceResult<string>.SuccessResult("Rezervasyon kaydınız sonlandırıldı.");
             }
             catch (Exception ex)
             {

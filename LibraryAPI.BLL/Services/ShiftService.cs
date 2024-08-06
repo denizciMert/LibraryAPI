@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LibraryAPI.BLL.Core;
+﻿using LibraryAPI.BLL.Core;
 using LibraryAPI.BLL.Interfaces;
 using LibraryAPI.BLL.Mappers;
 using LibraryAPI.DAL;
@@ -13,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
+    /// <summary>
+    /// ShiftService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to shift management.
+    /// </summary>
     public class ShiftService : ILibraryServiceManager<ShiftGet,ShiftPost,Shift>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly ShiftData _shiftData;
         private readonly ShiftMapper _shiftMapper;
 
+        /// <summary>
+        /// Constructor to initialize the ShiftService with necessary dependencies.
+        /// </summary>
         public ShiftService(ApplicationDbContext context)
         {
             _shiftData = new ShiftData(context);
             _shiftMapper = new ShiftMapper();
         }
 
+        /// <summary>
+        /// Retrieves all shifts.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<ShiftGet>>> GetAllAsync()
         {
             try
             {
                 var shifts = await _shiftData.SelectAllFiltered();
-                if (shifts == null || shifts.Count == 0)
+                if (shifts.Count == 0)
                 {
                     return ServiceResult<IEnumerable<ShiftGet>>.FailureResult("Vardiya verisi bulunmuyor.");
                 }
@@ -43,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<ShiftGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<ShiftGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all shifts with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Shift>>> GetAllWithDataAsync()
         {
             try
             {
                 var shifts = await _shiftData.SelectAll();
-                if (shifts == null || shifts.Count == 0)
+                if (shifts.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Shift>>.FailureResult("Vardiya verisi bulunmuyor.");
                 }
@@ -60,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Shift>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Shift>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a shift by its ID.
+        /// </summary>
         public async Task<ServiceResult<ShiftGet>> GetByIdAsync(int id)
         {
             try
             {
+                Shift? nullShift = null;
                 var shift = await _shiftData.SelectForEntity(id);
-                if (shift == null)
+                if (shift == nullShift)
                 {
                     return ServiceResult<ShiftGet>.FailureResult("Vardiya verisi bulunmuyor.");
                 }
@@ -78,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<ShiftGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<ShiftGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a shift with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Shift>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Shift? nullShift = null;
                 var shift = await _shiftData.SelectForEntity(id);
-                if (shift == null)
+                if (shift == nullShift)
                 {
                     return ServiceResult<Shift>.FailureResult("Vardiya verisi bulunmuyor.");
                 }
@@ -95,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Shift>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Shift>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new shift.
+        /// </summary>
         public async Task<ServiceResult<ShiftGet>> AddAsync(ShiftPost tPost)
         {
             try
@@ -115,16 +135,24 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<ShiftGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<ShiftGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing shift.
+        /// </summary>
         public async Task<ServiceResult<ShiftGet>> UpdateAsync(int id, ShiftPost tPost)
         {
             try
             {
+                if (await _shiftData.IsRegistered(tPost))
+                {
+                    return ServiceResult<ShiftGet>.FailureResult("Bu vardiya zaten eklenmiş.");
+                }
+                Shift? nullShift = null;
                 var shift = await _shiftData.SelectForEntity(id);
-                if (shift == null)
+                if (shift == nullShift)
                 {
                     return ServiceResult<ShiftGet>.FailureResult("Vardiya verisi bulunmuyor.");
                 }
@@ -135,16 +163,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<ShiftGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<ShiftGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a shift by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Shift? nullShift = null;
                 var shift = await _shiftData.SelectForEntity(id);
-                if (shift == null)
+                if (shift == nullShift)
                 {
                     return ServiceResult<bool>.FailureResult("Vardiya verisi bulunmuyor.");
                 }
@@ -154,7 +186,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 

@@ -1,12 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.AddressDTO;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.AddressDTO; // Importing the DTOs for Address
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class AddressMapper
-	{
+    // Mapper class for converting between Address entities and DTOs
+    public class AddressMapper
+    {
+        // Method to map AddressPost DTO to Address entity
         public Address MapToEntity(AddressPost dto)
         {
             var address = new Address
@@ -19,6 +20,7 @@ namespace LibraryAPI.BLL.Mappers
             return address;
         }
 
+        // Method to map AddressPost DTO to Address entity with additional fields
         public Address PostEntity(AddressPost dto)
         {
             var address = new Address
@@ -35,6 +37,7 @@ namespace LibraryAPI.BLL.Mappers
             return address;
         }
 
+        // Method to update an existing Address entity with AddressPost DTO data
         public Address UpdateEntity(Address address, AddressPost addressPost)
         {
             address.AddressString = addressPost.AddressString;
@@ -48,6 +51,7 @@ namespace LibraryAPI.BLL.Mappers
             return address;
         }
 
+        // Method to mark an Address entity as deleted
         public Address DeleteEntity(Address address)
         {
             address.DeleteDateLog = DateTime.Now;
@@ -56,6 +60,7 @@ namespace LibraryAPI.BLL.Mappers
             return address;
         }
 
+        // Method to map Address entity to AddressGet DTO
         public AddressGet MapToDto(Address entity)
         {
             var dto = new AddressGet
@@ -63,8 +68,8 @@ namespace LibraryAPI.BLL.Mappers
                 Id = entity.Id,
                 AddressString = entity.AddressString,
                 District = entity.District?.DistrictName,
-                City = entity.District?.City.CityName,
-                Country = entity.District?.City.Country.CountryName,
+                City = entity.District?.City!.CityName,
+                Country = entity.District?.City!.Country!.CountryName,
                 UserName = entity.ApplicationUser?.UserName,
                 UserFullName = $"{entity.ApplicationUser?.FirstName} {entity.ApplicationUser?.LastName}",
                 CreatinDateLog = entity.CreationDateLog,
@@ -75,6 +80,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
+    }
 }
-}
-

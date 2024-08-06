@@ -1,13 +1,13 @@
-﻿using System;
-using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.ShiftDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.ShiftDTO; // Importing the DTOs for Shift
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class ShiftMapper
-	{
+    // Mapper class for converting between Shift entities and DTOs
+    public class ShiftMapper
+    {
+        // Method to map ShiftPost DTO to Shift entity
         public Shift MapToEntity(ShiftPost shiftPost)
         {
             var entity = new Shift
@@ -18,6 +18,7 @@ namespace LibraryAPI.BLL.Mappers
             return entity;
         }
 
+        // Method to map ShiftPost DTO to Shift entity with additional fields
         public Shift PostEntity(ShiftPost shiftPost)
         {
             var shift = new Shift
@@ -32,6 +33,7 @@ namespace LibraryAPI.BLL.Mappers
             return shift;
         }
 
+        // Method to update an existing Shift entity with ShiftPost DTO data
         public Shift UpdateEntity(Shift shift, ShiftPost shiftPost)
         {
             shift.ShiftType = shiftPost.ShiftType;
@@ -43,6 +45,7 @@ namespace LibraryAPI.BLL.Mappers
             return shift;
         }
 
+        // Method to mark a Shift entity as deleted
         public Shift DeleteEntity(Shift shift)
         {
             shift.DeleteDateLog = DateTime.Now;
@@ -51,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return shift;
         }
 
+        // Method to map Shift entity to ShiftGet DTO
         public ShiftGet MapToDto(Shift shift)
         {
             var dto = new ShiftGet
@@ -67,4 +71,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

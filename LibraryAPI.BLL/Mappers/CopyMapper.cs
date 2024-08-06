@@ -1,7 +1,6 @@
-﻿using System;
-namespace LibraryAPI.BLL.Mappers
+﻿namespace LibraryAPI.BLL.Mappers
 {
-	public interface CopyMapper
+	public class CopyMapper
 	{
 	}
 }

@@ -1,11 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.LoanDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.LoanDTO; // Importing the DTOs for Loan
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
+    // Mapper class for converting between Loan entities and DTOs
     public class LoanMapper
     {
+        // Method to map LoanPost DTO to Loan entity
         public Loan MapToEntity(LoanPost dto)
         {
             var loan = new Loan
@@ -14,15 +16,12 @@ namespace LibraryAPI.BLL.Mappers
                 EmployeeId = dto.EmployeeId,
                 BookId = dto.BookId,
                 CopyNo = dto.CopyNo
-                //LoanDate = DateTime.Now, // Varsayılan olarak şu anki zamanı atıyoruz
-                //DueDate = DateTime.Now.AddDays(30), // Varsayılan olarak ödünç alma tarihine 30 gün ekliyoruz
-                //Active = true, // Varsayılan olarak ödünç durumu aktif olarak işaretlenmiş
-                //CreatedDate = DateTime.Now // Varsayılan olarak oluşturma tarihini şu anki zaman olarak atıyoruz
             };
 
             return loan;
         }
 
+        // Method to map LoanPost DTO to Loan entity with additional fields
         public Loan PostEntity(LoanPost dto)
         {
             var loan = new Loan
@@ -43,6 +42,7 @@ namespace LibraryAPI.BLL.Mappers
             return loan;
         }
 
+        // Method to update an existing Loan entity with LoanPost DTO data
         public Loan UpdateEntity(Loan loan, LoanPost loanPost)
         {
             loan.LoanedMemberId = loanPost.MemberId;
@@ -60,6 +60,7 @@ namespace LibraryAPI.BLL.Mappers
             return loan;
         }
 
+        // Method to mark a Loan entity as deleted
         public Loan DeleteEntity(Loan loan)
         {
             loan.Active = false;
@@ -69,17 +70,18 @@ namespace LibraryAPI.BLL.Mappers
             return loan;
         }
 
+        // Method to map Loan entity to LoanGet DTO
         public LoanGet MapToDto(Loan entity)
         {
             var dto = new LoanGet
             {
                 Id = entity.Id,
-                MemberName = $"{entity.Member.ApplicationUser.FirstName} {entity.Member.ApplicationUser.LastName}",
+                MemberName = $"{entity.Member!.ApplicationUser!.FirstName} {entity.Member!.ApplicationUser!.MiddleName} {entity.Member.ApplicationUser.LastName}",
                 MemberUserName = entity.Member?.ApplicationUser?.UserName,
                 BookTitle = entity.Book?.BookTitle,
                 BookIsbn = entity.Book?.Isbn,
                 CopyNo = entity.CopyNo,
-                EmployeeName = $"{entity.Employee.ApplicationUser.FirstName} {entity.Employee.ApplicationUser.LastName}",
+                EmployeeName = $"{entity.Employee!.ApplicationUser!.FirstName} {entity.Employee.ApplicationUser.LastName}",
                 EmployeeUserName = entity.Employee.ApplicationUser.UserName,
                 LoanDate = entity.LoanDate,
                 DueDate = entity.DueDate,
@@ -93,7 +95,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
-
     }
 }
-

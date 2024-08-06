@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çözüm Öğeleri", "{D259AC8A-3DF8-458C-9692-DC548D5934BD}"
 	ProjectSection(SolutionItems) = preProject
 		Notlar.txt = Notlar.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

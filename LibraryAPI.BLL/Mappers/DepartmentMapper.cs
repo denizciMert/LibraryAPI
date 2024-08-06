@@ -1,12 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.DepartmentDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.DepartmentDTO; // Importing the DTOs for Department
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class DepartmentMapper
-	{
+    // Mapper class for converting between Department entities and DTOs
+    public class DepartmentMapper
+    {
+        // Method to map DepartmentPost DTO to Department entity
         public Department MapToEntity(DepartmentPost dto)
         {
             var department = new Department
@@ -17,6 +18,7 @@ namespace LibraryAPI.BLL.Mappers
             return department;
         }
 
+        // Method to map DepartmentPost DTO to Department entity with additional fields
         public Department PostEntity(DepartmentPost dto)
         {
             var department = new Department
@@ -31,9 +33,10 @@ namespace LibraryAPI.BLL.Mappers
             return department;
         }
 
+        // Method to update an existing Department entity with DepartmentPost DTO data
         public Department UpdateEntity(Department department, DepartmentPost departmentPost)
         {
-            department.DepartmentName = department.DepartmentName;
+            department.DepartmentName = departmentPost.DepartmentName;
             department.CreationDateLog = department.CreationDateLog;
             department.UpdateDateLog = DateTime.Now;
             department.DeleteDateLog = null;
@@ -42,6 +45,7 @@ namespace LibraryAPI.BLL.Mappers
             return department;
         }
 
+        // Method to mark a Department entity as deleted
         public Department DeleteEntity(Department department)
         {
             department.DeleteDateLog = DateTime.Now;
@@ -50,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return department;
         }
 
+        // Method to map Department entity to DepartmentGet DTO
         public DepartmentGet MapToDto(Department entity)
         {
             var dto = new DepartmentGet
@@ -66,4 +71,3 @@ namespace LibraryAPI.BLL.Mappers
         }
     }
 }
-

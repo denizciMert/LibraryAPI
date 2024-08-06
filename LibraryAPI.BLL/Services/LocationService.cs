@@ -8,23 +8,34 @@ using LibraryAPI.Entities.Models;
 
 namespace LibraryAPI.BLL.Services
 {
-    public class LocationService : ILibraryServiceManager<LocationGet,LocationPost,Location>
+    /// <summary>
+    /// LocationService class implements the ILibraryServiceManager interface and provides
+    /// functionalities related to location management.
+    /// </summary>
+    public class LocationService : ILibraryServiceManager<LocationGet, LocationPost, Location>
     {
+        // Private fields to hold instances of data and mappers.
         private readonly LocationData _locationData;
         private readonly LocationMapper _locationMapper;
 
+        /// <summary>
+        /// Constructor to initialize the LocationService with necessary dependencies.
+        /// </summary>
         public LocationService(ApplicationDbContext context)
         {
             _locationData = new LocationData(context);
             _locationMapper = new LocationMapper();
         }
 
+        /// <summary>
+        /// Retrieves all locations.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<LocationGet>>> GetAllAsync()
         {
             try
             {
                 var locations = await _locationData.SelectAllFiltered();
-                if (locations == null || locations.Count == 0)
+                if (locations.Count == 0)
                 {
                     return ServiceResult<IEnumerable<LocationGet>>.FailureResult("Konum verisi bulunmuyor.");
                 }
@@ -38,16 +49,19 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<LocationGet>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<LocationGet>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves all locations with detailed data.
+        /// </summary>
         public async Task<ServiceResult<IEnumerable<Location>>> GetAllWithDataAsync()
         {
             try
             {
                 var locations = await _locationData.SelectAll();
-                if (locations == null || locations.Count == 0)
+                if (locations.Count == 0)
                 {
                     return ServiceResult<IEnumerable<Location>>.FailureResult("Konum verisi bulunmuyor.");
                 }
@@ -55,16 +69,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<Location>>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<IEnumerable<Location>>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a location by its ID.
+        /// </summary>
         public async Task<ServiceResult<LocationGet>> GetByIdAsync(int id)
         {
             try
             {
+                Location? nulLocation = null;
                 var location = await _locationData.SelectForEntity(id);
-                if (location == null)
+                if (location == nulLocation)
                 {
                     return ServiceResult<LocationGet>.FailureResult("Konum verisi bulunmuyor.");
                 }
@@ -73,16 +91,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LocationGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<LocationGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Retrieves a location with detailed data by its ID.
+        /// </summary>
         public async Task<ServiceResult<Location>> GetWithDataByIdAsync(int id)
         {
             try
             {
+                Location? nulLocation = null;
                 var location = await _locationData.SelectForEntity(id);
-                if (location == null)
+                if (location == nulLocation)
                 {
                     return ServiceResult<Location>.FailureResult("Konum verisi bulunmuyor.");
                 }
@@ -90,10 +112,13 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Location>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<Location>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Adds a new location.
+        /// </summary>
         public async Task<ServiceResult<LocationGet>> AddAsync(LocationPost tPost)
         {
             try
@@ -110,16 +135,24 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LocationGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<LocationGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Updates an existing location.
+        /// </summary>
         public async Task<ServiceResult<LocationGet>> UpdateAsync(int id, LocationPost tPost)
         {
             try
             {
+                if (await _locationData.IsRegistered(tPost))
+                {
+                    return ServiceResult<LocationGet>.FailureResult("Bu konum zaten eklenmiş.");
+                }
+                Location? nulLocation = null;
                 var location = await _locationData.SelectForEntity(id);
-                if (location == null)
+                if (location == nulLocation)
                 {
                     return ServiceResult<LocationGet>.FailureResult("Konum verisi bulunmuyor.");
                 }
@@ -130,16 +163,20 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<LocationGet>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<LocationGet>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
 
+        /// <summary>
+        /// Deletes a location by its ID.
+        /// </summary>
         public async Task<ServiceResult<bool>> DeleteAsync(int id)
         {
             try
             {
+                Location? nulLocation = null;
                 var location = await _locationData.SelectForEntity(id);
-                if (location == null)
+                if (location == nulLocation)
                 {
                     return ServiceResult<bool>.FailureResult("Konum verisi bulunmuyor.");
                 }
@@ -149,7 +186,7 @@ namespace LibraryAPI.BLL.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.Message}");
+                return ServiceResult<bool>.FailureResult($"Bir hata oluştu: {ex.InnerException}");
             }
         }
     }

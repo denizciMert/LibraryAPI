@@ -1,12 +1,13 @@
-﻿using LibraryAPI.Entities.DTOs.CategoryDTO;
-using LibraryAPI.Entities.DTOs.CountryDTO;
-using LibraryAPI.Entities.Enums;
-using LibraryAPI.Entities.Models;
+﻿using LibraryAPI.Entities.DTOs.CountryDTO; // Importing the DTOs for Country
+using LibraryAPI.Entities.Enums; // Importing the enums used in the project
+using LibraryAPI.Entities.Models; // Importing the entity models
 
 namespace LibraryAPI.BLL.Mappers
 {
-	public class CountryMapper
-	{
+    // Mapper class for converting between Country entities and DTOs
+    public class CountryMapper
+    {
+        // Method to map CountryPost DTO to Country entity
         public Country MapToEntity(CountryPost dto)
         {
             var country = new Country
@@ -17,6 +18,7 @@ namespace LibraryAPI.BLL.Mappers
             return country;
         }
 
+        // Method to map CountryPost DTO to Country entity with additional fields
         public Country PostEntity(CountryPost dto)
         {
             var country = new Country
@@ -31,9 +33,10 @@ namespace LibraryAPI.BLL.Mappers
             return country;
         }
 
+        // Method to update an existing Country entity with CountryPost DTO data
         public Country UpdateEntity(Country country, CountryPost countryPost)
         {
-            country.CountryName = country.CountryName;
+            country.CountryName = countryPost.CountryName;
             country.CreationDateLog = country.CreationDateLog;
             country.UpdateDateLog = DateTime.Now;
             country.DeleteDateLog = null;
@@ -42,6 +45,7 @@ namespace LibraryAPI.BLL.Mappers
             return country;
         }
 
+        // Method to mark a Country entity as deleted
         public Country DeleteEntity(Country country)
         {
             country.DeleteDateLog = DateTime.Now;
@@ -50,6 +54,7 @@ namespace LibraryAPI.BLL.Mappers
             return country;
         }
 
+        // Method to map Country entity to CountryGet DTO
         public CountryGet MapToDto(Country entity)
         {
             var dto = new CountryGet
@@ -64,6 +69,5 @@ namespace LibraryAPI.BLL.Mappers
 
             return dto;
         }
+    }
 }
-}
-

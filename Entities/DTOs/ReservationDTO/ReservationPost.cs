@@ -11,7 +11,6 @@ namespace LibraryAPI.Entities.DTOs.ReservationDTO
 
         // Unique identifier for the employee handling the reservation
         [JsonIgnore]
-        [Required]
         public string EmployeeId { get; set; } = string.Empty;
 
         // Unique identifier for the study table being reserved

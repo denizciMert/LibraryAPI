@@ -74,8 +74,8 @@ namespace LibraryAPI.WebAPI.Controllers
         public async Task<ActionResult<PenaltyPost>> Post(PenaltyPost penalty)
         {
             var user = await _accountManager.FindUserById(penalty.PenaltiedMemberId); // Finding the user by ID
-            var userPenalties = await _accountManager.GetReservations(user.Data); // Getting the user's penalties
-            if (userPenalties.Data.Count != 0) // Checking if the user already has a penalty
+            var userPenalties = await _accountManager.GetUserPenalties(user.Data); // Getting the user's penalties
+            if (userPenalties.Success) // Checking if the user already has a penalty
             {
                 return BadRequest("Bu kullanıcının zaten bir cezaya sahip. Eğer hatalı bir kayıt girildiyse öncelikle hatalı kaydı silin."); // Returning a bad request if the user already has a penalty
             }

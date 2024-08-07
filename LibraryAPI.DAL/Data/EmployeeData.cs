@@ -75,6 +75,83 @@ namespace LibraryAPI.DAL.Data
                     return true; // Returning true if a match is found
                 }
             }
+            var members = await context.Members!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var member in members) // Iterating through each employee
+            {
+                if (member.ApplicationUser!.IdentityNo == tPost.IdentityNo ||
+                    member.ApplicationUser.UserName == tPost.UserName ||
+                    member.ApplicationUser.Email == tPost.Email) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
+            return false; // Returning false if no match is found
+        }
+
+        public async Task<bool> IsRegisteredUserName(EmployeePost tPost)
+        {
+            var employees = await SelectAllFiltered(); // Selecting all filtered employees
+            foreach (var employee in employees) // Iterating through each employee
+            {
+                if (employee.ApplicationUser!.UserName == tPost.UserName) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
+            var members = await context.Members!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var member in members) // Iterating through each employee
+            {
+                if (member.ApplicationUser!.UserName == tPost.UserName) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
+            return false; // Returning false if no match is found
+        }
+
+        public async Task<bool> IsRegisteredIdNo(EmployeePost tPost)
+        {
+            var employees = await SelectAllFiltered(); // Selecting all filtered employees
+            foreach (var employee in employees) // Iterating through each employee
+            {
+                if (employee.ApplicationUser!.IdentityNo == tPost.IdentityNo) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
+            var members = await context.Members!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var member in members) // Iterating through each employee
+            {
+                if (member.ApplicationUser!.IdentityNo == tPost.IdentityNo) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
+            return false; // Returning false if no match is found
+        }
+
+        public async Task<bool> IsRegisteredEmail(EmployeePost tPost)
+        {
+            var employees = await SelectAllFiltered(); // Selecting all filtered employees
+            foreach (var employee in employees) // Iterating through each employee
+            {
+                if (employee.ApplicationUser!.Email == tPost.Email) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
+            var members = await context.Members!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var member in members) // Iterating through each employee
+            {
+                if (member.ApplicationUser!.Email == tPost.Email) // Checking if identity number, username, or email matches
+                {
+                    return true; // Returning true if a match is found
+                }
+            }
             return false; // Returning false if no match is found
         }
 

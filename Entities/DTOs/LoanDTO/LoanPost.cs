@@ -11,7 +11,6 @@ namespace LibraryAPI.Entities.DTOs.LoanDTO
 
         // ID of the employee processing the loan
         [JsonIgnore]
-        [Required]
         public string EmployeeId { get; set; } = string.Empty;
 
         // ID of the book being borrowed

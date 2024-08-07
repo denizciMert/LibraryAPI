@@ -128,6 +128,11 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
+                if (tPost.UserName == "admin")
+                {
+                    return ServiceResult<EmployeeGet>.FailureResult("Bu kullanıcı adını alamazsınız.");
+                }
+
                 if (tPost.DateOfBirth > DateTime.Now ||
                     tPost.DateOfBirth.Year > (DateTime.Now.Year - 18) ||
                     DateTime.Now.Year - tPost.DateOfBirth.Year > 123)
@@ -162,21 +167,48 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
+                if (tPost.UserName=="admin")
+                {
+                    return ServiceResult<EmployeeGet>.FailureResult("Bu kullanıcı adını alamazsınız.");
+                }
+
                 if (tPost.DateOfBirth > DateTime.Now ||
                     tPost.DateOfBirth.Year > (DateTime.Now.Year - 18) ||
                     DateTime.Now.Year - tPost.DateOfBirth.Year > 123)
                 {
                     return ServiceResult<EmployeeGet>.FailureResult("Çalışan 18 yaşından küçük ve 123 yaşında olamaz.");
                 }
-                if (await _employeeData.IsRegistered(tPost))
-                {
-                    return ServiceResult<EmployeeGet>.FailureResult("Bu çalışan zaten eklenmiş.");
-                }
+                
                 var employee = await _employeeData.SelectForUser(id);
                 if (employee.ApplicationUser == null)
                 {
                     return ServiceResult<EmployeeGet>.FailureResult("Çalışan verisi bulunmuyor.");
                 }
+
+                if (employee.ApplicationUser.Email!=tPost.Email)
+                {
+                    if (await _employeeData.IsRegisteredEmail(tPost))
+                    {
+                        return ServiceResult<EmployeeGet>.FailureResult("Bu mail adresi kullanılamaz.");
+                    }
+                }
+
+                if (employee.ApplicationUser.UserName!=tPost.UserName)
+                {
+                    if (await _employeeData.IsRegisteredUserName(tPost))
+                    {
+                        return ServiceResult<EmployeeGet>.FailureResult("Bu kullanıcı adı kullanılamaz.");
+                    }
+                }
+
+                if (employee.ApplicationUser.IdentityNo!=tPost.IdentityNo)
+                {
+                    if (await _employeeData.IsRegisteredIdNo(tPost))
+                    {
+                        return ServiceResult<EmployeeGet>.FailureResult("Bu kimlik numarası kullanılamaz.");
+                    }
+                }
+
                 _employeeMapper.UpdateUser(employee.ApplicationUser, tPost);
                 await _employeeData.UpdateUser(employee.ApplicationUser);
                 _employeeMapper.UpdateEmployee(employee, tPost);

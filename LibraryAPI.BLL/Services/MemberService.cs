@@ -141,6 +141,11 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
+                if (tPost.UserName == "admin")
+                {
+                    return ServiceResult<MemberGet>.FailureResult("Bu kullanıcı adını alamazsınız.");
+                }
+
                 if (tPost.DateOfBirth > DateTime.Now ||
                     tPost.DateOfBirth.Year > (DateTime.Now.Year - 18) ||
                     DateTime.Now.Year - tPost.DateOfBirth.Year > 123)
@@ -175,21 +180,46 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
+                if (tPost.UserName == "admin")
+                {
+                    return ServiceResult<MemberGet>.FailureResult("Bu kullanıcı adını alamazsınız.");
+                }
+
                 if (tPost.DateOfBirth > DateTime.Now ||
                     tPost.DateOfBirth.Year > (DateTime.Now.Year - 18) ||
                     DateTime.Now.Year - tPost.DateOfBirth.Year > 123)
                 {
                     return ServiceResult<MemberGet>.FailureResult("Üye 18 yaşından küçük ve 123 yaşından büyük olamaz.");
                 }
-                if (await _memberData.IsRegistered(tPost))
-                {
-                    return ServiceResult<MemberGet>.FailureResult("Bu üye zaten eklenmiş.");
-                }
 
                 var member = await _memberData.SelectForUser(id);
                 if (member.ApplicationUser == null)
                 {
                     return ServiceResult<MemberGet>.FailureResult("Üye verisi bulunmuyor.");
+                }
+
+                if (member.ApplicationUser.Email!=tPost.Email)
+                {
+                    if (await _memberData.IsRegisteredEmail(tPost))
+                    {
+                        return ServiceResult<MemberGet>.FailureResult("Bu mail adresi kullanılamaz.");
+                    }
+                }
+
+                if (member.ApplicationUser.UserName != tPost.UserName)
+                {
+                    if (await _memberData.IsRegisteredUserName(tPost))
+                    {
+                        return ServiceResult<MemberGet>.FailureResult("Bu kullanıcı adı kullanılamaz.");
+                    }
+                }
+
+                if (member.ApplicationUser.IdentityNo != tPost.IdentityNo)
+                {
+                    if (await _memberData.IsRegisteredIdNo(tPost))
+                    {
+                        return ServiceResult<MemberGet>.FailureResult("Bu kimlik numarası kullanılamaz.");
+                    }
                 }
 
                 _memberMapper.UpdateUser(member.ApplicationUser, tPost);

@@ -75,7 +75,7 @@ namespace LibraryAPI.WebAPI.Controllers
         {
             var user = await _accountManager.FindUserById(reservation.MemberId); // Finding the user by ID
             var userLoans = await _accountManager.GetReservations(user.Data); // Getting the user's reservations
-            if (userLoans.Data.Count != 0) // Checking if the user already has a reservation
+            if (userLoans.Success) // Checking if the user already has a reservation
             {
                 return BadRequest("Bu kullanıcının zaten bir rezervasyonu var."); // Returning a bad request if the user already has a reservation
             }

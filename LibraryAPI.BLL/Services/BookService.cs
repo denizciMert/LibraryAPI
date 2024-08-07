@@ -152,10 +152,15 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<BookGet>.FailureResult("Kitap verisi bulunmuyor.");
                 }
-                if (await _bookData.IsRegistered(tPost))
+
+                if (book.Isbn!=tPost.Isbn)
                 {
-                    return ServiceResult<BookGet>.FailureResult("Bu kitap zaten eklenmiş.");
+                    if (await _bookData.IsRegistered(tPost))
+                    {
+                        return ServiceResult<BookGet>.FailureResult("Bu kitap zaten eklenmiş.");
+                    }
                 }
+                
                 _bookMapper.UpdateEntity(book, tPost);
                 await _bookData.SaveContext();
                 var result = _bookMapper.MapToDto(book);

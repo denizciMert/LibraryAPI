@@ -70,6 +70,83 @@ namespace LibraryAPI.DAL.Data
                     return true; // Member is already registered
                 }
             }
+            var employees = await context.Employees!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var employee in employees)
+            {
+                if (employee.ApplicationUser!.Email == tPost.Email ||
+                    employee.ApplicationUser.IdentityNo == tPost.IdentityNo ||
+                    employee.ApplicationUser.UserName == tPost.UserName) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
+            return false; // Member is not registered
+        }
+
+        public async Task<bool> IsRegisteredUserName(MemberPost tPost)
+        {
+            var members = await SelectAllFiltered(); // Getting all filtered members
+            foreach (var member in members)
+            {
+                if (member.ApplicationUser!.UserName == tPost.UserName) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
+            var employees = await context.Employees!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var employee in employees)
+            {
+                if (employee.ApplicationUser!.UserName == tPost.UserName) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
+            return false; // Member is not registered
+        }
+
+        public async Task<bool> IsRegisteredIdNo(MemberPost tPost)
+        {
+            var members = await SelectAllFiltered(); // Getting all filtered members
+            foreach (var member in members)
+            {
+                if (member.ApplicationUser!.IdentityNo == tPost.IdentityNo) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
+            var employees = await context.Employees!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var employee in employees)
+            {
+                if (employee.ApplicationUser!.IdentityNo == tPost.IdentityNo) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
+            return false; // Member is not registered
+        }
+
+        public async Task<bool> IsRegisteredEmail(MemberPost tPost)
+        {
+            var members = await SelectAllFiltered(); // Getting all filtered members
+            foreach (var member in members)
+            {
+                if (member.ApplicationUser!.Email == tPost.Email) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
+            var employees = await context.Employees!.Include(x => x.ApplicationUser)
+                .Where(x => x.ApplicationUser!.State != State.Silindi).ToListAsync();
+            foreach (var employee in employees)
+            {
+                if (employee.ApplicationUser!.Email == tPost.Email) // Checking if a member is registered with the same email, identity number, or username
+                {
+                    return true; // Member is already registered
+                }
+            }
             return false; // Member is not registered
         }
 

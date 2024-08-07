@@ -104,7 +104,7 @@ namespace LibraryAPI.WebAPI.Controllers
         {
             var user = await _accountManager.FindUserById(loan.MemberId); // Finding the user by ID
             var userLoans = await _accountManager.GetUserLoans(user.Data); // Getting the user's loans
-            if (userLoans.Data.Count != 0) // Checking if the user already has a loan
+            if (userLoans.Success) // Checking if the user already has a loan
             {
                 return BadRequest("Bu kullanıcı zaten bir işlem yapmış."); // Returning a bad request if the user already has a loan
             }

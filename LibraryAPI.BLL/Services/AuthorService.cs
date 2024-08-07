@@ -162,10 +162,15 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar verisi bulunmuyor.");
                 }
-                if (await _authorData.IsRegistered(tPost))
+
+                if (author.AuthorFullName!=tPost.AuthorName)
                 {
-                    return ServiceResult<AuthorGet>.FailureResult("Bu yazar zaten eklenmiş.");
+                    if (await _authorData.IsRegistered(tPost))
+                    {
+                        return ServiceResult<AuthorGet>.FailureResult("Bu yazar zaten eklenmiş.");
+                    }
                 }
+                
                 if (tPost.DateOfBirth > DateTime.Now.AddYears(-4).Year)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar 4 yaşından küçük olamaz.");

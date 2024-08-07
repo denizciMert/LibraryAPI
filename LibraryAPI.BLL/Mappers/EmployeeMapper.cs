@@ -99,7 +99,7 @@ namespace LibraryAPI.BLL.Mappers
             var dto = new EmployeeGet
             {
                 Id = entity.Id,
-                EmployeeName = $"{entity.ApplicationUser?.FirstName} {entity.ApplicationUser?.LastName}",
+                EmployeeName = $"{entity.ApplicationUser?.FirstName} {entity.ApplicationUser?.MiddleName} {entity.ApplicationUser?.LastName}",
                 IdentityNo = entity.ApplicationUser?.IdentityNo,
                 UserName = entity.ApplicationUser?.UserName,
                 Email = entity.ApplicationUser?.Email,

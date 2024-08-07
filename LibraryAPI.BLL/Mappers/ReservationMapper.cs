@@ -75,7 +75,7 @@ namespace LibraryAPI.BLL.Mappers
             var dto = new ReservationGet
             {
                 Id = reservation.Id,
-                MemberName = reservation.Member?.ApplicationUser?.UserName,
+                MemberName = $"{reservation.Member?.ApplicationUser?.FirstName} {reservation.Member?.ApplicationUser?.MiddleName} {reservation.Member?.ApplicationUser?.LastName}",
                 UserName = reservation.Member?.ApplicationUser?.UserName,
                 EmployeeName = reservation.Employee?.ApplicationUser?.FirstName,
                 StudyTable = reservation.StudyTable?.TableCode,

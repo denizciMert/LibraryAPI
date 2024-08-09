@@ -622,7 +622,11 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                await _accountData.EndReservations(user.UserName!, reservationId);
+                var result = await _accountData.EndReservations(user.UserName!, reservationId);
+                if (result == false)
+                {
+                    return ServiceResult<string>.SuccessResult("Rezervasyon kaydınız yok veya hatalı işlem yaptınız.");
+                }
                 return ServiceResult<string>.SuccessResult("Rezervasyon kaydınız sonlandırıldı.");
             }
             catch (Exception ex)

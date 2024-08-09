@@ -333,7 +333,7 @@ namespace LibraryAPI.DAL.Data
         }
 
         // Ending a reservation asynchronously
-        public async Task EndReservations(string userName, int reservationId)
+        public async Task<bool> EndReservations(string userName, int reservationId)
         {
             var reservation = await context.Reservations!.Include(x => x.Member).ThenInclude(x => x!.ApplicationUser)
                 .Include(x => x.Employee).ThenInclude(x => x!.ApplicationUser)
@@ -342,10 +342,14 @@ namespace LibraryAPI.DAL.Data
                 .Where(x => x.State != State.Silindi)
                 .Where(x => x.Active == true)
                 .FirstOrDefaultAsync(x => x.Id == reservationId);
-
-            reservation!.Active = false;
+            if (reservation == null)
+            {
+                return false;
+            }
+            reservation.Active = false;
             context.Reservations!.Update(reservation);
             await context.SaveChangesAsync();
+            return true;
         }
 
         // Saving changes to the database

@@ -175,10 +175,12 @@ namespace LibraryAPI.BLL.Services
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar 4 yaşından küçük olamaz.");
                 }
+
                 if (tPost.DateOfDeath < tPost.DateOfBirth && tPost.DateOfDeath > DateTime.Now.Year)
                 {
                     return ServiceResult<AuthorGet>.FailureResult("Yazar ölüm yılı hatalı.");
                 }
+
                 _authorMapper.UpdateEntity(author, tPost);
                 await _authorData.SaveContext();
                 var newAuthor = _authorMapper.MapToDto(author);

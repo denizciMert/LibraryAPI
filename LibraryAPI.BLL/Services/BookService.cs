@@ -153,12 +153,22 @@ namespace LibraryAPI.BLL.Services
                     return ServiceResult<BookGet>.FailureResult("Kitap verisi bulunmuyor.");
                 }
 
+                if (await _bookData.IsLoaned(book.Id))
+                {
+                    return ServiceResult<BookGet>.FailureResult("Öncelikle bu kitapla alakalı işlemleri sonlandırmalısınız.");
+                }
+
                 if (book.Isbn!=tPost.Isbn)
                 {
                     if (await _bookData.IsRegistered(tPost))
                     {
                         return ServiceResult<BookGet>.FailureResult("Bu kitap zaten eklenmiş.");
                     }
+                }
+
+                if (!await _bookData.ClearCopies(book.Id))
+                {
+                    return ServiceResult<BookGet>.FailureResult("Kopya kayıtları kaldırılamadı");
                 }
                 
                 _bookMapper.UpdateEntity(book, tPost);

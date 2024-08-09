@@ -146,15 +146,19 @@ namespace LibraryAPI.BLL.Services
         {
             try
             {
-                if (await _publisherData.IsRegistered(tPost))
-                {
-                    return ServiceResult<PublisherGet>.FailureResult("Bu yayıncı zaten eklenmiş.");
-                }
                 Publisher? nullPublisher = null;
                 var publisher = await _publisherData.SelectForEntity(id);
                 if (publisher == nullPublisher)
                 {
                     return ServiceResult<PublisherGet>.FailureResult("Yayıncı verisi bulunmuyor.");
+                }
+
+                if (publisher.PublisherName!=tPost.PublisherName)
+                {
+                    if (await _publisherData.IsRegistered(tPost))
+                    {
+                        return ServiceResult<PublisherGet>.FailureResult("Bu yayıncı zaten eklenmiş.");
+                    }
                 }
                 _publisherMapper.UpdateEntity(publisher, tPost);
                 await _publisherData.SaveContext();

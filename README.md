@@ -120,7 +120,7 @@ My goal is to offer a comprehensive API for managing library operations such as 
    git clone https://github.com/denizciMert/LibraryAPI.git
    ```
 
-3. Set up the database connection string in appsettings.json:
+2. Set up the database connection string in appsettings.json:
 
     ```json
     {
@@ -137,7 +137,7 @@ My goal is to offer a comprehensive API for managing library operations such as 
     }
     ```
 
-4. Build and run the project:
+3. Build and run the project:
 
     ```bash
     dotnet build

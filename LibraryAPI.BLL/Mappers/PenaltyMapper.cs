@@ -66,7 +66,7 @@ namespace LibraryAPI.BLL.Mappers
             var dto = new PenaltyGet
             {
                 Id = entity.Id,
-                MemberName =$"{entity.Member?.ApplicationUser?.FirstName} {entity.Member?.ApplicationUser?.MiddleName} {entity.Member?.ApplicationUser?.LastName}" ?? "",
+                MemberName =$"{entity.Member?.ApplicationUser?.FirstName} {entity.Member?.ApplicationUser?.MiddleName} {entity.Member?.ApplicationUser?.LastName}",
                 UserName = entity.Member?.ApplicationUser?.UserName ?? "",
                 BookTitle = entity.Loan?.Book?.BookTitle ?? "",
                 Isbn = entity.Loan?.Book?.Isbn ?? "",

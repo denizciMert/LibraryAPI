@@ -76,6 +76,33 @@ namespace LibraryAPI.DAL.Data
             return false; // Returning false if no match is found
         }
 
+        public async Task<bool> IsLoaned(int bookId)
+        {
+            var loans = await context.Loans!.Where(x => x.Active == true && x.BookId == bookId).ToListAsync();
+            if (loans.Count!=0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> ClearCopies(int bookId)
+        {
+            var copies = await context.BookCopies!.Where(x => x.BookId == bookId).ToListAsync();
+            if (copies.Count == 0)
+            {
+                return true;
+            }
+
+            foreach (var copy in copies)
+            {
+                context.BookCopies!.Remove(copy);
+            }
+
+            await context.SaveChangesAsync();
+            return true;
+        }
+
         // Adding a book to the context
         public void AddToContext(Book book)
         {

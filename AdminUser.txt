@@ -1,0 +1,4 @@
+username : admin
+password : Admin123!
+
+Server=localhost;Database=LibraryAPI_MertDenizci;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=True
